@@ -70,7 +70,7 @@ export type ShopItem = {
 
 export type Settings = {
   diet: Diet;
-  householdSize: 1 | 2 | 4;
+  householdSize: number;
   onboardingDone: boolean;
 };
 

@@ -5,6 +5,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { getIngredient } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { uid } from '../lib/dates';
+import { parseHouseholdSize } from '../lib/household';
 import { estimateSavings } from '../lib/savings';
 import { itemsFromIds, starterPantry } from '../lib/starterPantry';
 import type { CookedMeal, Diet, PantryItem, Settings, ShopItem } from '../types';
@@ -16,7 +17,7 @@ export type KitchenState = {
   cooked: CookedMeal[];
   shop: ShopItem[];
   setHydrated: () => void;
-  completeOnboarding: (input: { diet: Diet; householdSize: 1 | 2 | 4; seed: boolean }) => void;
+  completeOnboarding: (input: { diet: Diet; householdSize: number; seed: boolean }) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   addIngredients: (ingredientIds: string[], source: PantryItem['source']) => void;
   removePantry: (id: string) => void;
@@ -48,11 +49,24 @@ export const useKitchen = create<KitchenState>()(
       setHydrated: () => set({ hydrated: true }),
       completeOnboarding: ({ diet, householdSize, seed }) =>
         set({
-          settings: { diet, householdSize, onboardingDone: true },
+          settings: {
+            diet,
+            householdSize: parseHouseholdSize(String(householdSize), 1),
+            onboardingDone: true,
+          },
           pantry: seed ? starterPantry() : [],
         }),
       updateSettings: (patch) =>
-        set((state) => ({ settings: { ...state.settings, ...patch } })),
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            ...patch,
+            householdSize: parseHouseholdSize(
+              String(patch.householdSize ?? state.settings.householdSize),
+              state.settings.householdSize,
+            ),
+          },
+        })),
       addIngredients: (ingredientIds, source) =>
         set((state) => {
           const existing = new Set(state.pantry.map((item) => item.ingredientId));

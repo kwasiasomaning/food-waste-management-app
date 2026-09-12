@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { HouseholdInput } from '../components/HouseholdInput';
 import { Button, Pill } from '../components/ui';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts } from '../theme';
@@ -28,17 +29,11 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
           />
         ))}
       </View>
-      <Text style={styles.label}>Household</Text>
-      <View style={styles.row}>
-        {([1, 2, 4] as const).map((size) => (
-          <Pill
-            key={size}
-            label={String(size)}
-            active={settings.householdSize === size}
-            onPress={() => updateSettings({ householdSize: size })}
-          />
-        ))}
-      </View>
+      <Text style={styles.label}>Who is home for dinner?</Text>
+      <HouseholdInput
+        value={settings.householdSize}
+        onChange={(householdSize) => updateSettings({ householdSize })}
+      />
       <View style={{ height: 24 }} />
       <Button
         variant="ghost"

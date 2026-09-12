@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { HouseholdInput } from '../components/HouseholdInput';
 import { Button, Display, Pill } from '../components/ui';
 import type { Diet } from '../types';
 import { useKitchen } from '../store/kitchen';
@@ -11,7 +12,7 @@ export function OnboardingScreen() {
   const completeOnboarding = useKitchen((s) => s.completeOnboarding);
   const [step, setStep] = useState(0);
   const [diet, setDiet] = useState<Diet>('omnivore');
-  const [householdSize, setHouseholdSize] = useState<1 | 2 | 4>(2);
+  const [householdSize, setHouseholdSize] = useState(2);
   const [seed, setSeed] = useState(true);
 
   if (step === 0) {
@@ -60,11 +61,7 @@ export function OnboardingScreen() {
           <Pill label="Vegan" active={diet === 'vegan'} onPress={() => setDiet('vegan')} />
         </View>
         <Text style={styles.label}>Who is home for dinner?</Text>
-        <View style={styles.row}>
-          <Pill label="Just me" active={householdSize === 1} onPress={() => setHouseholdSize(1)} />
-          <Pill label="Two" active={householdSize === 2} onPress={() => setHouseholdSize(2)} />
-          <Pill label="Four" active={householdSize === 4} onPress={() => setHouseholdSize(4)} />
-        </View>
+        <HouseholdInput value={householdSize} onChange={setHouseholdSize} />
         <Text style={styles.label}>Start from a typical fridge?</Text>
         <Text style={styles.hint}>
           Spinach on its last day, leftover rice, chicken, yogurt, bread. You can delete anything.
