@@ -63,7 +63,7 @@ export function WebFridgeCamera({
     <Modal visible transparent animationType="fade" onRequestClose={onCancel}>
       <View style={styles.backdrop}>
         <View style={styles.sheet}>
-          <Text style={styles.title}>Take a fridge photo</Text>
+          <Text style={styles.title}>What's inside your fridge Tonight</Text>
           <Text style={styles.sub}>Point the camera at the shelves, then capture.</Text>
           <View style={styles.frame}>
             {createElement('video', {
