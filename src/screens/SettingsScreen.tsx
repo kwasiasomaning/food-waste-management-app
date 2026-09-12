@@ -29,7 +29,7 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
           />
         ))}
       </View>
-      <Text style={styles.label}>Who is home for dinner?</Text>
+      <Text style={styles.label}>Who is home for dinner? e.g 2</Text>
       <HouseholdInput
         value={settings.householdSize}
         onChange={(householdSize) => updateSettings({ householdSize })}

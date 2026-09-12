@@ -60,7 +60,7 @@ export function OnboardingScreen() {
           <Pill label="Vegetarian" active={diet === 'vegetarian'} onPress={() => setDiet('vegetarian')} />
           <Pill label="Vegan" active={diet === 'vegan'} onPress={() => setDiet('vegan')} />
         </View>
-        <Text style={styles.label}>Who is home for dinner?</Text>
+        <Text style={styles.label}>Who is home for dinner? e.g 2</Text>
         <HouseholdInput value={householdSize} onChange={setHouseholdSize} />
         <Text style={styles.label}>Start from a typical fridge?</Text>
         <Text style={styles.hint}>

@@ -34,7 +34,7 @@ export function HouseholdInput({
         keyboardType="number-pad"
         inputMode="numeric"
         maxLength={2}
-        accessibilityLabel="Who is home for dinner"
+        accessibilityLabel="Who is home for dinner? e.g 2"
         style={styles.input}
       />
     </View>
