@@ -3,17 +3,17 @@ import { INGREDIENTS } from '../data/ingredients';
 import { hasMappedIngredientPhoto, photoForIngredient, photoForRecipe } from './foodPhoto';
 
 describe('photoForRecipe', () => {
-  it('picks a still life from the recipe', () => {
-    expect(photoForRecipe({ id: 'tomato-bread-supper', title: 'Tomato bread', emoji: '🍞' })).toBe(
-      'bread',
+  it('picks a plated meal still that matches the dinner', () => {
+    expect(photoForRecipe({ id: 'tomato-bread-supper', title: 'Tomato bread' })).toBe('meal-toast');
+    expect(photoForRecipe({ id: 'leftover-fried-rice', title: 'Fried rice' })).toBe(
+      'meal-fried-rice',
     );
-    expect(photoForRecipe({ id: 'leftover-fried-rice', title: 'Fried rice', emoji: '🍚' })).toBe(
-      'bowl',
+    expect(photoForRecipe({ id: 'spinach-frittata', title: 'Spinach frittata' })).toBe(
+      'meal-frittata',
     );
-    expect(photoForRecipe({ id: 'spinach-frittata', title: 'Spinach frittata', emoji: '🍳' })).toBe(
-      'greens',
-    );
-    expect(photoForRecipe({ id: 'salmon-lemon', title: 'Lemon salmon', emoji: '🐟' })).toBe('citrus');
+    expect(photoForRecipe({ id: 'salmon-lemon', title: 'Lemon salmon' })).toBe('meal-fish');
+    expect(photoForRecipe({ id: 'chicken-tacos', title: 'Chicken tacos' })).toBe('meal-tacos');
+    expect(photoForRecipe({ id: 'bell-pepper-pasta', title: 'Pasta' })).toBe('meal-pasta');
   });
 });
 

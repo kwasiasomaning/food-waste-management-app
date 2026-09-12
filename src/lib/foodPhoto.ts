@@ -120,12 +120,41 @@ export function hasMappedIngredientPhoto(id: string): boolean {
   return Object.hasOwn(INGREDIENT_PHOTO_BY_ID, id);
 }
 
-export function photoForRecipe(recipe: { id: string; title: string; emoji: string }): FoodPhotoId {
-  const hay = `${recipe.id} ${recipe.title} ${recipe.emoji}`.toLowerCase();
-  if (/bread|toast|tomato|quesadilla|taco|mozzarella|caprese|🍞|🍅|🌮/.test(hay)) return 'bread';
-  if (/rice|bowl|noodle|pasta|soup|lentil|stew|risotto|🍚|🍝|🍲|🥣/.test(hay)) return 'bowl';
-  if (/spin|kale|green|salad|broccoli|cabbage|zucchini|herb|🥬|🥦|🌿/.test(hay)) return 'greens';
-  if (/egg|frittata|shakshuka|🍳/.test(hay)) return 'greens';
-  if (/lemon|citrus|salmon|shrimp|fish|🍋|🐟|🦐/.test(hay)) return 'citrus';
-  return 'plate';
+export type MealPhotoId =
+  | 'meal-frittata'
+  | 'meal-toast'
+  | 'meal-fried-rice'
+  | 'meal-chicken'
+  | 'meal-tacos'
+  | 'meal-shakshuka'
+  | 'meal-pasta'
+  | 'meal-soup'
+  | 'meal-fish'
+  | 'meal-stirfry'
+  | 'meal-melt'
+  | 'meal-bowl'
+  | 'meal-noodles'
+  | 'meal-beans'
+  | 'meal-caprese';
+
+export function photoForRecipe(recipe: { id: string; title: string; emoji?: string }): MealPhotoId {
+  const hay = `${recipe.id} ${recipe.title}`.toLowerCase();
+  if (/taco|quesadilla/.test(hay)) return 'meal-tacos';
+  if (/shakshuka/.test(hay)) return 'meal-shakshuka';
+  if (/frittata|zucchini-eggs|feta-eggs|corn-eggs|roast-veg|bacon-potato/.test(hay)) {
+    return 'meal-frittata';
+  }
+  if (/toast|tomato-bread|avocado|ham-egg|apple-cheddar/.test(hay)) return 'meal-toast';
+  if (/fried.?rice/.test(hay)) return 'meal-fried-rice';
+  if (/grilled.?cheese|melt|broccoli-cheddar/.test(hay)) return 'meal-melt';
+  if (/noodle|peanut-noodles|cabbage-noodles/.test(hay)) return 'meal-noodles';
+  if (/pasta|aglio|spaghetti/.test(hay)) return 'meal-pasta';
+  if (/soup|lentil|coconut-lentil|carrot-ginger/.test(hay)) return 'meal-soup';
+  if (/salmon|shrimp/.test(hay)) return 'meal-fish';
+  if (/stir|tofu/.test(hay)) return 'meal-stirfry';
+  if (/yogurt|oat|banana-oat|cucumber-rice/.test(hay)) return 'meal-bowl';
+  if (/chickpea|black-bean|kale-beans|bean/.test(hay)) return 'meal-beans';
+  if (/mozzarella|caprese/.test(hay)) return 'meal-caprese';
+  if (/chicken/.test(hay)) return 'meal-chicken';
+  return 'meal-pasta';
 }

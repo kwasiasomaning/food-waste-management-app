@@ -4,8 +4,8 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { getIngredient } from '../data/ingredients';
 import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from '../data/places';
-import { RECIPES } from '../data/recipes';
 import { uid } from '../lib/dates';
+import { findRecipe } from '../lib/mealCache';
 import { parseHouseholdSize } from '../lib/household';
 import { estimateSavings, estimateUse, estimateWaste } from '../lib/savings';
 import { itemsFromIds, starterPantry } from '../lib/starterPantry';
@@ -163,7 +163,7 @@ export const useKitchen = create<KitchenState>()(
           ),
         })),
       cookRecipe: (recipeId) => {
-        const recipe = RECIPES.find((row) => row.id === recipeId);
+        const recipe = findRecipe(recipeId);
         if (!recipe) return null;
         const pantryIds = new Set(get().pantry.map((item) => item.ingredientId));
         const used = recipe.ingredients

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,6 +8,7 @@ import { WasteBriefCard } from '../components/WasteBriefCard';
 import { Button, Display } from '../components/ui';
 import { INGREDIENT_MAP } from '../data/ingredients';
 import { expiryLabel, prettyDate, urgencyOf } from '../lib/dates';
+import { loadDinnerIdeas } from '../lib/mealIdeas';
 import { missingShopList, suggestDinners } from '../lib/matching';
 import { dismissWasteBrief, isWasteBriefDismissed, wasteBriefForSession } from '../lib/wasteBrief';
 import type { TabName } from '../navigation';
@@ -28,7 +29,21 @@ export function TonightScreen({
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
-  const suggestions = suggestDinners(pantry, diet, 3);
+  const pantryKey = pantry.map((item) => `${item.ingredientId}:${item.expiresAt}`).join('|');
+  const localIdeas = useMemo(() => suggestDinners(pantry, diet, 3), [diet, pantry, pantryKey]);
+  const [suggestions, setSuggestions] = useState(localIdeas);
+
+  useEffect(() => {
+    setSuggestions(localIdeas);
+    if (pantry.length === 0) return;
+    let cancelled = false;
+    void loadDinnerIdeas(pantry, diet, 3).then((rows) => {
+      if (!cancelled && rows.length) setSuggestions(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [diet, localIdeas, pantry, pantryKey]);
   const dying = pantry
     .filter((item) => {
       const ingredient = INGREDIENT_MAP[item.ingredientId];

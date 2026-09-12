@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FoodStill } from '../components/FoodStill';
 import { Button, Display } from '../components/ui';
-import { photoForRecipe } from '../lib/foodPhoto';
-import { RECIPES } from '../data/recipes';
+import { findRecipe } from '../lib/mealCache';
+import { recipeImageSource } from '../lib/recipeImage';
 import { formatKg, formatMoney } from '../lib/savings';
 import { useKitchen } from '../store/kitchen';
-import { colors, fonts } from '../theme';
+import { colors, fonts, radius } from '../theme';
 
 export function CookedScreen({
   recipeId,
@@ -20,12 +20,16 @@ export function CookedScreen({
   savedKg: number;
   onDone: () => void;
 }) {
-  const recipe = RECIPES.find((row) => row.id === recipeId);
+  const recipe = findRecipe(recipeId);
   const currency = useKitchen((s) => s.settings.currency ?? 'USD');
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.center}>
-        <FoodStill id={recipe ? photoForRecipe(recipe) : 'plate'} height={160} />
+        {recipe ? (
+          <Image source={recipeImageSource(recipe)} resizeMode="cover" style={styles.hero} />
+        ) : (
+          <FoodStill id="plate" height={160} />
+        )}
         <Display italic style={styles.word}>
           That stayed food.
         </Display>
@@ -53,6 +57,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   center: { flex: 1, justifyContent: 'center' },
+  hero: {
+    width: '100%',
+    height: 160,
+    borderRadius: radius.lg,
+    backgroundColor: colors.paperDeep,
+  },
   word: { marginTop: 16 },
   body: {
     fontFamily: fonts.sans,

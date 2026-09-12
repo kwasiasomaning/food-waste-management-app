@@ -1,8 +1,7 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { FOOD_PHOTOS } from '../data/foodPhotos';
 import { getIngredient } from '../data/ingredients';
-import { photoForRecipe } from '../lib/foodPhoto';
+import { recipeImageSource } from '../lib/recipeImage';
 import type { ScoredRecipe } from '../types';
 import { colors, fonts, radius } from '../theme';
 
@@ -17,7 +16,7 @@ export function RecipeCard({
 }) {
   const dying = scored.expiringUsed.map((id) => getIngredient(id).name);
   const missing = scored.missing.map((id) => getIngredient(id).name);
-  const photo = FOOD_PHOTOS[photoForRecipe(scored.recipe)];
+  const photo = recipeImageSource(scored.recipe);
 
   return (
     <Pressable

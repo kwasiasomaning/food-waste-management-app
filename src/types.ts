@@ -69,6 +69,8 @@ export type RecipeIngredient = {
   optional?: boolean;
 };
 
+export type RecipeSource = 'house' | 'themealdb' | 'dummyjson';
+
 export type Recipe = {
   id: string;
   title: string;
@@ -81,6 +83,8 @@ export type Recipe = {
   ingredients: RecipeIngredient[];
   steps: string[];
   rescue: string;
+  source?: RecipeSource;
+  photoUri?: string;
 };
 
 export type PantryItem = {

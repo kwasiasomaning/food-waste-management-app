@@ -1,17 +1,16 @@
 import * as Haptics from 'expo-haptics';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { FoodStill } from '../components/FoodStill';
 import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
-import { photoForRecipe } from '../lib/foodPhoto';
-import { RECIPES } from '../data/recipes';
+import { findRecipe } from '../lib/mealCache';
+import { recipeImageSource } from '../lib/recipeImage';
 import { scoreRecipe } from '../lib/matching';
 import { scaleAmount, servingLabel } from '../lib/servings';
 import { useKitchen } from '../store/kitchen';
-import { colors, fonts } from '../theme';
+import { colors, fonts, radius } from '../theme';
 
 export function RecipeScreen({
   id,
@@ -27,7 +26,7 @@ export function RecipeScreen({
   const householdSize = useKitchen((s) => s.settings.householdSize);
   const addToShop = useKitchen((s) => s.addToShop);
   const cookRecipe = useKitchen((s) => s.cookRecipe);
-  const recipe = RECIPES.find((row) => row.id === id);
+  const recipe = findRecipe(id);
 
   if (!recipe) {
     return (
@@ -57,7 +56,7 @@ export function RecipeScreen({
         <Pressable onPress={onBack}>
           <Text style={styles.back}>← Tonight</Text>
         </Pressable>
-        <FoodStill id={photoForRecipe(recipe)} height={168} />
+        <Image source={recipeImageSource(recipe)} resizeMode="cover" style={styles.hero} />
         <Text style={styles.title}>{recipe.title}</Text>
         <Text style={styles.sub}>{recipe.subtitle}</Text>
         <Text style={styles.meta}>
@@ -112,6 +111,12 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
   scroll: { padding: 20, paddingBottom: 32 },
   back: { fontFamily: fonts.sansSemi, color: colors.terracotta, marginBottom: 12 },
+  hero: {
+    width: '100%',
+    height: 168,
+    borderRadius: radius.lg,
+    backgroundColor: colors.paperDeep,
+  },
   title: { fontFamily: fonts.display, fontSize: 32, lineHeight: 36, color: colors.ink, marginTop: 16 },
   sub: { fontFamily: fonts.sans, fontSize: 17, color: colors.inkSoft, marginTop: 8 },
   meta: { fontFamily: fonts.sansSemi, color: colors.ink, marginTop: 8 },

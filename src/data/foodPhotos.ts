@@ -1,8 +1,8 @@
 import type { ImageSourcePropType } from 'react-native';
 
-import type { FoodPhotoId, IngredientPhotoId } from '../lib/foodPhoto';
+import type { FoodPhotoId, IngredientPhotoId, MealPhotoId } from '../lib/foodPhoto';
 
-export type { FoodPhotoId, IngredientPhotoId };
+export type { FoodPhotoId, IngredientPhotoId, MealPhotoId };
 
 export const FOOD_PHOTOS: Record<FoodPhotoId, ImageSourcePropType> = {
   table: require('../../assets/food/table.png'),
@@ -52,4 +52,22 @@ export const INGREDIENT_PHOTOS: Record<IngredientPhotoId, ImageSourcePropType> =
   'ing-oil': require('../../assets/food/ing-oil.png'),
   'ing-beans': require('../../assets/food/ing-beans.png'),
   'ing-roast': require('../../assets/food/ing-roast.png'),
+};
+
+export const MEAL_PHOTOS: Record<MealPhotoId, ImageSourcePropType> = {
+  'meal-frittata': require('../../assets/food/meal-frittata.jpg'),
+  'meal-toast': require('../../assets/food/meal-toast.jpg'),
+  'meal-fried-rice': require('../../assets/food/meal-fried-rice.jpg'),
+  'meal-chicken': require('../../assets/food/meal-chicken.jpg'),
+  'meal-tacos': require('../../assets/food/meal-tacos.jpg'),
+  'meal-shakshuka': require('../../assets/food/meal-shakshuka.jpg'),
+  'meal-pasta': require('../../assets/food/meal-pasta.jpg'),
+  'meal-soup': require('../../assets/food/meal-soup.jpg'),
+  'meal-fish': require('../../assets/food/meal-fish.jpg'),
+  'meal-stirfry': require('../../assets/food/meal-stirfry.jpg'),
+  'meal-melt': require('../../assets/food/meal-melt.jpg'),
+  'meal-bowl': require('../../assets/food/meal-bowl.jpg'),
+  'meal-noodles': require('../../assets/food/meal-noodles.jpg'),
+  'meal-beans': require('../../assets/food/meal-beans.jpg'),
+  'meal-caprese': require('../../assets/food/meal-caprese.jpg'),
 };
