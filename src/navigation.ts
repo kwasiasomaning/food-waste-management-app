@@ -5,7 +5,11 @@ export type SnapCommand = {
   action: 'camera' | 'library';
 };
 
+export type LegalDoc = 'privacy' | 'terms';
+
 export type Route =
+  | { name: 'auth' }
+  | { name: 'legal'; doc: LegalDoc; back: 'auth' | 'settings' }
   | { name: 'onboarding' }
   | { name: 'tabs'; tab: TabName }
   | { name: 'recipe'; id: string }

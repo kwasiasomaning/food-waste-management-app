@@ -131,6 +131,32 @@ export type Settings = {
   onboardingDone: boolean;
   country: string;
   currency: string;
+  ownerId?: string;
+};
+
+export type ConsentRecord = {
+  privacyVersion: string;
+  termsVersion: string;
+  acceptedAt: string;
+  ageAttested: boolean;
+  ageMinimum: number;
+};
+
+export type Account = {
+  id: string;
+  email: string;
+  name: string;
+  passwordSalt: string;
+  passwordHash: string;
+  createdAt: string;
+  country: string;
+  consent: ConsentRecord;
+};
+
+export type Session = {
+  userId: string;
+  email: string;
+  name: string;
 };
 
 export type ScoredRecipe = {

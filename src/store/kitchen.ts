@@ -9,6 +9,7 @@ import { uid } from '../lib/dates';
 import { parseHouseholdSize } from '../lib/household';
 import { estimateSavings, estimateUse, estimateWaste } from '../lib/savings';
 import { itemsFromIds, starterPantry } from '../lib/starterPantry';
+import type { KitchenSlice } from '../lib/auth/kitchenVault';
 import type { BinnedItem, CookedMeal, Diet, PantryItem, Settings, ShopItem, UsedItem } from '../types';
 
 export type KitchenState = {
@@ -35,6 +36,10 @@ export type KitchenState = {
   buyChecked: () => void;
   clearShop: () => void;
   resetKitchen: () => void;
+  kitchenSlice: () => KitchenSlice;
+  replaceKitchen: (slice: KitchenSlice) => void;
+  claimKitchen: (ownerId: string) => void;
+  emptyForAccount: (input: { ownerId: string; country: string; currency?: string }) => void;
 };
 
 const defaultSettings: Settings = {
@@ -57,15 +62,18 @@ export const useKitchen = create<KitchenState>()(
       shop: [],
       setHydrated: () => set({ hydrated: true }),
       completeOnboarding: ({ diet, householdSize, seed }) =>
-        set({
+        set((state) => ({
           settings: {
             ...defaultSettings,
+            country: state.settings.country,
+            currency: state.settings.currency,
+            ownerId: state.settings.ownerId,
             diet,
             householdSize: parseHouseholdSize(String(householdSize), 1),
             onboardingDone: true,
           },
           pantry: seed ? starterPantry() : [],
-        }),
+        })),
       updateSettings: (patch) =>
         set((state) => ({
           settings: {
@@ -203,8 +211,54 @@ export const useKitchen = create<KitchenState>()(
       },
       clearShop: () => set({ shop: [] }),
       resetKitchen: () =>
+        set((state) => ({
+          settings: {
+            ...defaultSettings,
+            country: state.settings.country,
+            currency: state.settings.currency,
+            ownerId: state.settings.ownerId,
+            onboardingDone: state.settings.onboardingDone,
+            diet: state.settings.diet,
+            householdSize: state.settings.householdSize,
+          },
+          pantry: [],
+          cooked: [],
+          wasted: [],
+          used: [],
+          shop: [],
+        })),
+      kitchenSlice: () => {
+        const state = get();
+        return {
+          settings: state.settings,
+          pantry: state.pantry,
+          cooked: state.cooked,
+          wasted: state.wasted,
+          used: state.used,
+          shop: state.shop,
+        };
+      },
+      replaceKitchen: (slice) =>
         set({
-          settings: defaultSettings,
+          settings: slice.settings,
+          pantry: slice.pantry,
+          cooked: slice.cooked,
+          wasted: slice.wasted ?? [],
+          used: slice.used ?? [],
+          shop: slice.shop,
+        }),
+      claimKitchen: (ownerId) =>
+        set((state) => ({
+          settings: { ...state.settings, ownerId },
+        })),
+      emptyForAccount: ({ ownerId, country, currency }) =>
+        set({
+          settings: {
+            ...defaultSettings,
+            ownerId,
+            country,
+            currency: currency ?? defaultSettings.currency,
+          },
           pantry: [],
           cooked: [],
           wasted: [],

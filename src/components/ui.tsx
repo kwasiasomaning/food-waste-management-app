@@ -47,21 +47,25 @@ export function Button({
   onPress,
   variant = 'primary',
   style,
+  disabled,
 }: {
   label: string;
   onPress: () => void;
   variant?: 'primary' | 'ghost' | 'sage';
   style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
       style={({ pressed }) => [
         styles.button,
         variant === 'primary' && styles.primary,
         variant === 'ghost' && styles.ghost,
         variant === 'sage' && styles.sage,
-        pressed && { opacity: 0.86, transform: [{ scale: 0.99 }] },
+        disabled && { opacity: 0.45 },
+        pressed && !disabled && { opacity: 0.86, transform: [{ scale: 0.99 }] },
         style,
       ]}
     >
