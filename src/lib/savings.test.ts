@@ -1,4 +1,14 @@
-import { estimateSavings, formatKg, formatMoney, mealsEquivalent } from './savings';
+import { estimateSavings, estimateWaste, formatKg, formatMoney, mealsEquivalent } from './savings';
+
+describe('estimateWaste', () => {
+  it('counts the full grocery price of a binned item', () => {
+    expect(estimateWaste('spinach')).toEqual({ lostUsd: 3.2, lostKg: 0.15 });
+  });
+
+  it('ignores staples', () => {
+    expect(estimateWaste('salt')).toEqual({ lostUsd: 0, lostKg: 0 });
+  });
+});
 
 describe('estimateSavings', () => {
   it('ignores staples and unknown ids', () => {

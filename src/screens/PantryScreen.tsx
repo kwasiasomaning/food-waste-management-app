@@ -13,6 +13,7 @@ const ORDER: Urgency[] = ['tonight', 'soon', 'fresh', 'staple'];
 export function PantryScreen({ onTab }: { onTab: (tab: TabName) => void }) {
   const pantry = useKitchen((s) => s.pantry);
   const removePantry = useKitchen((s) => s.removePantry);
+  const binPantry = useKitchen((s) => s.binPantry);
   const setExpiryDays = useKitchen((s) => s.setExpiryDays);
 
   const groups = ORDER.map((urgency) => ({
@@ -48,6 +49,7 @@ export function PantryScreen({ onTab }: { onTab: (tab: TabName) => void }) {
                   item={item}
                   onUsed={() => removePantry(item.id)}
                   onSooner={() => setExpiryDays(item.id, 1)}
+                  onBinned={() => binPantry(item.id)}
                 />
               ))}
             </View>
@@ -62,10 +64,12 @@ function PantryRow({
   item,
   onUsed,
   onSooner,
+  onBinned,
 }: {
   item: PantryItem;
   onUsed: () => void;
   onSooner: () => void;
+  onBinned: () => void;
 }) {
   const ingredient = INGREDIENT_MAP[item.ingredientId];
   if (!ingredient) return null;
@@ -82,9 +86,15 @@ function PantryRow({
           <Text style={[styles.meta, { color: light.ink }]}>{expiryLabel(item.expiresAt)}</Text>
         </View>
       </View>
-      <Pressable onPress={onSooner} style={styles.tiny}>
-        <Text style={styles.tinyText}>Tonight</Text>
-      </Pressable>
+      {urgency === 'tonight' ? (
+        <Pressable onPress={onBinned} style={[styles.tiny, styles.tinyBin]}>
+          <Text style={styles.tinyBinText}>Binned</Text>
+        </Pressable>
+      ) : (
+        <Pressable onPress={onSooner} style={styles.tiny}>
+          <Text style={styles.tinyText}>Tonight</Text>
+        </Pressable>
+      )}
       <Pressable onPress={onUsed} style={styles.tiny}>
         <Text style={styles.tinyText}>Used</Text>
       </Pressable>
@@ -138,6 +148,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paperDeep,
   },
   tinyText: { fontFamily: fonts.sansSemi, fontSize: 12, color: colors.ink },
+  tinyBin: { backgroundColor: traffic.tonight.wash, borderWidth: 1, borderColor: traffic.tonight.rail },
+  tinyBinText: { fontFamily: fonts.sansSemi, fontSize: 12, color: traffic.tonight.ink },
   empty: { marginTop: 24, gap: 12 },
   emptyTitle: { fontFamily: fonts.display, fontSize: 26, color: colors.ink },
   emptyBody: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 16 },

@@ -1,5 +1,14 @@
 import { INGREDIENT_MAP } from '../data/ingredients';
 
+export function estimateWaste(ingredientId: string): { lostUsd: number; lostKg: number } {
+  const ingredient = INGREDIENT_MAP[ingredientId];
+  if (!ingredient || ingredient.isStaple) return { lostUsd: 0, lostKg: 0 };
+  return {
+    lostUsd: Math.round(ingredient.costUsd * 100) / 100,
+    lostKg: Math.round(ingredient.kg * 100) / 100,
+  };
+}
+
 export function estimateSavings(usedIngredientIds: string[]): { savedUsd: number; savedKg: number } {
   const unique = [...new Set(usedIngredientIds)];
   let savedUsd = 0;

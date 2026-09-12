@@ -91,6 +91,15 @@ export type PantryItem = {
   source: ItemSource;
 };
 
+export type BinnedItem = {
+  id: string;
+  ingredientId: string;
+  name: string;
+  binnedAt: string;
+  lostUsd: number;
+  lostKg: number;
+};
+
 export type CookedMeal = {
   id: string;
   recipeId: string;

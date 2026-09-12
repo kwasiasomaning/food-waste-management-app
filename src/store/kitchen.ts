@@ -6,21 +6,23 @@ import { getIngredient } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { uid } from '../lib/dates';
 import { parseHouseholdSize } from '../lib/household';
-import { estimateSavings } from '../lib/savings';
+import { estimateSavings, estimateWaste } from '../lib/savings';
 import { itemsFromIds, starterPantry } from '../lib/starterPantry';
-import type { CookedMeal, Diet, PantryItem, Settings, ShopItem } from '../types';
+import type { BinnedItem, CookedMeal, Diet, PantryItem, Settings, ShopItem } from '../types';
 
 export type KitchenState = {
   hydrated: boolean;
   settings: Settings;
   pantry: PantryItem[];
   cooked: CookedMeal[];
+  wasted: BinnedItem[];
   shop: ShopItem[];
   setHydrated: () => void;
   completeOnboarding: (input: { diet: Diet; householdSize: number; seed: boolean }) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   addIngredients: (ingredientIds: string[], source: PantryItem['source']) => void;
   removePantry: (id: string) => void;
+  binPantry: (id: string) => BinnedItem | null;
   consumeIngredients: (ingredientIds: string[]) => void;
   setExpiryDays: (id: string, daysFromNow: number) => void;
   cookRecipe: (recipeId: string) => CookedMeal | null;
@@ -45,6 +47,7 @@ export const useKitchen = create<KitchenState>()(
       settings: defaultSettings,
       pantry: [],
       cooked: [],
+      wasted: [],
       shop: [],
       setHydrated: () => set({ hydrated: true }),
       completeOnboarding: ({ diet, householdSize, seed }) =>
@@ -78,6 +81,25 @@ export const useKitchen = create<KitchenState>()(
         }),
       removePantry: (id) =>
         set((state) => ({ pantry: state.pantry.filter((item) => item.id !== id) })),
+      binPantry: (id) => {
+        const item = get().pantry.find((row) => row.id === id);
+        if (!item) return null;
+        const ingredient = getIngredient(item.ingredientId);
+        const { lostUsd, lostKg } = estimateWaste(item.ingredientId);
+        const record: BinnedItem = {
+          id: uid('binned'),
+          ingredientId: item.ingredientId,
+          name: ingredient.name,
+          binnedAt: new Date().toISOString(),
+          lostUsd,
+          lostKg,
+        };
+        set((state) => ({
+          pantry: state.pantry.filter((row) => row.id !== id),
+          wasted: [record, ...state.wasted],
+        }));
+        return record;
+      },
       consumeIngredients: (ingredientIds) =>
         set((state) => {
           const consume = new Set(ingredientIds);
@@ -159,6 +181,7 @@ export const useKitchen = create<KitchenState>()(
           settings: defaultSettings,
           pantry: [],
           cooked: [],
+          wasted: [],
           shop: [],
         }),
     }),
@@ -169,9 +192,11 @@ export const useKitchen = create<KitchenState>()(
         settings: state.settings,
         pantry: state.pantry,
         cooked: state.cooked,
+        wasted: state.wasted,
         shop: state.shop,
       }),
       onRehydrateStorage: () => (state) => {
+        if (state && !Array.isArray(state.wasted)) state.wasted = [];
         state?.setHydrated();
       },
     },
