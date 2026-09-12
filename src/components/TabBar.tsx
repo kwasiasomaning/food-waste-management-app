@@ -4,12 +4,20 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { TabName } from '../navigation';
 import { colors, fonts } from '../theme';
 import { FridgeMark } from './FridgeMark';
+import { PantryMark } from './PantryMark';
+import { SavedMark } from './SavedMark';
 import { ShopMark } from './ShopMark';
+import { TonightMark } from './TonightMark';
 
-const SIDE_TABS: { key: Exclude<TabName, 'scan'>; label: string; icon: string }[] = [
-  { key: 'tonight', label: 'Tonight', icon: '🍽️' },
-  { key: 'pantry', label: 'Pantry', icon: '🧊' },
-  { key: 'impact', label: 'Saved', icon: '🌱' },
+const SIDE_TABS: {
+  key: Exclude<TabName, 'scan'>;
+  label: string;
+  Mark: typeof TonightMark;
+}[] = [
+  { key: 'tonight', label: 'Tonight', Mark: TonightMark },
+  { key: 'pantry', label: 'Pantry', Mark: PantryMark },
+  { key: 'shop', label: 'Shop', Mark: ShopMark },
+  { key: 'impact', label: 'Saved', Mark: SavedMark },
 ];
 
 export function TabBar({
@@ -25,8 +33,18 @@ export function TabBar({
 }) {
   return (
     <View style={styles.bar}>
-      <SideTab item={SIDE_TABS[0]} active={tab === 'tonight'} onPress={() => onChange('tonight')} />
-      <SideTab item={SIDE_TABS[1]} active={tab === 'pantry'} onPress={() => onChange('pantry')} />
+      <SideTab
+        label={SIDE_TABS[0].label}
+        active={tab === 'tonight'}
+        onPress={() => onChange('tonight')}
+        mark={<TonightMark active={tab === 'tonight'} />}
+      />
+      <SideTab
+        label={SIDE_TABS[1].label}
+        active={tab === 'pantry'}
+        onPress={() => onChange('pantry')}
+        mark={<PantryMark active={tab === 'pantry'} />}
+      />
 
       <View style={styles.snapCol}>
         <Pressable
@@ -45,31 +63,36 @@ export function TabBar({
       </View>
 
       <SideTab
-        item={{ key: 'shop', label: 'Shop', icon: '' }}
+        label={SIDE_TABS[2].label}
         active={tab === 'shop'}
         onPress={() => onChange('shop')}
         mark={<ShopMark active={tab === 'shop'} />}
       />
-      <SideTab item={SIDE_TABS[2]} active={tab === 'impact'} onPress={() => onChange('impact')} />
+      <SideTab
+        label={SIDE_TABS[3].label}
+        active={tab === 'impact'}
+        onPress={() => onChange('impact')}
+        mark={<SavedMark active={tab === 'impact'} />}
+      />
     </View>
   );
 }
 
 function SideTab({
-  item,
+  label,
   active,
   onPress,
   mark,
 }: {
-  item: { key: string; label: string; icon: string };
+  label: string;
   active: boolean;
   onPress: () => void;
-  mark?: ReactNode;
+  mark: ReactNode;
 }) {
   return (
     <Pressable onPress={onPress} style={styles.item}>
-      {mark ?? <Text style={styles.icon}>{item.icon}</Text>}
-      <Text style={[styles.label, active && styles.labelActive]}>{item.label}</Text>
+      {mark}
+      <Text style={[styles.label, active && styles.labelActive]}>{label}</Text>
     </Pressable>
   );
 }
@@ -86,7 +109,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   item: { flex: 1, alignItems: 'center', gap: 3, paddingBottom: 2 },
-  icon: { fontSize: 16 },
   snapCol: {
     width: 56,
     alignItems: 'center',
