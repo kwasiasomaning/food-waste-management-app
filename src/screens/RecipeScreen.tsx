@@ -6,6 +6,7 @@ import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { scoreRecipe } from '../lib/matching';
+import { scaleAmount, servingLabel } from '../lib/servings';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
 
@@ -20,6 +21,7 @@ export function RecipeScreen({
 }) {
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
+  const householdSize = useKitchen((s) => s.settings.householdSize);
   const addToShop = useKitchen((s) => s.addToShop);
   const cookRecipe = useKitchen((s) => s.cookRecipe);
   const recipe = RECIPES.find((row) => row.id === id);
@@ -58,7 +60,7 @@ export function RecipeScreen({
         <Text style={styles.title}>{recipe.title}</Text>
         <Text style={styles.sub}>{recipe.subtitle}</Text>
         <Text style={styles.meta}>
-          {recipe.minutes} min · serves {recipe.servings}
+          {recipe.minutes} min · {servingLabel(householdSize)}
         </Text>
         <Text style={styles.rescue}>{recipe.rescue}</Text>
 
@@ -72,7 +74,10 @@ export function RecipeScreen({
               <Text style={styles.ingEmoji}>{ingredient.emoji}</Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.ingName}>{ingredient.name}</Text>
-                <Text style={styles.ingAmt}>{line.amount}{line.optional ? ' · if you have it' : ''}</Text>
+                <Text style={styles.ingAmt}>
+                  {scaleAmount(line.amount, recipe.servings, householdSize)}
+                  {line.optional ? ' · if you have it' : ''}
+                </Text>
               </View>
               {need ? (
                 <Pressable onPress={() => addToShop(line.ingredientId, `For ${recipe.title}`)}>
