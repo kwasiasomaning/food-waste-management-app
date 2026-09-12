@@ -1,16 +1,5 @@
-import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useMemo, useState } from 'react';
-import {
-  Alert,
-  Image,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FridgeMark } from '../components/FridgeMark';
@@ -22,6 +11,7 @@ import {
   INGREDIENTS,
   searchIngredients,
 } from '../data/ingredients';
+import { takeFridgePhoto, uploadFridgePhoto } from '../lib/fridgePhoto';
 import { identifyFridgeContents } from '../lib/fridgeVision';
 import type { SnapCommand, TabName } from '../navigation';
 import { useKitchen } from '../store/kitchen';
@@ -87,39 +77,17 @@ export function ScanScreen({
   };
 
   const takePhoto = async () => {
-    if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.mediaDevices) {
+    const result = await takeFridgePhoto();
+    if (result.kind === 'web-camera') {
       setWebCamera(true);
       return;
     }
-    const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert('Camera', 'Camera access is needed to photograph the fridge. You can still upload a photo.');
-      return;
-    }
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ['images'],
-      quality: 0.7,
-      cameraType: ImagePicker.CameraType.back,
-    });
-    if (result.canceled || !result.assets[0]) return;
-    await applyPhoto(result.assets[0].uri);
+    if (result.kind === 'uri') await applyPhoto(result.uri);
   };
 
   const uploadPhoto = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted && permission.status !== ImagePicker.PermissionStatus.GRANTED) {
-      // Web often reports limited/undetermined while still allowing the file picker.
-      if (Platform.OS !== 'web') {
-        Alert.alert('Photos', 'Photo library access is needed to upload a fridge picture.');
-        return;
-      }
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: 0.7,
-    });
-    if (result.canceled || !result.assets[0]) return;
-    await applyPhoto(result.assets[0].uri);
+    const result = await uploadFridgePhoto();
+    if (result.kind === 'uri') await applyPhoto(result.uri);
   };
 
   useEffect(() => {

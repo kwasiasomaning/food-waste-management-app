@@ -12,7 +12,7 @@ export function RecipeCard({
 }: {
   scored: ScoredRecipe;
   featured?: boolean;
-  onPress: () => void;
+  onPress?: () => void;
 }) {
   const dying = scored.expiringUsed.map((id) => getIngredient(id).name);
   const missing = scored.missing.map((id) => getIngredient(id).name);

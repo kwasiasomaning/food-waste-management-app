@@ -8,7 +8,7 @@ import { uid } from '../lib/dates';
 import { findRecipe } from '../lib/mealCache';
 import { parseHouseholdSize } from '../lib/household';
 import { estimateSavings, estimateUse, estimateWaste } from '../lib/savings';
-import { itemsFromIds, starterPantry } from '../lib/starterPantry';
+import { itemsFromIds } from '../lib/starterPantry';
 import type { KitchenSlice } from '../lib/auth/kitchenVault';
 import type { BinnedItem, CookedMeal, Diet, PantryItem, Settings, ShopItem, UsedItem } from '../types';
 
@@ -21,7 +21,12 @@ export type KitchenState = {
   used: UsedItem[];
   shop: ShopItem[];
   setHydrated: () => void;
-  completeOnboarding: (input: { diet: Diet; householdSize: number; seed: boolean }) => void;
+  completeOnboarding: (input: {
+    diet: Diet;
+    householdSize: number;
+    ingredientIds?: string[];
+    source?: PantryItem['source'];
+  }) => void;
   updateSettings: (patch: Partial<Settings>) => void;
   addIngredients: (ingredientIds: string[], source: PantryItem['source']) => void;
   removePantry: (id: string) => void;
@@ -61,7 +66,7 @@ export const useKitchen = create<KitchenState>()(
       used: [],
       shop: [],
       setHydrated: () => set({ hydrated: true }),
-      completeOnboarding: ({ diet, householdSize, seed }) =>
+      completeOnboarding: ({ diet, householdSize, ingredientIds = [], source = 'manual' }) =>
         set((state) => ({
           settings: {
             ...defaultSettings,
@@ -72,7 +77,7 @@ export const useKitchen = create<KitchenState>()(
             householdSize: parseHouseholdSize(String(householdSize), 1),
             onboardingDone: true,
           },
-          pantry: seed ? starterPantry() : [],
+          pantry: itemsFromIds(ingredientIds, source),
         })),
       updateSettings: (patch) =>
         set((state) => ({

@@ -1,21 +1,44 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DietPicker } from '../components/DietPicker';
 import { FoodStill } from '../components/FoodStill';
+import { FridgeMark } from '../components/FridgeMark';
 import { HouseholdInput } from '../components/HouseholdInput';
-import { Button, Display, Pill } from '../components/ui';
-import type { Diet } from '../types';
+import { IngredientStill } from '../components/IngredientStill';
+import { RecipeCard } from '../components/RecipeCard';
+import { WebFridgeCamera } from '../components/WebFridgeCamera';
+import { Button, Display } from '../components/ui';
+import { COMMON_FRIDGE, INGREDIENT_MAP, searchIngredients } from '../data/ingredients';
+import { takeFridgePhoto, uploadFridgePhoto } from '../lib/fridgePhoto';
+import { identifyFridgeContents } from '../lib/fridgeVision';
+import { loadDinnerIdeas } from '../lib/mealIdeas';
+import { suggestDinners } from '../lib/matching';
+import { itemsFromIds } from '../lib/starterPantry';
 import { useKitchen } from '../store/kitchen';
-import { colors, fonts } from '../theme';
+import { colors, fonts, radius } from '../theme';
+import type { Diet, ItemSource, ScoredRecipe } from '../types';
 
 export function OnboardingScreen() {
   const completeOnboarding = useKitchen((s) => s.completeOnboarding);
   const [step, setStep] = useState(0);
   const [diet, setDiet] = useState<Diet>('omnivore');
   const [householdSize, setHouseholdSize] = useState(2);
-  const [seed, setSeed] = useState(true);
+  const [picked, setPicked] = useState<string[]>([]);
+  const [source, setSource] = useState<ItemSource>('manual');
+
+  const finish = () => {
+    completeOnboarding({ diet, householdSize, ingredientIds: picked, source });
+  };
 
   if (step === 0) {
     return (
@@ -41,39 +64,223 @@ export function OnboardingScreen() {
       <SafeAreaView style={styles.safe}>
         <Display>One job.</Display>
         <Text style={styles.lede}>
-          Snap or tap what is in the kitchen. Tonight picks three dinners that use what expires
+          Photograph the fridge, or tick a list. Tonight ranks three dinners from what expires
           first. Two missing staples is fine. A shopping trip is not the point.
         </Text>
         <View style={styles.points}>
-          <Text style={styles.point}>1. Add the fridge, not a meal plan.</Text>
-          <Text style={styles.point}>2. Cook the thing that will not last.</Text>
-          <Text style={styles.point}>3. Mark it cooked. Watch money stay home.</Text>
+          <Text style={styles.point}>1. Snap the fridge, or pick from a list.</Text>
+          <Text style={styles.point}>2. See dinners from that pantry, tonight.</Text>
+          <Text style={styles.point}>3. Cook the thing that will not last.</Text>
         </View>
         <Button label="Set the table" onPress={() => setStep(2)} />
       </SafeAreaView>
     );
   }
 
+  if (step === 2) {
+    return (
+      <SafeAreaView style={styles.safe}>
+        <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
+          <Display>How do you eat?</Display>
+          <DietPicker value={diet} onChange={setDiet} />
+          <Text style={styles.label}>Who is home for dinner?</Text>
+          <HouseholdInput value={householdSize} onChange={setHouseholdSize} />
+        </ScrollView>
+        <Button label="Build the pantry" onPress={() => setStep(3)} />
+      </SafeAreaView>
+    );
+  }
+
+  if (step === 3) {
+    return (
+      <PantrySetup
+        picked={picked}
+        onChange={setPicked}
+        onSource={setSource}
+        onNext={() => setStep(4)}
+      />
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
-        <Display>How do you eat?</Display>
-        <DietPicker value={diet} onChange={setDiet} />
-        <Text style={styles.label}>Who is home for dinner?</Text>
-        <HouseholdInput value={householdSize} onChange={setHouseholdSize} />
-        <Text style={styles.label}>Start from a typical fridge?</Text>
-        <Text style={styles.hint}>
-          Spinach on its last day, leftover rice, chicken, yogurt, bread. You can delete anything.
+    <MealPreview
+      diet={diet}
+      ingredientIds={picked}
+      onBack={() => setStep(3)}
+      onDone={finish}
+    />
+  );
+}
+
+function PantrySetup({
+  picked,
+  onChange,
+  onSource,
+  onNext,
+}: {
+  picked: string[];
+  onChange: (ids: string[]) => void;
+  onSource: (source: ItemSource) => void;
+  onNext: () => void;
+}) {
+  const [query, setQuery] = useState('');
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [spotted, setSpotted] = useState<string[]>([]);
+  const [reading, setReading] = useState(false);
+  const [webCamera, setWebCamera] = useState(false);
+
+  const list = useMemo(() => {
+    const found = searchIngredients(query);
+    if (query.trim()) return found.filter((item) => !item.isStaple);
+    const common = COMMON_FRIDGE.map((id) => INGREDIENT_MAP[id]).filter(Boolean);
+    const extra = found.filter((item) => !item.isStaple && !common.some((row) => row.id === item.id));
+    return [...common, ...extra];
+  }, [query]);
+
+  const toggle = (id: string) => {
+    onChange(picked.includes(id) ? picked.filter((row) => row !== id) : [...picked, id]);
+  };
+
+  const applyPhoto = async (uri: string) => {
+    setPhoto(uri);
+    setReading(true);
+    onSource('scan');
+    try {
+      const found = await identifyFridgeContents(uri);
+      setSpotted(found);
+      onChange([...new Set([...picked, ...found])]);
+    } finally {
+      setReading(false);
+    }
+  };
+
+  const takePhoto = async () => {
+    const result = await takeFridgePhoto();
+    if (result.kind === 'web-camera') {
+      setWebCamera(true);
+      return;
+    }
+    if (result.kind === 'uri') await applyPhoto(result.uri);
+  };
+
+  const uploadPhoto = async () => {
+    const result = await uploadFridgePhoto();
+    if (result.kind === 'uri') await applyPhoto(result.uri);
+  };
+
+  return (
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.pantryScroll} showsVerticalScrollIndicator={false}>
+        <FridgeMark size={36} />
+        <Display style={styles.pantryTitle}>What's inside your fridge Tonight</Display>
+        <Text style={styles.lede}>
+          Photograph the shelves. Tonight will tick what it can see. Or skip the camera and pick
+          from the list.
         </Text>
-        <View style={styles.row}>
-          <Pill label="Yes — show me tonight" active={seed} onPress={() => setSeed(true)} />
-          <Pill label="Empty pantry" active={!seed} onPress={() => setSeed(false)} />
+
+        <View style={styles.photoActions}>
+          <Button label="Photograph the fridge" onPress={() => void takePhoto()} />
+          <Button variant="ghost" label="Upload a photo" onPress={() => void uploadPhoto()} />
+        </View>
+
+        {photo ? <Image source={{ uri: photo }} style={styles.photo} /> : null}
+        {reading ? <Text style={styles.hint}>Looking at the shelves…</Text> : null}
+        {spotted.length > 0 && !reading ? (
+          <Text style={styles.hint}>We spotted {spotted.length}. Uncheck anything we got wrong.</Text>
+        ) : null}
+
+        <Text style={styles.label}>Or tick what you already have</Text>
+        <TextInput
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Search spinach, leftover rice…"
+          placeholderTextColor={colors.inkSoft}
+          style={styles.search}
+        />
+        <View style={styles.grid}>
+          {list.map((item) => {
+            const on = picked.includes(item.id);
+            return (
+              <Pressable
+                key={item.id}
+                onPress={() => toggle(item.id)}
+                style={[styles.cell, on && styles.cellOn]}
+              >
+                <IngredientStill ingredientId={item.id} size={52} radius={12} />
+                <Text style={styles.cellName}>{item.name}</Text>
+                {spotted.includes(item.id) ? <Text style={styles.spotted}>Spotted</Text> : null}
+              </Pressable>
+            );
+          })}
         </View>
       </ScrollView>
-      <Button
-        label="Open the kitchen"
-        onPress={() => completeOnboarding({ diet, householdSize, seed })}
+      <WebFridgeCamera
+        visible={webCamera}
+        onCancel={() => setWebCamera(false)}
+        onCapture={(uri) => {
+          setWebCamera(false);
+          void applyPhoto(uri);
+        }}
       />
+      <View style={styles.footer}>
+        <Text style={styles.count}>{picked.length} in the pantry</Text>
+        <Button
+          label={picked.length ? "See tonight's dinners" : 'Skip for now'}
+          onPress={onNext}
+        />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+function MealPreview({
+  diet,
+  ingredientIds,
+  onBack,
+  onDone,
+}: {
+  diet: Diet;
+  ingredientIds: string[];
+  onBack: () => void;
+  onDone: () => void;
+}) {
+  const pantry = useMemo(() => itemsFromIds(ingredientIds, 'manual'), [ingredientIds]);
+  const [ideas, setIdeas] = useState<ScoredRecipe[]>(() => suggestDinners(pantry, diet, 3));
+
+  useEffect(() => {
+    setIdeas(suggestDinners(pantry, diet, 3));
+    if (pantry.length === 0) return;
+    let cancelled = false;
+    void loadDinnerIdeas(pantry, diet, 3).then((rows) => {
+      if (!cancelled && rows.length) setIdeas(rows);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [diet, pantry]);
+
+  return (
+    <SafeAreaView style={styles.safe} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
+        <Pressable onPress={onBack}>
+          <Text style={styles.back}>← Pantry</Text>
+        </Pressable>
+        <Display>Tonight, from your fridge.</Display>
+        <Text style={styles.lede}>
+          {ideas.length
+            ? 'These dinners use what you just logged. The one that expires first is on top.'
+            : 'Add a few more things and Tonight will have something to say. You can photograph the fridge anytime.'}
+        </Text>
+        {ideas.length > 0 ? (
+          <View style={styles.meals}>
+            <RecipeCard featured scored={ideas[0]} />
+            {ideas.slice(1).map((row) => (
+              <RecipeCard key={row.recipe.id} scored={row} />
+            ))}
+          </View>
+        ) : null}
+      </ScrollView>
+      <Button label="Open the kitchen" onPress={onDone} />
     </SafeAreaView>
   );
 }
@@ -109,16 +316,64 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   form: { paddingTop: 12, paddingBottom: 24, gap: 8 },
-  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 18, marginTop: 8 },
   label: {
     fontFamily: fonts.display,
     fontSize: 22,
     color: colors.ink,
-    marginTop: 8,
+    marginTop: 16,
   },
   hint: {
     fontFamily: fonts.sans,
     color: colors.inkSoft,
-    marginTop: 4,
+    marginTop: 8,
   },
+  pantryScroll: { paddingTop: 8, paddingBottom: 24, gap: 8 },
+  pantryTitle: { fontSize: 34, lineHeight: 38, marginTop: 8 },
+  photoActions: { gap: 8, marginTop: 16 },
+  photo: { height: 140, borderRadius: radius.md, marginTop: 8 },
+  search: {
+    backgroundColor: colors.cream,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontFamily: fonts.sans,
+    fontSize: 16,
+    color: colors.ink,
+    marginTop: 8,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 10,
+  },
+  cell: {
+    width: '31%',
+    flexGrow: 1,
+    minWidth: 96,
+    backgroundColor: colors.cream,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    padding: 10,
+    alignItems: 'center',
+    gap: 4,
+  },
+  cellOn: { borderColor: colors.terracotta, backgroundColor: '#F8E4D8' },
+  cellName: { fontFamily: fonts.sansSemi, fontSize: 12, color: colors.ink, textAlign: 'center' },
+  spotted: { fontFamily: fonts.sans, fontSize: 10, color: colors.terracotta },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    marginHorizontal: -22,
+    paddingHorizontal: 22,
+    paddingTop: 12,
+    gap: 8,
+    backgroundColor: colors.cream,
+  },
+  count: { fontFamily: fonts.sansSemi, color: colors.inkSoft },
+  meals: { gap: 12, marginTop: 16 },
+  back: { fontFamily: fonts.sansSemi, color: colors.terracotta, marginBottom: 8 },
 });
