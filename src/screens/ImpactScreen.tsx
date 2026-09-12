@@ -34,16 +34,20 @@ export function ImpactScreen() {
         </View>
 
         <View style={styles.split}>
-          <View style={[styles.hero, styles.heroSave]}>
-            <Text style={styles.heroEyebrow}>Kept</Text>
-            <Text style={[styles.heroNum, { color: colors.sage }]}>{money(savedUsd)}</Text>
-            <Text style={styles.heroCap}>{formatKg(savedKg)} still dinner</Text>
-          </View>
-          <View style={[styles.hero, styles.heroLose]}>
-            <Text style={styles.heroEyebrow}>Walked out</Text>
-            <Text style={[styles.heroNum, { color: traffic.tonight.ink }]}>{money(lostUsd)}</Text>
-            <Text style={styles.heroCap}>{formatKg(lostKg)} made it to landfill 😢</Text>
-          </View>
+          <HeroBox
+            label="Kept"
+            amount={formatMoney(savedUsd, currency, { tight: true })}
+            detail={`${formatKg(savedKg)} still dinner`}
+            ink={colors.sage}
+            wash={colors.sageSoft}
+          />
+          <HeroBox
+            label="Walked out"
+            amount={formatMoney(lostUsd, currency, { tight: true })}
+            detail={`${formatKg(lostKg)} to landfill 😢`}
+            ink={traffic.tonight.ink}
+            wash={traffic.tonight.wash}
+          />
         </View>
 
         <Text style={styles.net}>
@@ -137,6 +141,34 @@ export function ImpactScreen() {
   );
 }
 
+function HeroBox({
+  label,
+  amount,
+  detail,
+  ink,
+  wash,
+}: {
+  label: string;
+  amount: string;
+  detail: string;
+  ink: string;
+  wash: string;
+}) {
+  return (
+    <View style={[styles.hero, { backgroundColor: wash }]}>
+      <Text style={styles.heroEyebrow}>{label}</Text>
+      <View style={styles.heroLine}>
+        <Text style={[styles.heroMetric, styles.heroAmount, { color: ink }]} numberOfLines={1}>
+          {amount}
+        </Text>
+        <Text style={[styles.heroMetric, styles.heroDetail, { color: ink }]} numberOfLines={1}>
+          {detail}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 function Stat({ count, one, many }: { count: number; one: string; many: string }) {
   return (
     <View style={styles.stat}>
@@ -158,14 +190,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink, flex: 1 },
-  split: { flexDirection: 'row', gap: 10, marginBottom: 12 },
+  split: { flexDirection: 'row', alignItems: 'stretch', gap: 10, marginBottom: 12 },
   hero: {
     flex: 1,
+    minWidth: 0,
     borderRadius: radius.lg,
-    padding: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 12,
+    minHeight: 84,
+    justifyContent: 'space-between',
   },
-  heroSave: { backgroundColor: colors.sageSoft },
-  heroLose: { backgroundColor: traffic.tonight.wash },
   heroEyebrow: {
     fontFamily: fonts.sansBold,
     fontSize: 11,
@@ -173,8 +207,27 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.inkSoft,
   },
-  heroNum: { fontFamily: fonts.display, fontSize: 28, marginTop: 4 },
-  heroCap: { fontFamily: fonts.sans, color: colors.ink, marginTop: 4, fontSize: 13, lineHeight: 18 },
+  heroLine: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 10,
+    minHeight: 20,
+  },
+  heroMetric: {
+    fontFamily: fonts.sansSemi,
+    fontSize: 15,
+    lineHeight: 20,
+    fontVariant: ['tabular-nums'],
+  },
+  heroAmount: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
+  heroDetail: {
+    flex: 1,
+    minWidth: 0,
+  },
   net: {
     fontFamily: fonts.sans,
     color: colors.inkSoft,

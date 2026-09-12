@@ -41,4 +41,11 @@ describe('formatMoney', () => {
   it('formats dollars the same regardless of which country is stored', () => {
     expect(formatMoney(10, 'USD')).toBe('$10.00');
   });
+
+  it('keeps tight amounts on one line for wide currency signs', () => {
+    expect(formatMoney(10, 'USD', { tight: true })).toBe('$10.00');
+    expect(formatMoney(10, 'GHS', { tight: true })).toMatch(/GH₵|GHS/);
+    expect(formatMoney(10, 'GHS', { tight: true })).not.toMatch(/\n/);
+    expect(formatMoney(20, 'VND', { tight: true })).not.toMatch(/\.\d{2}$/);
+  });
 });

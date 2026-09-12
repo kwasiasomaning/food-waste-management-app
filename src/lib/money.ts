@@ -5,17 +5,30 @@ export function convertUsd(usd: number, currency = DEFAULT_CURRENCY): number {
   return usd * rate;
 }
 
-export function formatMoney(valueUsd: number, currency = DEFAULT_CURRENCY): string {
+export function formatMoney(
+  valueUsd: number,
+  currency = DEFAULT_CURRENCY,
+  options?: { tight?: boolean },
+): string {
   const code = CURRENCY_MAP[currency]?.code ?? DEFAULT_CURRENCY;
   const amount = convertUsd(valueUsd, code);
+  const tight = options?.tight === true;
+  const compact = tight && Math.abs(amount) >= 1000;
   try {
     return new Intl.NumberFormat('en', {
       style: 'currency',
       currency: code,
+      ...(tight
+        ? {
+            currencyDisplay: 'narrowSymbol',
+            minimumFractionDigits: compact ? 0 : 2,
+            maximumFractionDigits: compact ? 0 : 2,
+          }
+        : {}),
     }).format(amount);
   } catch {
     const symbol = CURRENCY_MAP[code]?.symbol ?? code;
-    return `${symbol}${amount.toFixed(2)}`;
+    return `${symbol}${compact ? Math.round(amount).toString() : amount.toFixed(2)}`;
   }
 }
 
