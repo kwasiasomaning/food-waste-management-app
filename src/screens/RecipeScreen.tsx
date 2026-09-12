@@ -3,6 +3,7 @@ import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-n
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FoodStill } from '../components/FoodStill';
+import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
 import { photoForRecipe } from '../lib/foodPhoto';
@@ -71,7 +72,7 @@ export function RecipeScreen({
           const need = missing.has(line.ingredientId);
           return (
             <View key={line.ingredientId + line.amount} style={styles.ing}>
-              <Text style={styles.ingEmoji}>{ingredient.emoji}</Text>
+              <IngredientStill ingredientId={ingredient.id} size={40} radius={10} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.ingName}>{ingredient.name}</Text>
                 <Text style={styles.ingAmt}>
@@ -136,7 +137,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.line,
   },
-  ingEmoji: { fontSize: 20, width: 28, textAlign: 'center' },
   ingName: { fontFamily: fonts.sansSemi, color: colors.ink },
   ingAmt: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 13 },
   shop: { fontFamily: fonts.sansBold, color: colors.terracotta },

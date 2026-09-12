@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FridgeMark } from '../components/FridgeMark';
+import { IngredientStill } from '../components/IngredientStill';
 import { WebFridgeCamera } from '../components/WebFridgeCamera';
 import { Button, Pill } from '../components/ui';
 import {
@@ -190,7 +191,7 @@ export function ScanScreen({
               onPress={() => toggle(item.id)}
               style={[styles.cell, on && styles.cellOn, already && styles.cellHave]}
             >
-              <Text style={styles.emoji}>{item.emoji}</Text>
+              <IngredientStill ingredientId={item.id} size={56} radius={12} />
               <Text style={styles.cellName}>{item.name}</Text>
               {already ? <Text style={styles.have}>In pantry</Text> : null}
               {mode === 'photo' && spotted.includes(item.id) ? (
@@ -266,7 +267,6 @@ const styles = StyleSheet.create({
   },
   cellOn: { borderColor: colors.terracotta, backgroundColor: '#F8E4D8' },
   cellHave: { opacity: 0.7 },
-  emoji: { fontSize: 26 },
   cellName: { fontFamily: fonts.sansSemi, fontSize: 12, color: colors.ink, textAlign: 'center' },
   have: { fontFamily: fonts.sans, fontSize: 10, color: colors.sage },
   spotted: { fontFamily: fonts.sans, fontSize: 10, color: colors.terracotta },

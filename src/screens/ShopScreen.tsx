@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FoodStill } from '../components/FoodStill';
+import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
 import { missingShopList, suggestDinners } from '../lib/matching';
@@ -56,10 +57,9 @@ export function ShopScreen() {
                   <View style={[styles.box, item.checked && styles.boxOn]}>
                     <Text style={styles.check}>{item.checked ? '✓' : ''}</Text>
                   </View>
+                  <IngredientStill ingredientId={ingredient.id} size={36} radius={9} />
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.name}>
-                      {ingredient.emoji} {ingredient.name}
-                    </Text>
+                    <Text style={styles.name}>{ingredient.name}</Text>
                     <Text style={styles.reason}>{item.reason}</Text>
                   </View>
                 </Pressable>

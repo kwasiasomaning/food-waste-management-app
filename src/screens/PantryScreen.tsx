@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FoodStill } from '../components/FoodStill';
+import { IngredientStill } from '../components/IngredientStill';
 import { INGREDIENT_MAP } from '../data/ingredients';
 import { expiryLabel, urgencyOf } from '../lib/dates';
 import type { TabName } from '../navigation';
@@ -80,7 +81,7 @@ function PantryRow({
   return (
     <View style={[styles.row, { backgroundColor: light.wash, borderColor: light.rail }]}>
       <View style={[styles.rail, { backgroundColor: light.rail }]} />
-      <Text style={styles.emoji}>{ingredient.emoji}</Text>
+      <IngredientStill ingredientId={ingredient.id} size={48} radius={12} />
       <View style={styles.copy}>
         <Text style={styles.name}>{ingredient.name}</Text>
         <View style={styles.metaRow}>
@@ -137,7 +138,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: 5,
   },
-  emoji: { fontSize: 24, width: 32, textAlign: 'center' },
   copy: { flex: 1 },
   name: { fontFamily: fonts.sansSemi, fontSize: 16, color: colors.ink },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 3 },
