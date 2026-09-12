@@ -30,9 +30,7 @@ export function estimateSavings(usedIngredientIds: string[]): { savedUsd: number
   };
 }
 
-export function formatMoney(value: number): string {
-  return `$${value.toFixed(2)}`;
-}
+export { formatMoney } from './money';
 
 export function formatKg(value: number): string {
   if (value < 1) return `${Math.round(value * 1000)} g`;

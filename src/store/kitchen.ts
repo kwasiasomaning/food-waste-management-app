@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { getIngredient } from '../data/ingredients';
+import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from '../data/places';
 import { RECIPES } from '../data/recipes';
 import { uid } from '../lib/dates';
 import { parseHouseholdSize } from '../lib/household';
@@ -40,6 +41,8 @@ const defaultSettings: Settings = {
   diet: 'omnivore',
   householdSize: 2,
   onboardingDone: false,
+  country: DEFAULT_COUNTRY,
+  currency: DEFAULT_CURRENCY,
 };
 
 export const useKitchen = create<KitchenState>()(
@@ -56,6 +59,7 @@ export const useKitchen = create<KitchenState>()(
       completeOnboarding: ({ diet, householdSize, seed }) =>
         set({
           settings: {
+            ...defaultSettings,
             diet,
             householdSize: parseHouseholdSize(String(householdSize), 1),
             onboardingDone: true,
@@ -222,6 +226,10 @@ export const useKitchen = create<KitchenState>()(
       onRehydrateStorage: () => (state) => {
         if (state && !Array.isArray(state.wasted)) state.wasted = [];
         if (state && !Array.isArray(state.used)) state.used = [];
+        if (state?.settings) {
+          if (!state.settings.country) state.settings.country = DEFAULT_COUNTRY;
+          if (!state.settings.currency) state.settings.currency = DEFAULT_CURRENCY;
+        }
         state?.setHydrated();
       },
     },

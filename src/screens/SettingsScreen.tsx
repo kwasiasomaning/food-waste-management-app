@@ -3,14 +3,31 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DietPicker } from '../components/DietPicker';
 import { HouseholdInput } from '../components/HouseholdInput';
+import { SettingPicker } from '../components/SettingPicker';
 import { Button } from '../components/ui';
+import { COUNTRIES, CURRENCIES, currencyForCountry } from '../data/places';
+import { countryLabel, currencyLabel } from '../lib/money';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts } from '../theme';
+
+const COUNTRY_OPTIONS = COUNTRIES.map((country) => ({
+  value: country.code,
+  label: countryLabel(country.code),
+  detail: country.currency,
+}));
+
+const CURRENCY_OPTIONS = CURRENCIES.map((currency) => ({
+  value: currency.code,
+  label: currencyLabel(currency.code),
+  detail: currency.symbol,
+}));
 
 export function SettingsScreen({ onBack }: { onBack: () => void }) {
   const settings = useKitchen((s) => s.settings);
   const updateSettings = useKitchen((s) => s.updateSettings);
   const resetKitchen = useKitchen((s) => s.resetKitchen);
+  const country = settings.country ?? 'US';
+  const currency = settings.currency ?? 'USD';
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -26,6 +43,25 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
         value={settings.householdSize}
         onChange={(householdSize) => updateSettings({ householdSize })}
       />
+      <Text style={styles.label}>Country</Text>
+      <SettingPicker
+        title="Country"
+        value={country}
+        options={COUNTRY_OPTIONS}
+        onChange={(next) =>
+          updateSettings({ country: next, currency: currencyForCountry(next) })
+        }
+      />
+      <Text style={styles.label}>Currency</Text>
+      <SettingPicker
+        title="Currency"
+        value={currency}
+        options={CURRENCY_OPTIONS}
+        onChange={(next) => updateSettings({ currency: next })}
+      />
+      <Text style={styles.hint}>
+        Grocery savings start from typical US prices, then show in this currency.
+      </Text>
       <View style={{ height: 24 }} />
       <Button
         variant="ghost"
@@ -47,6 +83,13 @@ const styles = StyleSheet.create({
   back: { fontFamily: fonts.sansSemi, color: colors.terracotta, marginBottom: 12, marginHorizontal: 20, marginTop: 0 },
   title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink, marginBottom: 20 },
   label: { fontFamily: fonts.display, fontSize: 22, color: colors.ink, marginTop: 8 },
+  hint: {
+    fontFamily: fonts.sans,
+    color: colors.inkSoft,
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 2,
+  },
   about: {
     fontFamily: fonts.sans,
     color: colors.inkSoft,

@@ -129,6 +129,8 @@ export type Settings = {
   diet: Diet;
   householdSize: number;
   onboardingDone: boolean;
+  country: string;
+  currency: string;
 };
 
 export type ScoredRecipe = {

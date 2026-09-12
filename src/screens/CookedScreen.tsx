@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, Display } from '../components/ui';
 import { RECIPES } from '../data/recipes';
 import { formatKg, formatMoney } from '../lib/savings';
+import { useKitchen } from '../store/kitchen';
 import { colors, fonts } from '../theme';
 
 export function CookedScreen({
@@ -18,6 +19,8 @@ export function CookedScreen({
   onDone: () => void;
 }) {
   const recipe = RECIPES.find((row) => row.id === recipeId);
+  const currency = useKitchen((s) => s.settings.currency ?? 'USD');
+  const country = useKitchen((s) => s.settings.country ?? 'US');
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.center}>
@@ -28,7 +31,7 @@ export function CookedScreen({
           quietly expire behind the milk.
         </Text>
         <View style={styles.nums}>
-          <Text style={styles.num}>{formatMoney(savedUsd)}</Text>
+          <Text style={styles.num}>{formatMoney(savedUsd, currency, country)}</Text>
           <Text style={styles.cap}>estimated groceries kept</Text>
           <Text style={[styles.num, { marginTop: 16 }]}>{formatKg(savedKg)}</Text>
           <Text style={styles.cap}>not in the bin</Text>

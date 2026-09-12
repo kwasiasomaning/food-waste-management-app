@@ -10,6 +10,9 @@ export function ImpactScreen() {
   const cooked = useKitchen((s) => s.cooked);
   const wasted = useKitchen((s) => s.wasted ?? []);
   const used = useKitchen((s) => s.used ?? []);
+  const currency = useKitchen((s) => s.settings.currency ?? 'USD');
+  const country = useKitchen((s) => s.settings.country ?? 'US');
+  const money = (value: number) => formatMoney(value, currency, country);
   const cookedUsd = cooked.reduce((sum, meal) => sum + meal.savedUsd, 0);
   const cookedKg = cooked.reduce((sum, meal) => sum + meal.savedKg, 0);
   const usedUsd = used.reduce((sum, item) => sum + item.savedUsd, 0);
@@ -30,20 +33,20 @@ export function ImpactScreen() {
         <View style={styles.split}>
           <View style={[styles.hero, styles.heroSave]}>
             <Text style={styles.heroEyebrow}>Kept</Text>
-            <Text style={[styles.heroNum, { color: colors.sage }]}>{formatMoney(savedUsd)}</Text>
+            <Text style={[styles.heroNum, { color: colors.sage }]}>{money(savedUsd)}</Text>
             <Text style={styles.heroCap}>{formatKg(savedKg)} still dinner</Text>
           </View>
           <View style={[styles.hero, styles.heroLose]}>
             <Text style={styles.heroEyebrow}>Walked out</Text>
-            <Text style={[styles.heroNum, { color: traffic.tonight.ink }]}>{formatMoney(lostUsd)}</Text>
+            <Text style={[styles.heroNum, { color: traffic.tonight.ink }]}>{money(lostUsd)}</Text>
             <Text style={styles.heroCap}>{formatKg(lostKg)} in the bin</Text>
           </View>
         </View>
 
         <Text style={styles.net}>
           {net >= 0
-            ? `${formatMoney(net)} more stayed in the kitchen than left in a bag.`
-            : `${formatMoney(Math.abs(net))} more walked out the door than you cooked.`}
+            ? `${money(net)} more stayed in the kitchen than left in a bag.`
+            : `${money(Math.abs(net))} more walked out the door than you cooked.`}
         </Text>
 
         <View style={styles.grid}>
@@ -74,7 +77,7 @@ export function ImpactScreen() {
                   })}
                 </Text>
               </View>
-              <Text style={styles.mealSave}>{formatMoney(meal.savedUsd)}</Text>
+              <Text style={styles.mealSave}>{money(meal.savedUsd)}</Text>
             </View>
           ))
         )}
@@ -98,7 +101,7 @@ export function ImpactScreen() {
                   {item.savedKg ? ` · ${formatKg(item.savedKg)}` : ''}
                 </Text>
               </View>
-              <Text style={styles.mealSave}>{formatMoney(item.savedUsd)}</Text>
+              <Text style={styles.mealSave}>{money(item.savedUsd)}</Text>
             </View>
           ))
         )}
@@ -122,7 +125,7 @@ export function ImpactScreen() {
                   {item.lostKg ? ` · ${formatKg(item.lostKg)}` : ''}
                 </Text>
               </View>
-              <Text style={styles.mealLose}>{formatMoney(item.lostUsd)}</Text>
+              <Text style={styles.mealLose}>{money(item.lostUsd)}</Text>
             </View>
           ))
         )}
