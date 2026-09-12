@@ -21,9 +21,17 @@ describe('photoForIngredient', () => {
   it('maps families to editorial stills instead of emoji', () => {
     expect(photoForIngredient({ id: 'spinach' })).toBe('ing-greens');
     expect(photoForIngredient({ id: 'tomato' })).toBe('ing-tomato');
+    expect(photoForIngredient({ id: 'bell-pepper' })).toBe('ing-pepper');
+    expect(photoForIngredient({ id: 'cucumber' })).toBe('ing-cucumber');
+    expect(photoForIngredient({ id: 'carrot' })).toBe('ing-carrot');
+    expect(photoForIngredient({ id: 'avocado' })).toBe('ing-avocado');
+    expect(photoForIngredient({ id: 'broccoli' })).toBe('ing-broccoli');
     expect(photoForIngredient({ id: 'eggs' })).toBe('ing-eggs');
     expect(photoForIngredient({ id: 'cheddar' })).toBe('ing-dairy');
+    expect(photoForIngredient({ id: 'yogurt' })).toBe('ing-yogurt');
     expect(photoForIngredient({ id: 'salmon' })).toBe('ing-fish');
+    expect(photoForIngredient({ id: 'shrimp' })).toBe('ing-shrimp');
+    expect(photoForIngredient({ id: 'ground-beef' })).toBe('ing-beef');
     expect(photoForIngredient({ id: 'leftover-rice' })).toBe('ing-grain');
     expect(photoForIngredient({ id: 'chickpeas' })).toBe('ing-beans');
     expect(photoForIngredient({ id: 'olive-oil' })).toBe('ing-oil');
@@ -38,6 +46,6 @@ describe('photoForIngredient', () => {
 
   it('falls back by category for unknown ids', () => {
     expect(photoForIngredient({ id: 'mystery-cheese', category: 'dairy' })).toBe('ing-dairy');
-    expect(photoForIngredient({ id: 'mystery-veg' })).toBe('ing-carrot');
+    expect(photoForIngredient({ id: 'mystery-veg' })).toBe('ing-greens');
   });
 });

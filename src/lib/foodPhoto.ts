@@ -6,55 +6,73 @@ export type IngredientPhotoId =
   | 'ing-lemon'
   | 'ing-onion'
   | 'ing-carrot'
+  | 'ing-pepper'
+  | 'ing-cucumber'
+  | 'ing-potato'
+  | 'ing-sweet-potato'
+  | 'ing-broccoli'
+  | 'ing-zucchini'
+  | 'ing-mushroom'
+  | 'ing-avocado'
+  | 'ing-apple'
+  | 'ing-banana'
+  | 'ing-corn'
+  | 'ing-ginger'
+  | 'ing-chili'
+  | 'ing-cabbage'
+  | 'ing-celery'
+  | 'ing-berries'
+  | 'ing-peas'
   | 'ing-eggs'
   | 'ing-dairy'
+  | 'ing-yogurt'
   | 'ing-bread'
+  | 'ing-tortilla'
   | 'ing-chicken'
+  | 'ing-beef'
+  | 'ing-pork'
   | 'ing-fish'
+  | 'ing-shrimp'
+  | 'ing-tofu'
   | 'ing-grain'
   | 'ing-oil'
-  | 'ing-beans';
+  | 'ing-beans'
+  | 'ing-roast';
 
 const INGREDIENT_FAMILIES: Record<IngredientPhotoId, readonly string[]> = {
-  'ing-greens': [
-    'spinach',
-    'kale',
-    'lettuce',
-    'celery',
-    'cabbage',
-    'scallion',
-    'cilantro',
-    'parsley',
-    'basil',
-    'frozen-peas',
-  ],
-  'ing-tomato': ['tomato', 'canned-tomatoes', 'chili', 'paprika', 'chili-flakes'],
-  'ing-lemon': ['lemon', 'lime', 'apple', 'banana', 'corn', 'frozen-berries'],
-  'ing-onion': ['onion', 'garlic', 'ginger'],
-  'ing-carrot': [
-    'carrot',
-    'potato',
-    'sweet-potato',
-    'broccoli',
-    'zucchini',
-    'cucumber',
-    'avocado',
-    'bell-pepper',
-    'mushroom',
-    'leftover-roast-veg',
-  ],
+  'ing-greens': ['spinach', 'kale', 'lettuce', 'scallion', 'cilantro', 'parsley', 'basil'],
+  'ing-tomato': ['tomato', 'canned-tomatoes'],
+  'ing-lemon': ['lemon', 'lime'],
+  'ing-onion': ['onion', 'garlic'],
+  'ing-carrot': ['carrot'],
+  'ing-pepper': ['bell-pepper'],
+  'ing-cucumber': ['cucumber'],
+  'ing-potato': ['potato'],
+  'ing-sweet-potato': ['sweet-potato'],
+  'ing-broccoli': ['broccoli'],
+  'ing-zucchini': ['zucchini'],
+  'ing-mushroom': ['mushroom'],
+  'ing-avocado': ['avocado'],
+  'ing-apple': ['apple'],
+  'ing-banana': ['banana'],
+  'ing-corn': ['corn'],
+  'ing-ginger': ['ginger'],
+  'ing-chili': ['chili', 'paprika', 'chili-flakes'],
+  'ing-cabbage': ['cabbage'],
+  'ing-celery': ['celery'],
+  'ing-berries': ['frozen-berries'],
+  'ing-peas': ['frozen-peas'],
   'ing-eggs': ['eggs'],
-  'ing-dairy': ['milk', 'yogurt', 'butter', 'cheddar', 'parmesan', 'mozzarella', 'feta', 'sour-cream'],
-  'ing-bread': ['bread', 'tortillas', 'oats'],
-  'ing-chicken': [
-    'chicken-thighs',
-    'chicken-breast',
-    'leftover-chicken',
-    'ground-beef',
-    'bacon',
-    'ham',
-  ],
-  'ing-fish': ['salmon', 'tuna', 'shrimp'],
+  'ing-dairy': ['milk', 'butter', 'cheddar', 'parmesan', 'mozzarella', 'feta', 'sour-cream'],
+  'ing-yogurt': ['yogurt'],
+  'ing-bread': ['bread', 'oats'],
+  'ing-tortilla': ['tortillas'],
+  'ing-chicken': ['chicken-thighs', 'chicken-breast', 'leftover-chicken'],
+  'ing-beef': ['ground-beef'],
+  'ing-pork': ['bacon', 'ham'],
+  'ing-fish': ['salmon', 'tuna'],
+  'ing-shrimp': ['shrimp'],
+  'ing-tofu': ['tofu'],
   'ing-grain': ['rice', 'pasta', 'leftover-rice', 'leftover-pasta'],
   'ing-oil': [
     'olive-oil',
@@ -67,7 +85,8 @@ const INGREDIENT_FAMILIES: Record<IngredientPhotoId, readonly string[]> = {
     'pepper',
     'cumin',
   ],
-  'ing-beans': ['chickpeas', 'black-beans', 'lentils', 'tofu', 'peanut-butter'],
+  'ing-beans': ['chickpeas', 'black-beans', 'lentils', 'peanut-butter'],
+  'ing-roast': ['leftover-roast-veg'],
 };
 
 const INGREDIENT_PHOTO_BY_ID: Record<string, IngredientPhotoId> = Object.fromEntries(
@@ -87,9 +106,9 @@ function photoFallback(category?: string): IngredientPhotoId {
     case 'leftovers':
       return 'ing-grain';
     case 'frozen':
-      return 'ing-greens';
+      return 'ing-peas';
     default:
-      return 'ing-carrot';
+      return 'ing-greens';
   }
 }
 
