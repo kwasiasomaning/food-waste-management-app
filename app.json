@@ -9,8 +9,8 @@
     "backgroundColor": "#231C16",
     "scheme": "tonight",
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
+      "image": "./assets/food/table.png",
+      "resizeMode": "cover",
       "backgroundColor": "#F3EBE0"
     },
     "ios": {

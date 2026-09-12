@@ -1,7 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FoodStill } from '../components/FoodStill';
 import { Button, Display } from '../components/ui';
+import { photoForRecipe } from '../lib/foodPhoto';
 import { RECIPES } from '../data/recipes';
 import { formatKg, formatMoney } from '../lib/savings';
 import { useKitchen } from '../store/kitchen';
@@ -23,8 +25,10 @@ export function CookedScreen({
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.center}>
-        <Text style={styles.emoji}>{recipe?.emoji ?? '🍽️'}</Text>
-        <Display italic>That stayed food.</Display>
+        <FoodStill id={recipe ? photoForRecipe(recipe) : 'plate'} height={160} />
+        <Display italic style={styles.word}>
+          That stayed food.
+        </Display>
         <Text style={styles.body}>
           {recipe?.title ?? 'Dinner'} is cooked. The ingredients came off the pantry so they cannot
           quietly expire behind the milk.
@@ -49,7 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   center: { flex: 1, justifyContent: 'center' },
-  emoji: { fontSize: 64, marginBottom: 12 },
+  word: { marginTop: 16 },
   body: {
     fontFamily: fonts.sans,
     color: colors.inkSoft,

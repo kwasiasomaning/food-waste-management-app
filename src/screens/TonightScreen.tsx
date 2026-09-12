@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FoodStill } from '../components/FoodStill';
 import { RecipeCard } from '../components/RecipeCard';
 import { WasteBriefCard } from '../components/WasteBriefCard';
 import { Button, Display } from '../components/ui';
@@ -67,6 +68,7 @@ export function TonightScreen({
 
         {suggestions.length === 0 ? (
           <View style={styles.empty}>
+            <FoodStill id="shelf" height={120} />
             <Text style={styles.emptyTitle}>The kitchen is quiet.</Text>
             <Text style={styles.emptyBody}>
               Add what you already have. Tonight will rank dinners by what expires first.

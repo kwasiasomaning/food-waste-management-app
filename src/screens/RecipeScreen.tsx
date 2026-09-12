@@ -2,13 +2,15 @@ import * as Haptics from 'expo-haptics';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FoodStill } from '../components/FoodStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
+import { photoForRecipe } from '../lib/foodPhoto';
 import { RECIPES } from '../data/recipes';
 import { scoreRecipe } from '../lib/matching';
 import { scaleAmount, servingLabel } from '../lib/servings';
 import { useKitchen } from '../store/kitchen';
-import { colors, fonts, radius } from '../theme';
+import { colors, fonts } from '../theme';
 
 export function RecipeScreen({
   id,
@@ -54,9 +56,7 @@ export function RecipeScreen({
         <Pressable onPress={onBack}>
           <Text style={styles.back}>← Tonight</Text>
         </Pressable>
-        <View style={[styles.plate, { backgroundColor: recipe.plate }]}>
-          <Text style={styles.emoji}>{recipe.emoji}</Text>
-        </View>
+        <FoodStill id={photoForRecipe(recipe)} height={168} />
         <Text style={styles.title}>{recipe.title}</Text>
         <Text style={styles.sub}>{recipe.subtitle}</Text>
         <Text style={styles.meta}>
@@ -111,15 +111,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
   scroll: { padding: 20, paddingBottom: 32 },
   back: { fontFamily: fonts.sansSemi, color: colors.terracotta, marginBottom: 12 },
-  plate: {
-    height: 140,
-    borderRadius: radius.lg,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  emoji: { fontSize: 64 },
-  title: { fontFamily: fonts.display, fontSize: 32, lineHeight: 36, color: colors.ink },
+  title: { fontFamily: fonts.display, fontSize: 32, lineHeight: 36, color: colors.ink, marginTop: 16 },
   sub: { fontFamily: fonts.sans, fontSize: 17, color: colors.inkSoft, marginTop: 8 },
   meta: { fontFamily: fonts.sansSemi, color: colors.ink, marginTop: 8 },
   rescue: {

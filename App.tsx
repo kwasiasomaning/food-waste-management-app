@@ -12,7 +12,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { PhoneShell } from './src/components/PhoneShell';
@@ -29,6 +29,7 @@ import { ScanScreen } from './src/screens/ScanScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { ShopScreen } from './src/screens/ShopScreen';
 import { TonightScreen } from './src/screens/TonightScreen';
+import { FOOD_PHOTOS } from './src/data/foodPhotos';
 import { useAuth } from './src/store/auth';
 import { useKitchen } from './src/store/kitchen';
 import { colors } from './src/theme';
@@ -57,7 +58,7 @@ export default function App() {
     const timer = setTimeout(() => {
       setHydrated();
       setAuthHydrated();
-    }, 800);
+    }, 1400);
     return () => clearTimeout(timer);
   }, [setHydrated, setAuthHydrated]);
 
@@ -84,9 +85,11 @@ export default function App() {
 
   if ((!fontsLoaded && !fontError) || !hydrated || !authHydrated) {
     return (
-      <View style={styles.boot}>
-        <Text style={styles.bootWord}>Tonight.</Text>
-      </View>
+      <ImageBackground source={FOOD_PHOTOS.table} style={styles.boot} imageStyle={styles.bootImage}>
+        <View style={styles.bootScrim}>
+          <Text style={styles.bootWord}>Tonight.</Text>
+        </View>
+      </ImageBackground>
     );
   }
 
@@ -171,6 +174,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paper,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  bootImage: { opacity: 0.92 },
+  bootScrim: {
+    backgroundColor: 'rgba(243, 235, 224, 0.55)',
+    paddingHorizontal: 22,
+    paddingVertical: 10,
+    borderRadius: 18,
   },
   bootWord: {
     fontStyle: 'italic',

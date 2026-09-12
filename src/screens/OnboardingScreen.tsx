@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DietPicker } from '../components/DietPicker';
+import { FoodStill } from '../components/FoodStill';
 import { HouseholdInput } from '../components/HouseholdInput';
 import { Button, Display, Pill } from '../components/ui';
 import type { Diet } from '../types';
@@ -20,6 +21,7 @@ export function OnboardingScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.hero}>
+          <FoodStill id="citrus" height={168} style={styles.heroStill} />
           <Text style={styles.kicker}>A dinner app, not a climate lecture</Text>
           <Display style={styles.wordmark} italic>
             Tonight.
@@ -85,6 +87,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   hero: { flex: 1, justifyContent: 'center' },
+  heroStill: { marginBottom: 22 },
   kicker: {
     fontFamily: fonts.sansSemi,
     color: colors.terracotta,

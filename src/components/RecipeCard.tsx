@@ -1,6 +1,8 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { FOOD_PHOTOS } from '../data/foodPhotos';
 import { getIngredient } from '../data/ingredients';
+import { photoForRecipe } from '../lib/foodPhoto';
 import type { ScoredRecipe } from '../types';
 import { colors, fonts, radius } from '../theme';
 
@@ -15,15 +17,14 @@ export function RecipeCard({
 }) {
   const dying = scored.expiringUsed.map((id) => getIngredient(id).name);
   const missing = scored.missing.map((id) => getIngredient(id).name);
+  const photo = FOOD_PHOTOS[photoForRecipe(scored.recipe)];
 
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [featured ? styles.featured : styles.row, pressed && { opacity: 0.92 }]}
     >
-      <View style={[featured ? styles.plateWide : styles.plate, { backgroundColor: scored.recipe.plate }]}>
-        <Text style={[styles.emoji, featured && styles.emojiWide]}>{scored.recipe.emoji}</Text>
-      </View>
+      <Image source={photo} resizeMode="cover" style={featured ? styles.plateWide : styles.plate} />
       <View style={featured ? styles.copyFeatured : styles.copy}>
         <Text style={[styles.title, featured && styles.titleFeatured]}>{scored.recipe.title}</Text>
         <Text style={styles.meta}>
@@ -60,16 +61,13 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: colors.paperDeep,
   },
   plateWide: {
-    height: 132,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 148,
+    width: '100%',
+    backgroundColor: colors.paperDeep,
   },
-  emoji: { fontSize: 30 },
-  emojiWide: { fontSize: 56 },
   copy: { flex: 1, paddingVertical: 4, paddingRight: 4 },
   copyFeatured: { padding: 16, paddingTop: 12 },
   title: {

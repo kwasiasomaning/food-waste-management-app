@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FoodStill } from '../components/FoodStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
 import { missingShopList, suggestDinners } from '../lib/matching';
@@ -29,6 +30,7 @@ export function ShopScreen() {
 
         {shop.length === 0 ? (
           <View style={styles.empty}>
+            <FoodStill id="citrus" height={120} />
             <Text style={styles.emptyTitle}>Nothing to buy.</Text>
             <Text style={styles.emptyBody}>
               If Tonight needs one or two things, they land here. You can pull them from tonight’s

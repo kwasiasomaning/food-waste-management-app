@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ConsentCheck } from '../components/ConsentCheck';
+import { FoodStill } from '../components/FoodStill';
 import { LocaleIcons } from '../components/LocaleIcons';
 import { Button, Display } from '../components/ui';
 import { minimumAgeForCountry } from '../data/legal';
@@ -60,6 +61,7 @@ export function AuthScreen({
         <LocaleIcons />
       </View>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <FoodStill id="table" height={128} />
         <Display italic>Tonight.</Display>
         <Text style={styles.lede}>
           Create an account to keep this kitchen yours. Data stays on this device. You can export or

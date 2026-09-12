@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { FoodStill } from '../components/FoodStill';
 import { INGREDIENT_MAP } from '../data/ingredients';
 import { expiryLabel, urgencyOf } from '../lib/dates';
 import type { TabName } from '../navigation';
@@ -31,6 +32,7 @@ export function PantryScreen({ onTab }: { onTab: (tab: TabName) => void }) {
         <Text style={styles.title}>Pantry</Text>
         {groups.length === 0 ? (
           <View style={styles.empty}>
+            <FoodStill id="shelf" height={120} />
             <Text style={styles.emptyTitle}>Nothing logged yet.</Text>
             <Text style={styles.emptyBody}>Add the fridge and Tonight will have something to say.</Text>
             <Pressable style={styles.cta} onPress={() => onTab('scan')}>
