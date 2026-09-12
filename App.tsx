@@ -32,7 +32,7 @@ import { TonightScreen } from './src/screens/TonightScreen';
 import { FOOD_PHOTOS } from './src/data/foodPhotos';
 import { useAuth } from './src/store/auth';
 import { useKitchen } from './src/store/kitchen';
-import { colors } from './src/theme';
+import { colors, fonts } from './src/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
@@ -85,11 +85,13 @@ export default function App() {
 
   if ((!fontsLoaded && !fontError) || !hydrated || !authHydrated) {
     return (
-      <ImageBackground source={FOOD_PHOTOS.table} style={styles.boot} imageStyle={styles.bootImage}>
-        <View style={styles.bootScrim}>
-          <Text style={styles.bootWord}>Tonight.</Text>
-        </View>
-      </ImageBackground>
+      <PhoneShell>
+        <ImageBackground source={FOOD_PHOTOS.table} style={styles.boot} imageStyle={styles.bootImage}>
+          <View style={styles.bootBand}>
+            <Text style={styles.bootWord}>Tonight.</Text>
+          </View>
+        </ImageBackground>
+      </PhoneShell>
     );
   }
 
@@ -172,19 +174,20 @@ const styles = StyleSheet.create({
   boot: {
     flex: 1,
     backgroundColor: colors.paper,
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
-  bootImage: { opacity: 0.92 },
-  bootScrim: {
-    backgroundColor: 'rgba(243, 235, 224, 0.55)',
+  bootImage: { opacity: 0.96 },
+  bootBand: {
+    backgroundColor: colors.paper,
+    paddingTop: 18,
+    paddingBottom: 36,
     paddingHorizontal: 22,
-    paddingVertical: 10,
-    borderRadius: 18,
+    alignItems: 'center',
   },
   bootWord: {
-    fontStyle: 'italic',
-    fontSize: 42,
+    fontFamily: fonts.displayItalic,
+    fontSize: 40,
+    lineHeight: 46,
     color: colors.ink,
   },
   app: { flex: 1, backgroundColor: colors.paper },
