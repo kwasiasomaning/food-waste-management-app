@@ -39,7 +39,7 @@ export function ImpactScreen() {
           <View style={[styles.hero, styles.heroLose]}>
             <Text style={styles.heroEyebrow}>Walked out</Text>
             <Text style={[styles.heroNum, { color: traffic.tonight.ink }]}>{money(lostUsd)}</Text>
-            <Text style={styles.heroCap}>{formatKg(lostKg)} in the bin</Text>
+            <Text style={styles.heroCap}>{formatKg(lostKg)} made it to landfill 😢</Text>
           </View>
         </View>
 
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     color: colors.inkSoft,
   },
   heroNum: { fontFamily: fonts.display, fontSize: 28, marginTop: 4 },
-  heroCap: { fontFamily: fonts.sans, color: colors.ink, marginTop: 4, fontSize: 13 },
+  heroCap: { fontFamily: fonts.sans, color: colors.ink, marginTop: 4, fontSize: 13, lineHeight: 18 },
   net: {
     fontFamily: fonts.sans,
     color: colors.inkSoft,
