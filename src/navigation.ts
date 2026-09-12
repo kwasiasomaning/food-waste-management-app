@@ -1,5 +1,10 @@
 export type TabName = 'tonight' | 'pantry' | 'scan' | 'shop' | 'impact';
 
+export type SnapCommand = {
+  id: number;
+  action: 'camera' | 'library';
+};
+
 export type Route =
   | { name: 'onboarding' }
   | { name: 'tabs'; tab: TabName }

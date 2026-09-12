@@ -17,7 +17,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { PhoneShell } from './src/components/PhoneShell';
 import { TabBar } from './src/components/TabBar';
-import type { Route, TabName } from './src/navigation';
+import type { Route, SnapCommand, TabName } from './src/navigation';
 import { CookedScreen } from './src/screens/CookedScreen';
 import { ImpactScreen } from './src/screens/ImpactScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
@@ -45,6 +45,7 @@ export default function App() {
   const setHydrated = useKitchen((s) => s.setHydrated);
   const onboardingDone = useKitchen((s) => s.settings.onboardingDone);
   const [route, setRoute] = useState<Route>({ name: 'onboarding' });
+  const [snapCommand, setSnapCommand] = useState<SnapCommand | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setHydrated(), 800);
@@ -91,10 +92,27 @@ export default function App() {
               />
             ) : null}
             {route.tab === 'pantry' ? <PantryScreen onTab={goTab} /> : null}
-            {route.tab === 'scan' ? <ScanScreen onDone={goTab} /> : null}
+            {route.tab === 'scan' ? (
+              <ScanScreen
+                onDone={goTab}
+                snapCommand={snapCommand}
+                onSnapHandled={() => setSnapCommand(null)}
+              />
+            ) : null}
             {route.tab === 'shop' ? <ShopScreen /> : null}
             {route.tab === 'impact' ? <ImpactScreen /> : null}
-            <TabBar tab={route.tab} onChange={goTab} />
+            <TabBar
+              tab={route.tab}
+              onChange={goTab}
+              onSnap={() => {
+                goTab('scan');
+                setSnapCommand({ id: Date.now(), action: 'camera' });
+              }}
+              onRoll={() => {
+                goTab('scan');
+                setSnapCommand({ id: Date.now(), action: 'library' });
+              }}
+            />
           </View>
         ) : null}
         {route.name === 'recipe' ? (

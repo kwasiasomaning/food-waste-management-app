@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Image,
@@ -13,23 +13,31 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CameraGlyph } from '../components/CameraGlyph';
 import { WebFridgeCamera } from '../components/WebFridgeCamera';
 import { Button, Pill } from '../components/ui';
 import {
   CATEGORY_LABEL,
-  COMMON_FRIDGE,
   INGREDIENTS,
   searchIngredients,
 } from '../data/ingredients';
 import { identifyFridgeContents } from '../lib/fridgeVision';
-import type { TabName } from '../navigation';
+import type { SnapCommand, TabName } from '../navigation';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
 import type { Category } from '../types';
 
 const CATS: Category[] = ['produce', 'dairy', 'protein', 'pantry', 'leftovers', 'frozen'];
 
-export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
+export function ScanScreen({
+  onDone,
+  snapCommand,
+  onSnapHandled,
+}: {
+  onDone: (tab: TabName) => void;
+  snapCommand: SnapCommand | null;
+  onSnapHandled: () => void;
+}) {
   const addIngredients = useKitchen((s) => s.addIngredients);
   const pantry = useKitchen((s) => s.pantry);
   const have = new Set(pantry.map((item) => item.ingredientId));
@@ -113,6 +121,14 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
     await applyPhoto(result.assets[0].uri);
   };
 
+  useEffect(() => {
+    if (!snapCommand) return;
+    const action = snapCommand.action;
+    onSnapHandled();
+    if (action === 'camera') void takePhoto();
+    else void uploadPhoto();
+  }, [snapCommand]);
+
   const photoItems = INGREDIENTS.filter((item) => {
     if (spotted.includes(item.id) || picked.includes(item.id)) return true;
     if (query && visible.some((row) => row.id === item.id)) return true;
@@ -122,6 +138,11 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.head}>
+        {mode === 'catalog' ? (
+          <View style={styles.glyph}>
+            <CameraGlyph size={58} />
+          </View>
+        ) : null}
         <Text style={styles.title}>{mode === 'photo' ? 'What is in the photo?' : 'Add the fridge'}</Text>
         <Text style={styles.sub}>
           {mode === 'photo'
@@ -130,7 +151,7 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
               : spotted.length
                 ? 'We spotted these. Uncheck anything we got wrong.'
                 : 'Hard to read that photo. Tick what you can see, or try another shot.'
-            : 'Tap what you already have. No typing required unless you want it.'}
+            : 'Snap the shelves with the shutter, or tick what you already have.'}
         </Text>
       </View>
 
@@ -154,15 +175,6 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
               />
             ))}
           </ScrollView>
-          <View style={styles.photoRow}>
-            <Pressable onPress={takePhoto}>
-              <Text style={styles.photoLink}>Take photo</Text>
-            </Pressable>
-            <Text style={styles.photoDot}>·</Text>
-            <Pressable onPress={uploadPhoto}>
-              <Text style={styles.photoLink}>Upload a photo</Text>
-            </Pressable>
-          </View>
         </View>
       ) : null}
 
@@ -205,21 +217,7 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
               <Button variant="ghost" label="Retake" onPress={takePhoto} style={{ flex: 1 }} />
               <Button variant="ghost" label="Catalog" onPress={() => setMode('catalog')} style={{ flex: 1 }} />
             </View>
-          ) : (
-            <Button
-              variant="ghost"
-              label="Typical fridge"
-              onPress={() =>
-                setPicked((current) => {
-                  const next = new Set(current);
-                  for (const id of COMMON_FRIDGE) {
-                    if (!have.has(id)) next.add(id);
-                  }
-                  return [...next];
-                })
-              }
-            />
-          )}
+          ) : null}
           <Button label={picked.length ? 'Add to pantry' : 'Add something'} onPress={save} />
         </View>
       </View>
@@ -230,6 +228,7 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
   head: { paddingHorizontal: 20, paddingTop: 8 },
+  glyph: { alignItems: 'flex-start', marginBottom: 4 },
   title: { fontFamily: fonts.display, fontSize: 32, color: colors.ink },
   sub: { fontFamily: fonts.sans, color: colors.inkSoft, marginTop: 6, marginBottom: 10 },
   tools: { paddingHorizontal: 20, gap: 10, marginBottom: 8 },
@@ -245,9 +244,6 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   cats: { gap: 8, paddingRight: 20 },
-  photoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  photoLink: { fontFamily: fonts.sansSemi, color: colors.terracotta },
-  photoDot: { color: colors.inkSoft, fontFamily: fonts.sans },
   photo: { height: 120, marginHorizontal: 20, borderRadius: radius.md, marginBottom: 8 },
   grid: {
     paddingHorizontal: 16,
