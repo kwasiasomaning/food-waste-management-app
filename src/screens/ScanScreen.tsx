@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { WebFridgeCamera } from '../components/WebFridgeCamera';
 import { Button, Pill } from '../components/ui';
 import {
   CATEGORY_LABEL,
@@ -39,6 +40,7 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
   const [photo, setPhoto] = useState<string | null>(null);
   const [mode, setMode] = useState<'catalog' | 'photo'>('catalog');
   const [reading, setReading] = useState(false);
+  const [webCamera, setWebCamera] = useState(false);
 
   const visible = useMemo(() => {
     const found = searchIngredients(query);
@@ -76,11 +78,13 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
   };
 
   const takePhoto = async () => {
+    if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.mediaDevices) {
+      setWebCamera(true);
+      return;
+    }
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      const message = 'Camera access is needed to photograph the fridge. You can still upload a photo.';
-      if (Platform.OS === 'web') window.alert(message);
-      else Alert.alert('Camera', message);
+      Alert.alert('Camera', 'Camera access is needed to photograph the fridge. You can still upload a photo.');
       return;
     }
     const result = await ImagePicker.launchCameraAsync({
@@ -185,6 +189,14 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
         })}
       </ScrollView>
 
+      <WebFridgeCamera
+        visible={webCamera}
+        onCancel={() => setWebCamera(false)}
+        onCapture={(uri) => {
+          setWebCamera(false);
+          void applyPhoto(uri);
+        }}
+      />
       <View style={styles.footer}>
         <Text style={styles.count}>{picked.length} selected</Text>
         <View style={styles.actions}>
