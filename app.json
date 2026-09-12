@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Tonight",
+    "slug": "tonight",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#231C16",
+    "scheme": "tonight",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F3EBE0"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.tonight.kitchen",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Tonight uses a photo of your kitchen to suggest dinner from food you already have.",
+        "NSPhotoLibraryUsageDescription": "Tonight uses a fridge photo so you can confirm what is already there."
+      }
+    },
+    "android": {
+      "package": "app.tonight.kitchen",
+      "adaptiveIcon": {
+        "backgroundColor": "#F3EBE0",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "name": "Tonight",
+      "shortName": "Tonight",
+      "lang": "en",
+      "themeColor": "#C24722",
+      "backgroundColor": "#231C16"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#F3EBE0"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Tonight uses a fridge photo so you can confirm what is already there."
+        }
+      ]
+    ]
+  }
+}
