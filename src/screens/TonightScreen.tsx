@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { RecipeCard } from '../components/RecipeCard';
+import { WasteBriefCard } from '../components/WasteBriefCard';
 import { Button, Display } from '../components/ui';
 import { INGREDIENT_MAP } from '../data/ingredients';
 import { expiryLabel, prettyDate, urgencyOf } from '../lib/dates';
 import { missingShopList, suggestDinners } from '../lib/matching';
+import { wasteBriefForSession } from '../lib/wasteBrief';
 import type { TabName } from '../navigation';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts } from '../theme';
@@ -19,6 +22,7 @@ export function TonightScreen({
   onTab: (tab: TabName) => void;
   onSettings: () => void;
 }) {
+  const [brief] = useState(wasteBriefForSession);
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
@@ -40,6 +44,7 @@ export function TonightScreen({
           </Pressable>
         </View>
         <Display italic>Tonight.</Display>
+        <WasteBriefCard brief={brief} />
 
         {dying.length > 0 ? (
           <Pressable style={styles.alert} onPress={() => onTab('pantry')}>
