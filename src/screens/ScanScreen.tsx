@@ -1,7 +1,9 @@
 import * as ImagePicker from 'expo-image-picker';
 import { useMemo, useState } from 'react';
 import {
+  Alert,
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -18,6 +20,7 @@ import {
   INGREDIENTS,
   searchIngredients,
 } from '../data/ingredients';
+import { identifyFridgeContents } from '../lib/fridgeVision';
 import type { TabName } from '../navigation';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
@@ -32,8 +35,10 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState<Category | 'all'>('all');
   const [picked, setPicked] = useState<string[]>([]);
+  const [spotted, setSpotted] = useState<string[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
   const [mode, setMode] = useState<'catalog' | 'photo'>('catalog');
+  const [reading, setReading] = useState(false);
 
   const visible = useMemo(() => {
     const found = searchIngredients(query);
@@ -51,26 +56,64 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
     if (!picked.length) return;
     addIngredients(picked, photo ? 'scan' : 'manual');
     setPicked([]);
+    setSpotted([]);
     setPhoto(null);
     onDone('tonight');
   };
 
-  const openPhoto = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
+  const applyPhoto = async (uri: string) => {
+    setPhoto(uri);
+    setMode('photo');
+    setReading(true);
+    try {
+      const found = await identifyFridgeContents(uri);
+      const next = found.filter((id) => !have.has(id));
+      setSpotted(found);
+      setPicked(next);
+    } finally {
+      setReading(false);
+    }
+  };
+
+  const takePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      const message = 'Camera access is needed to photograph the fridge. You can still upload a photo.';
+      if (Platform.OS === 'web') window.alert(message);
+      else Alert.alert('Camera', message);
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ['images'],
-      quality: 0.6,
+      quality: 0.7,
+      cameraType: ImagePicker.CameraType.back,
     });
     if (result.canceled || !result.assets[0]) return;
-    setPhoto(result.assets[0].uri);
-    setMode('photo');
-    setPicked((current) => {
-      const next = new Set(current);
-      for (const id of COMMON_FRIDGE) {
-        if (!have.has(id)) next.add(id);
-      }
-      return [...next];
-    });
+    await applyPhoto(result.assets[0].uri);
   };
+
+  const uploadPhoto = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted && permission.status !== ImagePicker.PermissionStatus.GRANTED) {
+      // Web often reports limited/undetermined while still allowing the file picker.
+      if (Platform.OS !== 'web') {
+        Alert.alert('Photos', 'Photo library access is needed to upload a fridge picture.');
+        return;
+      }
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      quality: 0.7,
+    });
+    if (result.canceled || !result.assets[0]) return;
+    await applyPhoto(result.assets[0].uri);
+  };
+
+  const photoItems = INGREDIENTS.filter((item) => {
+    if (spotted.includes(item.id) || picked.includes(item.id)) return true;
+    if (query && visible.some((row) => row.id === item.id)) return true;
+    return false;
+  });
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -78,7 +121,11 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
         <Text style={styles.title}>{mode === 'photo' ? 'What is in the photo?' : 'Add the fridge'}</Text>
         <Text style={styles.sub}>
           {mode === 'photo'
-            ? 'Start from what most kitchens have. Uncheck anything you do not see.'
+            ? reading
+              ? 'Looking at the shelves…'
+              : spotted.length
+                ? 'We spotted these. Uncheck anything we got wrong.'
+                : 'Hard to read that photo. Tick what you can see, or try another shot.'
             : 'Tap what you already have. No typing required unless you want it.'}
         </Text>
       </View>
@@ -103,45 +150,49 @@ export function ScanScreen({ onDone }: { onDone: (tab: TabName) => void }) {
               />
             ))}
           </ScrollView>
-          <Pressable onPress={openPhoto}>
-            <Text style={styles.photoLink}>Or use a fridge photo</Text>
-          </Pressable>
+          <View style={styles.photoRow}>
+            <Pressable onPress={takePhoto}>
+              <Text style={styles.photoLink}>Take photo</Text>
+            </Pressable>
+            <Text style={styles.photoDot}>·</Text>
+            <Pressable onPress={uploadPhoto}>
+              <Text style={styles.photoLink}>Upload a photo</Text>
+            </Pressable>
+          </View>
         </View>
       ) : null}
 
       {photo ? <Image source={{ uri: photo }} style={styles.photo} /> : null}
 
       <ScrollView contentContainerStyle={styles.grid} showsVerticalScrollIndicator={false}>
-        {(mode === 'photo'
-          ? INGREDIENTS.filter(
-              (item) =>
-                (COMMON_FRIDGE as readonly string[]).includes(item.id) || picked.includes(item.id),
-            )
-          : visible
-        ).map(
-          (item) => {
-            const on = picked.includes(item.id);
-            const already = have.has(item.id);
-            return (
-              <Pressable
-                key={item.id}
-                onPress={() => toggle(item.id)}
-                style={[styles.cell, on && styles.cellOn, already && styles.cellHave]}
-              >
-                <Text style={styles.emoji}>{item.emoji}</Text>
-                <Text style={styles.cellName}>{item.name}</Text>
-                {already ? <Text style={styles.have}>In pantry</Text> : null}
-              </Pressable>
-            );
-          },
-        )}
+        {(mode === 'photo' ? photoItems : visible).map((item) => {
+          const on = picked.includes(item.id);
+          const already = have.has(item.id);
+          return (
+            <Pressable
+              key={item.id}
+              onPress={() => toggle(item.id)}
+              style={[styles.cell, on && styles.cellOn, already && styles.cellHave]}
+            >
+              <Text style={styles.emoji}>{item.emoji}</Text>
+              <Text style={styles.cellName}>{item.name}</Text>
+              {already ? <Text style={styles.have}>In pantry</Text> : null}
+              {mode === 'photo' && spotted.includes(item.id) ? (
+                <Text style={styles.spotted}>Spotted</Text>
+              ) : null}
+            </Pressable>
+          );
+        })}
       </ScrollView>
 
       <View style={styles.footer}>
         <Text style={styles.count}>{picked.length} selected</Text>
         <View style={styles.actions}>
           {mode === 'photo' ? (
-            <Button variant="ghost" label="Catalog" onPress={() => setMode('catalog')} />
+            <View style={styles.photoActions}>
+              <Button variant="ghost" label="Retake" onPress={takePhoto} style={{ flex: 1 }} />
+              <Button variant="ghost" label="Catalog" onPress={() => setMode('catalog')} style={{ flex: 1 }} />
+            </View>
           ) : (
             <Button
               variant="ghost"
@@ -182,7 +233,9 @@ const styles = StyleSheet.create({
     color: colors.ink,
   },
   cats: { gap: 8, paddingRight: 20 },
+  photoRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   photoLink: { fontFamily: fonts.sansSemi, color: colors.terracotta },
+  photoDot: { color: colors.inkSoft, fontFamily: fonts.sans },
   photo: { height: 120, marginHorizontal: 20, borderRadius: radius.md, marginBottom: 8 },
   grid: {
     paddingHorizontal: 16,
@@ -208,6 +261,7 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 26 },
   cellName: { fontFamily: fonts.sansSemi, fontSize: 12, color: colors.ink, textAlign: 'center' },
   have: { fontFamily: fonts.sans, fontSize: 10, color: colors.sage },
+  spotted: { fontFamily: fonts.sans, fontSize: 10, color: colors.terracotta },
   footer: {
     borderTopWidth: 1,
     borderTopColor: colors.line,
@@ -217,4 +271,5 @@ const styles = StyleSheet.create({
   },
   count: { fontFamily: fonts.sansSemi, color: colors.inkSoft },
   actions: { gap: 8 },
+  photoActions: { flexDirection: 'row', gap: 8 },
 });

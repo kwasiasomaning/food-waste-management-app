@@ -51,7 +51,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Tonight uses a fridge photo so you can confirm what is already there."
+          "photosPermission": "Tonight uses a fridge photo so you can confirm what is already there.",
+          "cameraPermission": "Tonight uses the camera to see what is already in your fridge."
         }
       ]
     ]
