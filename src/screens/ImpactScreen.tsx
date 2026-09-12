@@ -190,15 +190,11 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink, flex: 1 },
-  split: { flexDirection: 'row', alignItems: 'stretch', gap: 10, marginBottom: 12 },
+  split: { gap: 8, marginBottom: 12 },
   hero: {
-    flex: 1,
-    minWidth: 0,
     borderRadius: radius.lg,
-    paddingVertical: 14,
-    paddingHorizontal: 12,
-    minHeight: 84,
-    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 14,
   },
   heroEyebrow: {
     fontFamily: fonts.sansBold,
@@ -210,8 +206,8 @@ const styles = StyleSheet.create({
   heroLine: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginTop: 10,
+    gap: 10,
+    marginTop: 8,
     minHeight: 20,
   },
   heroMetric: {
@@ -221,7 +217,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   heroAmount: {
-    flexGrow: 0,
+    minWidth: 88,
     flexShrink: 0,
   },
   heroDetail: {
