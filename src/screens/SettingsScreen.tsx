@@ -62,16 +62,19 @@ export function SettingsScreen({
           {session?.name ? `${session.name} · ` : ''}
           {session?.email ?? 'Signed out'}
         </Text>
+        <View style={styles.legalRow}>
+          <Pressable onPress={() => onOpenLegal('privacy')} hitSlop={6}>
+            <Text style={styles.link}>Privacy policy</Text>
+          </Pressable>
+          <Text style={styles.legalDot}>·</Text>
+          <Pressable onPress={() => onOpenLegal('terms')} hitSlop={6}>
+            <Text style={styles.link}>Terms of use</Text>
+          </Pressable>
+        </View>
         <View style={styles.rowBtns}>
           <Button variant="ghost" label="Download my data" onPress={() => void download()} />
           <Button variant="ghost" label="Sign out" onPress={() => void logout()} />
         </View>
-        <Pressable onPress={() => onOpenLegal('privacy')}>
-          <Text style={styles.link}>Privacy policy</Text>
-        </Pressable>
-        <Pressable onPress={() => onOpenLegal('terms')}>
-          <Text style={styles.link}>Terms of use</Text>
-        </Pressable>
         {note ? <Text style={styles.note}>{note}</Text> : null}
 
         <Text style={styles.label}>Diet</Text>
@@ -129,9 +132,18 @@ const styles = StyleSheet.create({
   back: { fontFamily: fonts.sansSemi, color: colors.terracotta },
   title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink, marginBottom: 20 },
   label: { fontFamily: fonts.display, fontSize: 22, color: colors.ink, marginTop: 8 },
-  account: { fontFamily: fonts.sans, color: colors.inkSoft, marginTop: 6, marginBottom: 10 },
+  account: { fontFamily: fonts.sans, color: colors.inkSoft, marginTop: 6 },
+  legalRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 14,
+  },
+  legalDot: { fontFamily: fonts.sans, color: colors.inkSoft },
   rowBtns: { gap: 8, marginBottom: 10 },
-  link: { fontFamily: fonts.sansSemi, color: colors.terracotta, marginBottom: 8 },
+  link: { fontFamily: fonts.sansSemi, color: colors.terracotta },
   note: { fontFamily: fonts.sans, color: colors.sage, marginBottom: 8, lineHeight: 20 },
   deleteLaunch: { marginTop: 18 },
   deleteLink: { fontFamily: fonts.sansSemi, color: colors.terracottaDeep },
