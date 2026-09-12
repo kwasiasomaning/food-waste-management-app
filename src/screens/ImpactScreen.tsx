@@ -14,11 +14,8 @@ export function ImpactScreen() {
   const currency = useKitchen((s) => s.settings.currency ?? 'USD');
   const money = (value: number) => formatMoney(value, currency);
   const cookedUsd = cooked.reduce((sum, meal) => sum + meal.savedUsd, 0);
-  const cookedKg = cooked.reduce((sum, meal) => sum + meal.savedKg, 0);
   const usedUsd = used.reduce((sum, item) => sum + item.savedUsd, 0);
-  const usedKg = used.reduce((sum, item) => sum + item.savedKg, 0);
   const savedUsd = Math.round((cookedUsd + usedUsd) * 100) / 100;
-  const savedKg = Math.round((cookedKg + usedKg) * 100) / 100;
   const lostUsd = wasted.reduce((sum, item) => sum + item.lostUsd, 0);
   const lostKg = wasted.reduce((sum, item) => sum + item.lostKg, 0);
   const mealsAway = mealsEquivalent(lostKg);
@@ -35,14 +32,14 @@ export function ImpactScreen() {
 
         <View style={styles.split}>
           <HeroBox
-            label="Kept"
+            label="Money Saved"
             amount={formatMoney(savedUsd, currency, { tight: true })}
-            detail={`${formatKg(savedKg)} still dinner`}
             ink={colors.sage}
             wash={colors.sageSoft}
+            large
           />
           <HeroBox
-            label="Walked out"
+            label="Money Wasted"
             amount={formatMoney(lostUsd, currency, { tight: true })}
             detail={`${formatKg(lostKg)} to landfill 😢`}
             ink={traffic.tonight.ink}
@@ -147,22 +144,29 @@ function HeroBox({
   detail,
   ink,
   wash,
+  large,
 }: {
   label: string;
   amount: string;
-  detail: string;
+  detail?: string;
   ink: string;
   wash: string;
+  large?: boolean;
 }) {
   return (
     <View style={[styles.hero, { backgroundColor: wash }]}>
       <Text style={styles.heroEyebrow}>{label}</Text>
-      <Text style={[styles.heroAmount, { color: ink }]} numberOfLines={1}>
+      <Text
+        style={[styles.heroAmount, large && styles.heroAmountLarge, { color: ink }]}
+        numberOfLines={1}
+      >
         {amount}
       </Text>
-      <Text style={[styles.heroDetail, { color: ink }]} numberOfLines={1}>
-        {detail}
-      </Text>
+      {detail ? (
+        <Text style={[styles.heroDetail, { color: ink }]} numberOfLines={1}>
+          {detail}
+        </Text>
+      ) : null}
     </View>
   );
 }
@@ -207,6 +211,12 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     marginTop: 8,
     fontVariant: ['tabular-nums'],
+  },
+  heroAmountLarge: {
+    fontFamily: fonts.display,
+    fontSize: 36,
+    lineHeight: 40,
+    marginTop: 6,
   },
   heroDetail: {
     fontFamily: fonts.sans,
