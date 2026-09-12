@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { DietPicker } from '../components/DietPicker';
 import { HouseholdInput } from '../components/HouseholdInput';
 import { Button, Display, Pill } from '../components/ui';
 import type { Diet } from '../types';
@@ -55,11 +56,7 @@ export function OnboardingScreen() {
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
         <Display>How do you eat?</Display>
-        <View style={styles.row}>
-          <Pill label="Everything" active={diet === 'omnivore'} onPress={() => setDiet('omnivore')} />
-          <Pill label="Vegetarian" active={diet === 'vegetarian'} onPress={() => setDiet('vegetarian')} />
-          <Pill label="Vegan" active={diet === 'vegan'} onPress={() => setDiet('vegan')} />
-        </View>
+        <DietPicker value={diet} onChange={setDiet} />
         <Text style={styles.label}>Who is home for dinner? e.g 2</Text>
         <HouseholdInput value={householdSize} onChange={setHouseholdSize} />
         <Text style={styles.label}>Start from a typical fridge?</Text>

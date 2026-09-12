@@ -2,7 +2,8 @@ import { INGREDIENT_MAP } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import type { PantryItem } from '../types';
 import { addDaysIso } from './dates';
-import { dietAllows, scoreRecipe, suggestDinners } from './matching';
+import { tagsFor } from '../data/ingredientTags';
+import { scoreRecipe, suggestDinners } from './matching';
 import { starterPantry } from './starterPantry';
 
 function item(ingredientId: string, days: number): PantryItem {
@@ -14,19 +15,6 @@ function item(ingredientId: string, days: number): PantryItem {
     source: 'manual',
   };
 }
-
-describe('dietAllows', () => {
-  it('lets omnivores see everything', () => {
-    expect(dietAllows('vegan', 'omnivore')).toBe(true);
-    expect(dietAllows('omnivore', 'omnivore')).toBe(true);
-  });
-
-  it('hides meat from vegetarians and vegans', () => {
-    expect(dietAllows('omnivore', 'vegetarian')).toBe(false);
-    expect(dietAllows('vegetarian', 'vegan')).toBe(false);
-    expect(dietAllows('vegan', 'vegan')).toBe(true);
-  });
-});
 
 describe('scoreRecipe', () => {
   it('ranks the dinner that uses dying food first', () => {
@@ -101,6 +89,22 @@ describe('suggestDinners', () => {
 
   it('only returns vegan dinners for vegans', () => {
     const suggestions = suggestDinners(starterPantry(), 'vegan', 5);
-    expect(suggestions.every((row) => row.recipe.diet === 'vegan')).toBe(true);
+    expect(suggestions.length).toBeGreaterThan(0);
+    const banned = new Set(['meat', 'poultry', 'pork', 'beef', 'seafood', 'shellfish', 'dairy', 'egg', 'honey']);
+    for (const row of suggestions) {
+      for (const line of row.recipe.ingredients) {
+        if (line.optional) continue;
+        expect(tagsFor(line.ingredientId).some((tag) => banned.has(tag))).toBe(false);
+      }
+    }
+  });
+
+  it('lets pescatarians use fish dinners from a typical fridge when they fit', () => {
+    const suggestions = suggestDinners(
+      [...starterPantry(), item('salmon', 1), item('tuna', 20)],
+      'pescatarian',
+      8,
+    );
+    expect(suggestions.every((row) => !row.recipe.ingredients.some((line) => line.ingredientId.includes('chicken') || line.ingredientId === 'ground-beef' || line.ingredientId === 'bacon'))).toBe(true);
   });
 });

@@ -2,12 +2,9 @@ import { INGREDIENT_MAP } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import type { Diet, PantryItem, Recipe, ScoredRecipe } from '../types';
 import { daysUntil } from './dates';
+import { dietAllows } from './diet';
 
-export function dietAllows(recipeDiet: Diet, userDiet: Diet): boolean {
-  if (userDiet === 'omnivore') return true;
-  if (userDiet === 'vegetarian') return recipeDiet !== 'omnivore';
-  return recipeDiet === 'vegan';
-}
+export { dietAllows };
 
 export function isRequired(ingredientId: string, optional?: boolean): boolean {
   if (optional) return false;
@@ -31,7 +28,7 @@ export function scoreRecipe(
   userDiet: Diet,
   now = Date.now(),
 ): ScoredRecipe | null {
-  if (!dietAllows(recipe.diet, userDiet)) return null;
+  if (!dietAllows(recipe, userDiet)) return null;
 
   const index = pantryIndex(pantry, now);
   const required = recipe.ingredients.filter((line) => isRequired(line.ingredientId, line.optional));

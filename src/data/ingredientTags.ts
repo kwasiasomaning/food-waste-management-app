@@ -1,0 +1,47 @@
+import type { FoodTag } from '../types';
+
+export const INGREDIENT_TAGS: Record<string, FoodTag[]> = {
+  milk: ['dairy'],
+  yogurt: ['dairy'],
+  butter: ['dairy', 'high-fat'],
+  cheddar: ['dairy', 'high-fat'],
+  parmesan: ['dairy'],
+  mozzarella: ['dairy'],
+  feta: ['dairy'],
+  'sour-cream': ['dairy', 'high-fat'],
+  eggs: ['egg'],
+  honey: ['honey', 'high-sugar'],
+  'chicken-thighs': ['meat', 'poultry'],
+  'chicken-breast': ['meat', 'poultry'],
+  'leftover-chicken': ['meat', 'poultry'],
+  'ground-beef': ['meat', 'beef'],
+  bacon: ['meat', 'pork', 'high-fat'],
+  ham: ['meat', 'pork'],
+  salmon: ['seafood'],
+  tuna: ['seafood'],
+  shrimp: ['seafood', 'shellfish'],
+  bread: ['gluten', 'grain'],
+  pasta: ['gluten', 'grain'],
+  'leftover-pasta': ['gluten', 'grain'],
+  tortillas: ['gluten', 'grain'],
+  oats: ['gluten', 'grain'],
+  rice: ['grain'],
+  'leftover-rice': ['grain'],
+  'peanut-butter': ['nut', 'legume'],
+  chickpeas: ['legume', 'fodmap'],
+  'black-beans': ['legume', 'fodmap'],
+  lentils: ['legume', 'fodmap'],
+  'frozen-peas': ['legume'],
+  onion: ['fodmap'],
+  garlic: ['fodmap'],
+  cilantro: ['cilantro'],
+  banana: ['high-sugar'],
+  'frozen-berries': ['high-sugar'],
+  potato: ['grain'],
+  'sweet-potato': ['grain'],
+  'soy-sauce': ['low-sodium-avoid'],
+};
+
+export function tagsFor(ingredientId: string): FoodTag[] {
+  return INGREDIENT_TAGS[ingredientId] ?? [];
+}

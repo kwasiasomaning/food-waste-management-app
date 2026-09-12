@@ -6,7 +6,46 @@ export type Category =
   | 'frozen'
   | 'leftovers';
 
-export type Diet = 'omnivore' | 'vegetarian' | 'vegan';
+export type RecipeDiet = 'omnivore' | 'vegetarian' | 'vegan';
+
+export type Diet =
+  | RecipeDiet
+  | 'pescatarian'
+  | 'no-red-meat'
+  | 'halal'
+  | 'kosher'
+  | 'hindu'
+  | 'gluten-free'
+  | 'dairy-free'
+  | 'low-lactose'
+  | 'nut-free'
+  | 'low-sodium'
+  | 'diabetic'
+  | 'low-fat'
+  | 'low-calorie'
+  | 'no-cilantro'
+  | 'no-alcohol'
+  | 'pregnant';
+
+export type FoodTag =
+  | 'meat'
+  | 'poultry'
+  | 'pork'
+  | 'beef'
+  | 'seafood'
+  | 'shellfish'
+  | 'dairy'
+  | 'egg'
+  | 'honey'
+  | 'gluten'
+  | 'nut'
+  | 'legume'
+  | 'grain'
+  | 'high-sugar'
+  | 'high-fat'
+  | 'fodmap'
+  | 'cilantro'
+  | 'low-sodium-avoid';
 export type Urgency = 'tonight' | 'soon' | 'fresh' | 'staple';
 export type ItemSource = 'scan' | 'manual' | 'starter' | 'shop';
 
@@ -36,7 +75,7 @@ export type Recipe = {
   subtitle: string;
   minutes: number;
   servings: number;
-  diet: Diet;
+  diet: RecipeDiet;
   emoji: string;
   plate: string;
   ingredients: RecipeIngredient[];

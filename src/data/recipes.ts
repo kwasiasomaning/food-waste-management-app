@@ -1,11 +1,11 @@
-import type { Diet, Recipe, RecipeIngredient } from '../types';
+import type { Recipe, RecipeDiet, RecipeIngredient } from '../types';
 
 function r(
   id: string,
   title: string,
   subtitle: string,
   minutes: number,
-  diet: Diet,
+  diet: RecipeDiet,
   emoji: string,
   plate: string,
   ingredients: RecipeIngredient[],
