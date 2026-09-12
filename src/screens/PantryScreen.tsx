@@ -5,7 +5,7 @@ import { INGREDIENT_MAP } from '../data/ingredients';
 import { expiryLabel, urgencyOf } from '../lib/dates';
 import type { TabName } from '../navigation';
 import { useKitchen } from '../store/kitchen';
-import { colors, fonts, radius, urgencyCopy } from '../theme';
+import { colors, fonts, radius, traffic, urgencyCopy } from '../theme';
 import type { PantryItem, Urgency } from '../types';
 
 const ORDER: Urgency[] = ['tonight', 'soon', 'fresh', 'staple'];
@@ -39,7 +39,7 @@ export function PantryScreen({ onTab }: { onTab: (tab: TabName) => void }) {
         ) : (
           groups.map((group) => (
             <View key={group.urgency} style={styles.group}>
-              <Text style={[styles.groupLabel, { color: colors[group.urgency] }]}>
+              <Text style={[styles.groupLabel, { color: traffic[group.urgency].ink }]}>
                 {urgencyCopy[group.urgency]}
               </Text>
               {group.items.map((item) => (
@@ -69,12 +69,18 @@ function PantryRow({
 }) {
   const ingredient = INGREDIENT_MAP[item.ingredientId];
   if (!ingredient) return null;
+  const urgency = urgencyOf(item, ingredient);
+  const light = traffic[urgency];
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, { backgroundColor: light.wash, borderColor: light.rail }]}>
+      <View style={[styles.rail, { backgroundColor: light.rail }]} />
       <Text style={styles.emoji}>{ingredient.emoji}</Text>
       <View style={styles.copy}>
         <Text style={styles.name}>{ingredient.name}</Text>
-        <Text style={styles.meta}>{expiryLabel(item.expiresAt)}</Text>
+        <View style={styles.metaRow}>
+          <View style={[styles.dot, { backgroundColor: light.rail }]} />
+          <Text style={[styles.meta, { color: light.ink }]}>{expiryLabel(item.expiresAt)}</Text>
+        </View>
       </View>
       <Pressable onPress={onSooner} style={styles.tiny}>
         <Text style={styles.tinyText}>Tonight</Text>
@@ -105,14 +111,26 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: colors.cream,
     borderRadius: radius.md,
-    padding: 12,
+    paddingVertical: 12,
+    paddingRight: 12,
+    paddingLeft: 16,
     borderWidth: 1,
     borderColor: colors.line,
+    overflow: 'hidden',
+  },
+  rail: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 5,
   },
   emoji: { fontSize: 24, width: 32, textAlign: 'center' },
   copy: { flex: 1 },
   name: { fontFamily: fonts.sansSemi, fontSize: 16, color: colors.ink },
-  meta: { fontFamily: fonts.sans, color: colors.inkSoft, marginTop: 2 },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 3 },
+  dot: { width: 7, height: 7, borderRadius: 4 },
+  meta: { fontFamily: fonts.sansSemi, fontSize: 13 },
   tiny: {
     paddingHorizontal: 8,
     paddingVertical: 6,

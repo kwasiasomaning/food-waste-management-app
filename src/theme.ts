@@ -50,3 +50,26 @@ export const urgencyCopy: Record<string, string> = {
   fresh: 'Fresh',
   staple: 'Staple',
 };
+
+export const traffic = {
+  tonight: {
+    ink: '#9E4A3C',
+    wash: '#F6E8E2',
+    rail: '#C56A5A',
+  },
+  soon: {
+    ink: '#9A7424',
+    wash: '#F4EBD4',
+    rail: '#D1A24A',
+  },
+  fresh: {
+    ink: '#4F6F56',
+    wash: '#E7EFE6',
+    rail: '#7A9A7E',
+  },
+  staple: {
+    ink: '#6A6156',
+    wash: '#FFF8EF',
+    rail: '#C9BDAE',
+  },
+} as const;
