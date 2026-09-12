@@ -2,6 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { TabName } from '../navigation';
 import { colors, fonts } from '../theme';
+import { FridgeMark } from './FridgeMark';
 
 const SIDE_TABS: { key: Exclude<TabName, 'scan'>; label: string; icon: string }[] = [
   { key: 'tonight', label: 'Tonight', icon: '🍽️' },
@@ -27,29 +28,18 @@ export function TabBar({
       <SideTab item={SIDE_TABS[1]} active={tab === 'pantry'} onPress={() => onChange('pantry')} />
 
       <View style={styles.snapCol}>
-        <View style={styles.snapRow}>
-          <Pressable
-            onPress={onRoll}
-            style={styles.roll}
-            accessibilityRole="button"
-            accessibilityLabel="Upload a fridge photo"
-          >
-            <View style={styles.rollPic} />
-            <View style={styles.rollHill} />
-          </Pressable>
-          <Pressable
-            onPress={onSnap}
-            style={({ pressed }) => [styles.shutter, pressed && styles.shutterPressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Take a fridge photo"
-          >
-            <View style={styles.shutterRing}>
-              <View style={styles.shutterLens} />
-            </View>
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={onSnap}
+          onLongPress={onRoll}
+          delayLongPress={350}
+          style={({ pressed }) => [styles.fridgeBtn, pressed && styles.fridgePressed]}
+          accessibilityRole="button"
+          accessibilityLabel="Snap the fridge"
+        >
+          <FridgeMark size={28} />
+        </Pressable>
         <Pressable onPress={() => onChange('scan')} hitSlop={6}>
-          <Text style={[styles.label, tab === 'scan' && styles.labelActive]}>Snap</Text>
+          <Text style={[styles.label, tab === 'scan' && styles.labelActive]}>Add</Text>
         </Pressable>
       </View>
 
@@ -83,83 +73,29 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.line,
     backgroundColor: colors.cream,
-    paddingTop: 10,
+    paddingTop: 8,
     paddingBottom: 12,
     paddingHorizontal: 4,
   },
   item: { flex: 1, alignItems: 'center', gap: 3, paddingBottom: 2 },
   icon: { fontSize: 16 },
   snapCol: {
-    width: 108,
+    width: 56,
     alignItems: 'center',
-    marginTop: -28,
+    marginTop: -10,
   },
-  snapRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  roll: {
-    width: 30,
-    height: 30,
-    borderRadius: 8,
-    backgroundColor: colors.paperDeep,
-    borderWidth: 1,
-    borderColor: colors.line,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-    marginBottom: 6,
-  },
-  rollPic: {
-    position: 'absolute',
-    top: 6,
-    left: 7,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.amber,
-  },
-  rollHill: {
-    width: 22,
-    height: 10,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    backgroundColor: colors.sage,
-    opacity: 0.7,
-  },
-  shutter: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: colors.terracotta,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: colors.terracottaDeep,
-    shadowOpacity: 0.28,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  shutterPressed: { transform: [{ scale: 0.96 }], backgroundColor: colors.terracottaDeep },
-  shutterRing: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: colors.cream,
+  fridgeBtn: {
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shutterLens: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: colors.terracottaDeep,
-  },
+  fridgePressed: { opacity: 0.75, transform: [{ scale: 0.96 }] },
   label: {
     fontFamily: fonts.sansSemi,
     fontSize: 11,
     color: colors.inkSoft,
-    marginTop: 3,
+    marginTop: 2,
   },
   labelActive: { color: colors.ink },
 });

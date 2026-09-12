@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { CameraGlyph } from '../components/CameraGlyph';
+import { FridgeMark } from '../components/FridgeMark';
 import { WebFridgeCamera } from '../components/WebFridgeCamera';
 import { Button, Pill } from '../components/ui';
 import {
@@ -140,7 +140,7 @@ export function ScanScreen({
       <View style={styles.head}>
         {mode === 'catalog' ? (
           <View style={styles.glyph}>
-            <CameraGlyph size={58} />
+            <FridgeMark size={36} />
           </View>
         ) : null}
         <Text style={styles.title}>{mode === 'photo' ? 'What is in the photo?' : 'Add the fridge'}</Text>
