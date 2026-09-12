@@ -7,7 +7,7 @@ import { FridgeMark } from './FridgeMark';
 const SIDE_TABS: { key: Exclude<TabName, 'scan'>; label: string; icon: string }[] = [
   { key: 'tonight', label: 'Tonight', icon: '🍽️' },
   { key: 'pantry', label: 'Pantry', icon: '🧊' },
-  { key: 'shop', label: 'Shop', icon: '🧺' },
+  { key: 'shop', label: 'Shop', icon: '🛒' },
   { key: 'impact', label: 'Saved', icon: '🌱' },
 ];
 
