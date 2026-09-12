@@ -1,13 +1,14 @@
+import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { TabName } from '../navigation';
 import { colors, fonts } from '../theme';
 import { FridgeMark } from './FridgeMark';
+import { ShopMark } from './ShopMark';
 
 const SIDE_TABS: { key: Exclude<TabName, 'scan'>; label: string; icon: string }[] = [
   { key: 'tonight', label: 'Tonight', icon: '🍽️' },
   { key: 'pantry', label: 'Pantry', icon: '🧊' },
-  { key: 'shop', label: 'Shop', icon: '🛒' },
   { key: 'impact', label: 'Saved', icon: '🌱' },
 ];
 
@@ -43,8 +44,13 @@ export function TabBar({
         </Pressable>
       </View>
 
-      <SideTab item={SIDE_TABS[2]} active={tab === 'shop'} onPress={() => onChange('shop')} />
-      <SideTab item={SIDE_TABS[3]} active={tab === 'impact'} onPress={() => onChange('impact')} />
+      <SideTab
+        item={{ key: 'shop', label: 'Shop', icon: '' }}
+        active={tab === 'shop'}
+        onPress={() => onChange('shop')}
+        mark={<ShopMark active={tab === 'shop'} />}
+      />
+      <SideTab item={SIDE_TABS[2]} active={tab === 'impact'} onPress={() => onChange('impact')} />
     </View>
   );
 }
@@ -53,14 +59,16 @@ function SideTab({
   item,
   active,
   onPress,
+  mark,
 }: {
   item: { key: string; label: string; icon: string };
   active: boolean;
   onPress: () => void;
+  mark?: ReactNode;
 }) {
   return (
     <Pressable onPress={onPress} style={styles.item}>
-      <Text style={styles.icon}>{item.icon}</Text>
+      {mark ?? <Text style={styles.icon}>{item.icon}</Text>}
       <Text style={[styles.label, active && styles.labelActive]}>{item.label}</Text>
     </Pressable>
   );
