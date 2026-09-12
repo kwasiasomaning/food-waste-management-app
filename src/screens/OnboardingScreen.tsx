@@ -57,7 +57,7 @@ export function OnboardingScreen() {
       <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
         <Display>How do you eat?</Display>
         <DietPicker value={diet} onChange={setDiet} />
-        <Text style={styles.label}>Who is home for dinner? e.g 2</Text>
+        <Text style={styles.label}>Who is home for dinner?</Text>
         <HouseholdInput value={householdSize} onChange={setHouseholdSize} />
         <Text style={styles.label}>Start from a typical fridge?</Text>
         <Text style={styles.hint}>

@@ -21,7 +21,7 @@ export function SettingsScreen({ onBack }: { onBack: () => void }) {
       <Text style={styles.title}>Settings</Text>
       <Text style={styles.label}>Diet</Text>
       <DietPicker value={settings.diet} onChange={(diet) => updateSettings({ diet })} />
-      <Text style={styles.label}>Who is home for dinner? e.g 2</Text>
+      <Text style={styles.label}>Who is home for dinner?</Text>
       <HouseholdInput
         value={settings.householdSize}
         onChange={(householdSize) => updateSettings({ householdSize })}
