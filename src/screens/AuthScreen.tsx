@@ -93,10 +93,11 @@ export function AuthScreen({
 
         {mode === 'register' ? (
           <Field
-            label="Name (optional)"
+            label="Name"
             value={name}
             onChangeText={setName}
             autoComplete="name"
+            autoCapitalize="words"
             placeholder="What should we call you"
           />
         ) : null}
@@ -223,6 +224,7 @@ function Field({
   secure,
   keyboardType,
   autoComplete,
+  autoCapitalize = 'none',
 }: {
   label: string;
   value: string;
@@ -231,6 +233,7 @@ function Field({
   secure?: boolean;
   keyboardType?: 'email-address' | 'default';
   autoComplete?: 'email' | 'password' | 'new-password' | 'name';
+  autoCapitalize?: 'none' | 'words';
 }) {
   return (
     <View style={styles.field}>
@@ -241,7 +244,7 @@ function Field({
         placeholder={placeholder}
         placeholderTextColor={colors.inkSoft}
         secureTextEntry={secure}
-        autoCapitalize="none"
+        autoCapitalize={autoCapitalize}
         autoCorrect={false}
         keyboardType={keyboardType}
         autoComplete={autoComplete}

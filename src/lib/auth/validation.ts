@@ -18,7 +18,7 @@ export function passwordIssues(password: string): string | null {
 
 export function displayNameIssues(name: string): string | null {
   const trimmed = name.trim();
-  if (!trimmed) return null;
+  if (!trimmed) return 'Enter your name.';
   if (trimmed.length > 40) return 'Keep the name under 40 characters.';
   return null;
 }

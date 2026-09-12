@@ -13,7 +13,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   },
   {
     heading: 'What we collect',
-    body: 'We collect only what the app needs: your email and password (stored as a salted hash, never in plain text), an optional name, the country and currency you choose, household size and diet, pantry items, cooked and binned records, and the consents you give. We do not ask for your phone number, payment card, precise location, contacts, or government ID. We do not run advertising SDKs or sell your data.',
+    body: 'We collect only what the app needs: your email and password (stored as a salted hash, never in plain text), your name, the country and currency you choose, household size and diet, pantry items, cooked and binned records, and the consents you give. We do not ask for your phone number, payment card, precise location, contacts, or government ID. We do not run advertising SDKs or sell your data.',
   },
   {
     heading: 'Where it is stored',

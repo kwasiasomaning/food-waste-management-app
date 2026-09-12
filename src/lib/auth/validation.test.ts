@@ -1,12 +1,20 @@
 import { minimumAgeForCountry } from '../../data/legal';
 import { hashPassword, passwordsMatch } from './password';
-import { isValidEmail, normalizeEmail, passwordIssues } from './validation';
+import { displayNameIssues, isValidEmail, normalizeEmail, passwordIssues } from './validation';
 
 describe('email', () => {
   it('normalizes and accepts a simple address', () => {
     expect(normalizeEmail('  Ada@Kitchen.ORG ')).toBe('ada@kitchen.org');
     expect(isValidEmail('ada@kitchen.org')).toBe(true);
     expect(isValidEmail('not-an-email')).toBe(false);
+  });
+});
+
+describe('name', () => {
+  it('requires a name', () => {
+    expect(displayNameIssues('')).toBe('Enter your name.');
+    expect(displayNameIssues('   ')).toBe('Enter your name.');
+    expect(displayNameIssues('Ada')).toBeNull();
   });
 });
 
