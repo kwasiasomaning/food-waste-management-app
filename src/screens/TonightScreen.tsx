@@ -8,7 +8,7 @@ import { Button, Display } from '../components/ui';
 import { INGREDIENT_MAP } from '../data/ingredients';
 import { expiryLabel, prettyDate, urgencyOf } from '../lib/dates';
 import { missingShopList, suggestDinners } from '../lib/matching';
-import { wasteBriefForSession } from '../lib/wasteBrief';
+import { dismissWasteBrief, isWasteBriefDismissed, wasteBriefForSession } from '../lib/wasteBrief';
 import type { TabName } from '../navigation';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts } from '../theme';
@@ -23,6 +23,7 @@ export function TonightScreen({
   onSettings: () => void;
 }) {
   const [brief] = useState(wasteBriefForSession);
+  const [showBrief, setShowBrief] = useState(() => !isWasteBriefDismissed());
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
@@ -44,7 +45,15 @@ export function TonightScreen({
           </Pressable>
         </View>
         <Display italic>Tonight.</Display>
-        <WasteBriefCard brief={brief} />
+        {showBrief ? (
+          <WasteBriefCard
+            brief={brief}
+            onDismiss={() => {
+              dismissWasteBrief();
+              setShowBrief(false);
+            }}
+          />
+        ) : null}
 
         {dying.length > 0 ? (
           <Pressable style={styles.alert} onPress={() => onTab('pantry')}>

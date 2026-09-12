@@ -1,5 +1,5 @@
 import { WASTE_BRIEFS } from '../data/wasteBriefs';
-import { pickWasteBrief } from './wasteBrief';
+import { dismissWasteBrief, isWasteBriefDismissed, pickWasteBrief } from './wasteBrief';
 
 describe('waste briefs', () => {
   it('has sourced copy for every brief', () => {
@@ -24,5 +24,10 @@ describe('waste briefs', () => {
     for (let i = 0; i < 30; i += 1) {
       expect(pickWasteBrief(excluded).id).not.toBe(excluded);
     }
+  });
+
+  it('remembers a dismiss for the session', () => {
+    dismissWasteBrief();
+    expect(isWasteBriefDismissed()).toBe(true);
   });
 });

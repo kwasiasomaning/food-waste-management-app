@@ -1,12 +1,23 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { WasteBrief } from '../data/wasteBriefs';
 import { colors, fonts, radius } from '../theme';
 
-export function WasteBriefCard({ brief }: { brief: WasteBrief }) {
+export function WasteBriefCard({
+  brief,
+  onDismiss,
+}: {
+  brief: WasteBrief;
+  onDismiss: () => void;
+}) {
   return (
     <View style={styles.card} accessibilityRole="text">
-      <Text style={styles.source}>{brief.source}</Text>
+      <View style={styles.head}>
+        <Text style={styles.source}>{brief.source}</Text>
+        <Pressable onPress={onDismiss} hitSlop={10} accessibilityRole="button" accessibilityLabel="Dismiss">
+          <Text style={styles.dismiss}>Dismiss</Text>
+        </Pressable>
+      </View>
       <Text style={[styles.body, brief.kind === 'quote' && styles.quote]}>{brief.text}</Text>
       <Text style={styles.cite}>{brief.cite}</Text>
     </View>
@@ -20,6 +31,17 @@ const styles = StyleSheet.create({
     padding: 14,
     borderWidth: 1,
     borderColor: colors.line,
+  },
+  head: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  dismiss: {
+    fontFamily: fonts.sansSemi,
+    fontSize: 12,
+    color: colors.inkSoft,
   },
   source: {
     fontFamily: fonts.sansBold,
