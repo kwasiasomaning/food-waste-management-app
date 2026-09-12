@@ -12,7 +12,7 @@ const ORDER: Urgency[] = ['tonight', 'soon', 'fresh', 'staple'];
 
 export function PantryScreen({ onTab }: { onTab: (tab: TabName) => void }) {
   const pantry = useKitchen((s) => s.pantry);
-  const removePantry = useKitchen((s) => s.removePantry);
+  const markUsed = useKitchen((s) => s.markUsed);
   const binPantry = useKitchen((s) => s.binPantry);
   const setExpiryDays = useKitchen((s) => s.setExpiryDays);
 
@@ -47,7 +47,7 @@ export function PantryScreen({ onTab }: { onTab: (tab: TabName) => void }) {
                 <PantryRow
                   key={item.id}
                   item={item}
-                  onUsed={() => removePantry(item.id)}
+                  onUsed={() => markUsed(item.id)}
                   onSooner={() => setExpiryDays(item.id, 1)}
                   onBinned={() => binPantry(item.id)}
                 />

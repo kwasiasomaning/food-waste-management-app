@@ -9,6 +9,11 @@ export function estimateWaste(ingredientId: string): { lostUsd: number; lostKg: 
   };
 }
 
+export function estimateUse(ingredientId: string): { savedUsd: number; savedKg: number } {
+  const { lostUsd, lostKg } = estimateWaste(ingredientId);
+  return { savedUsd: lostUsd, savedKg: lostKg };
+}
+
 export function estimateSavings(usedIngredientIds: string[]): { savedUsd: number; savedKg: number } {
   const unique = [...new Set(usedIngredientIds)];
   let savedUsd = 0;

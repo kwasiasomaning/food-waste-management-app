@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { countedNoun } from '../lib/grammar';
 import { formatKg, formatMoney, mealsEquivalent } from '../lib/savings';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius, traffic } from '../theme';
@@ -8,10 +9,16 @@ import { colors, fonts, radius, traffic } from '../theme';
 export function ImpactScreen() {
   const cooked = useKitchen((s) => s.cooked);
   const wasted = useKitchen((s) => s.wasted ?? []);
-  const savedUsd = cooked.reduce((sum, meal) => sum + meal.savedUsd, 0);
-  const savedKg = cooked.reduce((sum, meal) => sum + meal.savedKg, 0);
+  const used = useKitchen((s) => s.used ?? []);
+  const cookedUsd = cooked.reduce((sum, meal) => sum + meal.savedUsd, 0);
+  const cookedKg = cooked.reduce((sum, meal) => sum + meal.savedKg, 0);
+  const usedUsd = used.reduce((sum, item) => sum + item.savedUsd, 0);
+  const usedKg = used.reduce((sum, item) => sum + item.savedKg, 0);
+  const savedUsd = Math.round((cookedUsd + usedUsd) * 100) / 100;
+  const savedKg = Math.round((cookedKg + usedKg) * 100) / 100;
   const lostUsd = wasted.reduce((sum, item) => sum + item.lostUsd, 0);
   const lostKg = wasted.reduce((sum, item) => sum + item.lostKg, 0);
+  const mealsAway = mealsEquivalent(lostKg);
   const net = Math.round((savedUsd - lostUsd) * 100) / 100;
 
   return (
@@ -39,18 +46,14 @@ export function ImpactScreen() {
             : `${formatMoney(Math.abs(net))} more walked out the door than you cooked.`}
         </Text>
 
-        <View style={styles.row}>
-          <View style={styles.stat}>
-            <Text style={styles.statNum}>{cooked.length}</Text>
-            <Text style={styles.statCap}>dinners cooked</Text>
+        <View style={styles.grid}>
+          <View style={styles.row}>
+            <Stat count={cooked.length} one="dinner cooked" many="dinners cooked" />
+            <Stat count={used.length} one="item used" many="items used" />
           </View>
-          <View style={styles.stat}>
-            <Text style={styles.statNum}>{wasted.length}</Text>
-            <Text style={styles.statCap}>items binned</Text>
-          </View>
-          <View style={styles.stat}>
-            <Text style={styles.statNum}>{mealsEquivalent(lostKg)}</Text>
-            <Text style={styles.statCap}>meals thrown away</Text>
+          <View style={styles.row}>
+            <Stat count={wasted.length} one="item binned" many="items binned" />
+            <Stat count={mealsAway} one="meal thrown away" many="meals thrown away" />
           </View>
         </View>
 
@@ -72,6 +75,30 @@ export function ImpactScreen() {
                 </Text>
               </View>
               <Text style={styles.mealSave}>{formatMoney(meal.savedUsd)}</Text>
+            </View>
+          ))
+        )}
+
+        <Text style={[styles.section, { marginTop: 28 }]}>Items Used</Text>
+        {used.length === 0 ? (
+          <Text style={styles.empty}>
+            When you finish something, mark it Used in Pantry. The grocery money stays here so it
+            counts as kept.
+          </Text>
+        ) : (
+          used.map((item) => (
+            <View key={item.id} style={styles.meal}>
+              <View>
+                <Text style={styles.mealTitle}>{item.name}</Text>
+                <Text style={styles.mealMeta}>
+                  {new Date(item.usedAt).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                  {item.savedKg ? ` · ${formatKg(item.savedKg)}` : ''}
+                </Text>
+              </View>
+              <Text style={styles.mealSave}>{formatMoney(item.savedUsd)}</Text>
             </View>
           ))
         )}
@@ -104,6 +131,15 @@ export function ImpactScreen() {
   );
 }
 
+function Stat({ count, one, many }: { count: number; one: string; many: string }) {
+  return (
+    <View style={styles.stat}>
+      <Text style={styles.statNum}>{count}</Text>
+      <Text style={styles.statCap}>{countedNoun(count, one, many)}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
   scroll: { padding: 20, paddingBottom: 40 },
@@ -132,7 +168,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 16,
   },
-  row: { flexDirection: 'row', gap: 8, marginBottom: 24 },
+  grid: { gap: 8, marginBottom: 24 },
+  row: { flexDirection: 'row', gap: 8 },
   stat: {
     flex: 1,
     backgroundColor: colors.cream,

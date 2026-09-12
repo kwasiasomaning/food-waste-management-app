@@ -6,9 +6,9 @@ import { getIngredient } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
 import { uid } from '../lib/dates';
 import { parseHouseholdSize } from '../lib/household';
-import { estimateSavings, estimateWaste } from '../lib/savings';
+import { estimateSavings, estimateUse, estimateWaste } from '../lib/savings';
 import { itemsFromIds, starterPantry } from '../lib/starterPantry';
-import type { BinnedItem, CookedMeal, Diet, PantryItem, Settings, ShopItem } from '../types';
+import type { BinnedItem, CookedMeal, Diet, PantryItem, Settings, ShopItem, UsedItem } from '../types';
 
 export type KitchenState = {
   hydrated: boolean;
@@ -16,6 +16,7 @@ export type KitchenState = {
   pantry: PantryItem[];
   cooked: CookedMeal[];
   wasted: BinnedItem[];
+  used: UsedItem[];
   shop: ShopItem[];
   setHydrated: () => void;
   completeOnboarding: (input: { diet: Diet; householdSize: number; seed: boolean }) => void;
@@ -23,6 +24,7 @@ export type KitchenState = {
   addIngredients: (ingredientIds: string[], source: PantryItem['source']) => void;
   removePantry: (id: string) => void;
   binPantry: (id: string) => BinnedItem | null;
+  markUsed: (id: string) => UsedItem | null;
   consumeIngredients: (ingredientIds: string[]) => void;
   setExpiryDays: (id: string, daysFromNow: number) => void;
   cookRecipe: (recipeId: string) => CookedMeal | null;
@@ -48,6 +50,7 @@ export const useKitchen = create<KitchenState>()(
       pantry: [],
       cooked: [],
       wasted: [],
+      used: [],
       shop: [],
       setHydrated: () => set({ hydrated: true }),
       completeOnboarding: ({ diet, householdSize, seed }) =>
@@ -97,6 +100,25 @@ export const useKitchen = create<KitchenState>()(
         set((state) => ({
           pantry: state.pantry.filter((row) => row.id !== id),
           wasted: [record, ...state.wasted],
+        }));
+        return record;
+      },
+      markUsed: (id) => {
+        const item = get().pantry.find((row) => row.id === id);
+        if (!item) return null;
+        const ingredient = getIngredient(item.ingredientId);
+        const { savedUsd, savedKg } = estimateUse(item.ingredientId);
+        const record: UsedItem = {
+          id: uid('used'),
+          ingredientId: item.ingredientId,
+          name: ingredient.name,
+          usedAt: new Date().toISOString(),
+          savedUsd,
+          savedKg,
+        };
+        set((state) => ({
+          pantry: state.pantry.filter((row) => row.id !== id),
+          used: [record, ...state.used],
         }));
         return record;
       },
@@ -182,6 +204,7 @@ export const useKitchen = create<KitchenState>()(
           pantry: [],
           cooked: [],
           wasted: [],
+          used: [],
           shop: [],
         }),
     }),
@@ -193,10 +216,12 @@ export const useKitchen = create<KitchenState>()(
         pantry: state.pantry,
         cooked: state.cooked,
         wasted: state.wasted,
+        used: state.used,
         shop: state.shop,
       }),
       onRehydrateStorage: () => (state) => {
         if (state && !Array.isArray(state.wasted)) state.wasted = [];
+        if (state && !Array.isArray(state.used)) state.used = [];
         state?.setHydrated();
       },
     },

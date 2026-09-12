@@ -100,6 +100,15 @@ export type BinnedItem = {
   lostKg: number;
 };
 
+export type UsedItem = {
+  id: string;
+  ingredientId: string;
+  name: string;
+  usedAt: string;
+  savedUsd: number;
+  savedKg: number;
+};
+
 export type CookedMeal = {
   id: string;
   recipeId: string;
