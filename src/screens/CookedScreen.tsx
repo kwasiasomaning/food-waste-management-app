@@ -20,7 +20,6 @@ export function CookedScreen({
 }) {
   const recipe = RECIPES.find((row) => row.id === recipeId);
   const currency = useKitchen((s) => s.settings.currency ?? 'USD');
-  const country = useKitchen((s) => s.settings.country ?? 'US');
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.center}>
@@ -31,7 +30,7 @@ export function CookedScreen({
           quietly expire behind the milk.
         </Text>
         <View style={styles.nums}>
-          <Text style={styles.num}>{formatMoney(savedUsd, currency, country)}</Text>
+          <Text style={styles.num}>{formatMoney(savedUsd, currency)}</Text>
           <Text style={styles.cap}>estimated groceries kept</Text>
           <Text style={[styles.num, { marginTop: 16 }]}>{formatKg(savedKg)}</Text>
           <Text style={styles.cap}>not in the bin</Text>

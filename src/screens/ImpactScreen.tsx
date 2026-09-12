@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { LocaleIcons } from '../components/LocaleIcons';
 import { countedNoun } from '../lib/grammar';
 import { formatKg, formatMoney, mealsEquivalent } from '../lib/savings';
 import { useKitchen } from '../store/kitchen';
@@ -11,8 +12,7 @@ export function ImpactScreen() {
   const wasted = useKitchen((s) => s.wasted ?? []);
   const used = useKitchen((s) => s.used ?? []);
   const currency = useKitchen((s) => s.settings.currency ?? 'USD');
-  const country = useKitchen((s) => s.settings.country ?? 'US');
-  const money = (value: number) => formatMoney(value, currency, country);
+  const money = (value: number) => formatMoney(value, currency);
   const cookedUsd = cooked.reduce((sum, meal) => sum + meal.savedUsd, 0);
   const cookedKg = cooked.reduce((sum, meal) => sum + meal.savedKg, 0);
   const usedUsd = used.reduce((sum, item) => sum + item.savedUsd, 0);
@@ -28,7 +28,10 @@ export function ImpactScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.kicker}>What stayed food, and what did not</Text>
-        <Text style={styles.title}>Saved</Text>
+        <View style={styles.top}>
+          <Text style={styles.title}>Saved</Text>
+          <LocaleIcons />
+        </View>
 
         <View style={styles.split}>
           <View style={[styles.hero, styles.heroSave]}>
@@ -147,7 +150,14 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
   scroll: { padding: 20, paddingBottom: 40 },
   kicker: { fontFamily: fonts.sansSemi, color: colors.inkSoft },
-  title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink, marginBottom: 16 },
+  top: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 16,
+  },
+  title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink, flex: 1 },
   split: { flexDirection: 'row', gap: 10, marginBottom: 12 },
   hero: {
     flex: 1,

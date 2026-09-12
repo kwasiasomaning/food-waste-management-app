@@ -33,8 +33,12 @@ describe('formatMoney', () => {
   });
 
   it('shows the selected currency symbol after conversion', () => {
-    expect(formatMoney(10, 'GBP', 'GB')).toMatch(/£/);
-    expect(formatMoney(10, 'EUR', 'DE')).toMatch(/€|EUR/);
-    expect(formatMoney(10, 'GHS', 'GH')).toMatch(/GH₵|GHS/);
+    expect(formatMoney(10, 'GBP')).toMatch(/£/);
+    expect(formatMoney(10, 'EUR')).toMatch(/€|EUR/);
+    expect(formatMoney(10, 'GHS')).toMatch(/GH₵|GHS/);
+  });
+
+  it('formats dollars the same regardless of which country is stored', () => {
+    expect(formatMoney(10, 'USD')).toBe('$10.00');
   });
 });

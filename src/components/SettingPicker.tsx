@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -14,11 +15,13 @@ export function SettingPicker({
   value,
   options,
   onChange,
+  children,
 }: {
   title: string;
   value: string;
   options: SettingOption[];
   onChange: (value: string) => void;
+  children?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -34,15 +37,20 @@ export function SettingPicker({
   }, [options, query]);
 
   return (
-    <View style={styles.wrap}>
+    <View style={children ? styles.compact : styles.wrap}>
       <Pressable
         onPress={() => setOpen(true)}
-        style={styles.trigger}
+        style={children ? undefined : styles.trigger}
+        hitSlop={children ? 8 : undefined}
         accessibilityRole="button"
         accessibilityLabel={title}
       >
-        <Text style={styles.triggerText}>{selected?.label ?? value}</Text>
-        <Text style={styles.chevron}>▾</Text>
+        {children ?? (
+          <>
+            <Text style={styles.triggerText}>{selected?.label ?? value}</Text>
+            <Text style={styles.chevron}>▾</Text>
+          </>
+        )}
       </Pressable>
 
       <Modal
@@ -102,6 +110,7 @@ export function SettingPicker({
 
 const styles = StyleSheet.create({
   wrap: { marginTop: 8, marginBottom: 8 },
+  compact: {},
   trigger: {
     flexDirection: 'row',
     alignItems: 'center',

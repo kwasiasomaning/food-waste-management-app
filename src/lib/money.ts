@@ -1,26 +1,15 @@
-import {
-  COUNTRY_MAP,
-  CURRENCY_MAP,
-  DEFAULT_COUNTRY,
-  DEFAULT_CURRENCY,
-  localeForCountry,
-} from '../data/places';
+import { COUNTRY_MAP, CURRENCY_MAP, DEFAULT_CURRENCY } from '../data/places';
 
 export function convertUsd(usd: number, currency = DEFAULT_CURRENCY): number {
   const rate = CURRENCY_MAP[currency]?.perUsd ?? 1;
   return usd * rate;
 }
 
-export function formatMoney(
-  valueUsd: number,
-  currency = DEFAULT_CURRENCY,
-  country = DEFAULT_COUNTRY,
-): string {
+export function formatMoney(valueUsd: number, currency = DEFAULT_CURRENCY): string {
   const code = CURRENCY_MAP[currency]?.code ?? DEFAULT_CURRENCY;
   const amount = convertUsd(valueUsd, code);
-  const locale = localeForCountry(country);
   try {
-    return new Intl.NumberFormat(locale, {
+    return new Intl.NumberFormat('en', {
       style: 'currency',
       currency: code,
     }).format(amount);
