@@ -157,14 +157,12 @@ function HeroBox({
   return (
     <View style={[styles.hero, { backgroundColor: wash }]}>
       <Text style={styles.heroEyebrow}>{label}</Text>
-      <View style={styles.heroLine}>
-        <Text style={[styles.heroMetric, styles.heroAmount, { color: ink }]} numberOfLines={1}>
-          {amount}
-        </Text>
-        <Text style={[styles.heroMetric, styles.heroDetail, { color: ink }]} numberOfLines={1}>
-          {detail}
-        </Text>
-      </View>
+      <Text style={[styles.heroAmount, { color: ink }]} numberOfLines={1}>
+        {amount}
+      </Text>
+      <Text style={[styles.heroDetail, { color: ink }]} numberOfLines={1}>
+        {detail}
+      </Text>
     </View>
   );
 }
@@ -203,26 +201,18 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.inkSoft,
   },
-  heroLine: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
+  heroAmount: {
+    fontFamily: fonts.sansBold,
+    fontSize: 22,
+    lineHeight: 26,
     marginTop: 8,
-    minHeight: 20,
-  },
-  heroMetric: {
-    fontFamily: fonts.sansSemi,
-    fontSize: 15,
-    lineHeight: 20,
     fontVariant: ['tabular-nums'],
   },
-  heroAmount: {
-    minWidth: 88,
-    flexShrink: 0,
-  },
   heroDetail: {
-    flex: 1,
-    minWidth: 0,
+    fontFamily: fonts.sans,
+    fontSize: 14,
+    lineHeight: 18,
+    marginTop: 4,
   },
   net: {
     fontFamily: fonts.sans,
