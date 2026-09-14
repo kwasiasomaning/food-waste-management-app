@@ -101,7 +101,7 @@ export const RECIPES: Recipe[] = [
     '#D9A07A',
     [a('chickpeas', '1 can'), a('tomato', '2', true), a('canned-tomatoes', '1 can', true), a('spinach', '2 handfuls', true), a('onion', '1'), a('garlic', '3 cloves'), a('cumin', '1 tsp'), a('olive-oil', '2 tbsp'), a('lemon', '1/2', true)],
     [
-      'Soft onions in olive oil. Add garlic and cumin until fragrant.',
+      'Soften onions in olive oil. Add garlic and cumin until fragrant.',
       'Tip in chickpeas and whatever tomatoes you have. Simmer 10 minutes.',
       'Fold spinach through at the end if it is on its last day.',
       'Finish with lemon. Eat with bread or rice.',
@@ -302,7 +302,7 @@ export const RECIPES: Recipe[] = [
     [
       'Cook pasta. Warm oil and garlic, then fold in tuna off the heat.',
       'Toss with pasta, lemon, and a splash of pasta water.',
-      'Chili if you want it to feel like a decision.',
+      'Add chili flakes if you want it to feel like a decision.',
     ],
     'Uses leftover half-lemons and the pasta box with three nests left.',
   ),
@@ -366,7 +366,7 @@ export const RECIPES: Recipe[] = [
     [
       'Toast the bread. Mash avocado with lemon and salt.',
       'Fry or boil the eggs if you have them.',
-      'Chili flakes if the avocado is very ripe — it usually is.',
+      'Spread the avocado, top with the egg, and chili flakes if the fruit is very ripe — it usually is.',
     ],
     'Avocados go from perfect to compost in a day. Eat them at perfect.',
   ),
@@ -398,7 +398,7 @@ export const RECIPES: Recipe[] = [
     [
       'Sweat onion, carrot, and celery.',
       'Add stock and chicken. Simmer 15 minutes.',
-      'Rice or pasta in the last 5 minutes if you have leftovers to hide.',
+      'Add leftover rice or pasta in the last 5 minutes if you have some to hide.',
     ],
     'The most wasted protein in a household is cooked meat nobody planned a second life for.',
   ),
@@ -446,7 +446,7 @@ export const RECIPES: Recipe[] = [
     [
       'Slice cabbage thin. Char it in a dry-hot pan until the edges go sweet.',
       'Add garlic, soy, and cooked noodles with a splash of water.',
-      'Chili and scallion. Eat from the pan.',
+      'Finish with chili and scallion. Eat from the pan.',
     ],
     'People buy a whole cabbage for one recipe and lose the rest.',
   ),
@@ -476,7 +476,7 @@ export const RECIPES: Recipe[] = [
     [a('mozzarella', '1 ball'), a('tomato', '2'), a('olive-oil', 'a pour'), a('basil', 'if alive', true), a('salt', 'plenty'), a('bread', 'to mop', true)],
     [
       'Slice tomato and mozzarella. Salt the tomatoes first and wait 3 minutes.',
-      'Oil, basil, more salt. Bread if the juices demand it.',
+      'Finish with oil, basil, and more salt. Bread if the juices demand it.',
     ],
     'Wet mozzarella does not improve in the fridge. Tomatoes do not either.',
   ),
@@ -492,7 +492,7 @@ export const RECIPES: Recipe[] = [
     [
       'Oil a small dish. Add tomatoes if you have them, then the feta.',
       'Bake 10 minutes at 200°C, then crack eggs around and bake until just set.',
-      'Chili and bread. This is a whole dinner for one, or a share for two.',
+      'Finish with chili and bread. This is a whole dinner for one, or a share for two.',
     ],
     'Blocks of feta dry out after the first use. Heat brings them back.',
   ),
@@ -538,7 +538,7 @@ export const RECIPES: Recipe[] = [
     [a('potato', '3'), a('eggs', '5'), a('onion', '1'), a('olive-oil', '3 tbsp'), a('cheddar', 'optional', true)],
     [
       'Thinly slice potatoes and onion. Cook in oil, covered, until tender.',
-      'Pour over beaten eggs. Cook low, then grill the top.',
+      'Pour over beaten eggs. Cook low, then grill the top. Add cheddar if the block is open.',
     ],
     'Potatoes are cheap and still wasted by the bag. This uses three.',
   ),
@@ -552,8 +552,9 @@ export const RECIPES: Recipe[] = [
     '#C0D4A8',
     [a('pasta', '200g'), a('parsley', '1 bunch', true), a('cilantro', '1 bunch', true), a('basil', '1 bunch', true), a('garlic', '2 cloves'), a('lemon', '1'), a('olive-oil', '4 tbsp'), a('chili-flakes', 'pinch', true)],
     [
+      'Boil pasta in well-salted water.',
       'Blend or chop all remaining herbs with oil, garlic, lemon, and salt.',
-      'Toss through hot pasta. If you only have one herb, that is enough.',
+      'Toss through the hot pasta. If you only have one herb, that is enough.',
     ],
     'Herbs are the fastest wilt in the drawer. Pasta is their last useful job.',
   ),
@@ -568,7 +569,7 @@ export const RECIPES: Recipe[] = [
     [a('corn', '2 cobs or 1 cup'), a('eggs', '3'), a('butter', 'a knob'), a('scallion', '2', true), a('chili', 'optional', true)],
     [
       'Cut corn from the cob. Sizzle in butter until it smells sweet.',
-      'Add beaten eggs and soft-scramble. Scallion on top.',
+      'Add beaten eggs and soft-scramble. Finish with scallion.',
     ],
     'Cooked corn sits in foil and gets forgotten. Eggs wake it up.',
   ),
@@ -583,7 +584,7 @@ export const RECIPES: Recipe[] = [
     [a('shrimp', '300g'), a('garlic', '4 cloves'), a('butter', '2 tbsp'), a('lemon', '1'), a('parsley', 'a pinch', true), a('leftover-rice', 'to serve', true)],
     [
       'Pat shrimp dry. Hot pan, butter, garlic, shrimp — 2 minutes a side.',
-      'Lemon, parsley, salt. Rice if it is already cooked.',
+      'Finish with lemon, parsley, and salt. Rice if it is already cooked.',
     ],
     'Defrosted shrimp cannot go back. This recipe respects that.',
   ),
@@ -597,7 +598,7 @@ export const RECIPES: Recipe[] = [
     '#A8C090',
     [a('kale', '1 bunch'), a('chickpeas', '1 can'), a('garlic', '4 cloves'), a('olive-oil', '3 tbsp'), a('lemon', '1'), a('chili-flakes', 'pinch')],
     [
-      'Strip kale from the stems and chop. Masssage with salt if it is very tough.',
+      'Strip kale from the stems and chop. Massage with salt if it is very tough.',
       'Warm oil, garlic, chili. Add kale and a splash of water. Cover 5 minutes.',
       'Add chickpeas and lemon. Eat with bread or rice.',
     ],
@@ -630,7 +631,7 @@ export const RECIPES: Recipe[] = [
     [
       'Reheat roast vegetables in a hot pan so they catch again.',
       'Make wells and fry eggs in the gaps.',
-      'Yogurt and chili. Do not add anything new unless you must.',
+      'Finish with yogurt and chili. Do not add anything new unless you must.',
     ],
     'Roast vegetables are cooked twice as often as they are eaten twice.',
   ),
@@ -646,7 +647,7 @@ export const RECIPES: Recipe[] = [
     [
       'Fry onion, garlic, ginger. Add lentils, coconut milk, and a can of water.',
       'Simmer 20 minutes. Fold spinach in at the end.',
-      'Lemon and salt until it tastes expensive.',
+      'Season with lemon and salt until it tastes expensive.',
     ],
     'Coconut milk cans linger after one curry. Lentils make the second.',
   ),
@@ -661,7 +662,7 @@ export const RECIPES: Recipe[] = [
     [a('bacon', '4 slices'), a('potato', '3'), a('onion', '1'), a('eggs', '2', true)],
     [
       'Render bacon. Remove. Fry potatoes and onion in the fat until crisp.',
-      'Return bacon. Eggs on top if the carton is open.',
+      'Return the bacon. Fry eggs on top if the carton is open.',
     ],
     'Opened bacon is a countdown. Potatoes make it a meal instead of a snack.',
   ),

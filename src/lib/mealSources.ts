@@ -1,5 +1,6 @@
 import { tagsFor } from '../data/ingredientTags';
 import type { Recipe, RecipeDiet, RecipeIngredient, RecipeSource } from '../types';
+import { howSteps } from './howSteps';
 import { ingredientIdFromName } from './mealMatch';
 
 export type FetchLike = typeof fetch;
@@ -51,7 +52,6 @@ function toRecipe(meal: RemoteMeal): Recipe | null {
     meal,
     ingredients.map((line) => line.ingredientId),
   );
-  const steps = meal.steps.map((step) => step.trim()).filter(Boolean);
   return {
     id: meal.id,
     title: meal.title,
@@ -62,7 +62,7 @@ function toRecipe(meal: RemoteMeal): Recipe | null {
     emoji: '🍽️',
     plate: '#E8DCCB',
     ingredients,
-    steps: steps.length ? steps : ['Cook it hot. Season. Eat it tonight.'],
+    steps: howSteps(meal.steps),
     rescue: 'Suggested because it uses food already in your fridge.',
     source: meal.source,
     photoUri: meal.photoUri,
@@ -124,7 +124,7 @@ export async function fetchThemealdbMeals(
         servings: 2,
         category: raw.strCategory,
         ingredients: mealDbLines(raw),
-        steps: (raw.strInstructions ?? '').split(/\r?\n/).filter((line) => line.trim()),
+        steps: [raw.strInstructions ?? ''],
       });
       if (recipe) found.set(recipe.id, recipe);
     }
