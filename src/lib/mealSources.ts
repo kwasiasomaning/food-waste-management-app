@@ -31,6 +31,12 @@ const EGG_WORDS = /\b(egg|eggs)\b/i;
 const SKIP_MEAL_TYPE = /\b(dessert|beverage|cocktail|smoothie)\b/i;
 const DINNER_MEAL_TYPE = /\b(dinner|lunch|snack|appetizer|side)\b/i;
 
+function isNonDinnerSweetOrDrink(category?: string, mealTypes: string[] = []): boolean {
+  const labels = [...mealTypes, category ?? ''].filter(Boolean);
+  if (labels.some((type) => DINNER_MEAL_TYPE.test(type))) return false;
+  return labels.some((type) => SKIP_MEAL_TYPE.test(type));
+}
+
 function dietFromMeal(meal: RemoteMeal, ingredientIds: string[]): RecipeDiet {
   const category = (meal.category ?? '').toLowerCase();
   if (category === 'vegan') return 'vegan';
@@ -137,6 +143,7 @@ async function lookupThemealdb(
   const found: Recipe[] = [];
   for (const raw of details) {
     if (!raw) continue;
+    if (isNonDinnerSweetOrDrink(raw.strCategory)) continue;
     const recipe = toRecipe({
       source: 'themealdb',
       id: `themealdb:${raw.idMeal}`,
@@ -205,11 +212,7 @@ type DummyjsonRecipe = {
 };
 
 function dummyjsonToRecipe(row: DummyjsonRecipe): Recipe | null {
-  const mealType = row.mealType ?? [];
-  if (
-    mealType.some((type) => SKIP_MEAL_TYPE.test(type)) &&
-    !mealType.some((type) => DINNER_MEAL_TYPE.test(type))
-  ) {
+  if (isNonDinnerSweetOrDrink(undefined, row.mealType ?? [])) {
     return null;
   }
   return toRecipe({
