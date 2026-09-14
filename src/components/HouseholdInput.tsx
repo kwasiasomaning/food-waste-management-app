@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
-import { parseHouseholdSize } from '../lib/household';
+import { MAX_HOUSEHOLD_DIGITS, householdDigits, parseHouseholdSize } from '../lib/household';
 import { colors, fonts, radius } from '../theme';
 import { Pill } from './ui';
 
@@ -34,18 +34,18 @@ export function HouseholdInput({
       <TextInput
         value={text}
         onChangeText={(raw) => {
-          const digits = raw.replace(/[^\d]/g, '');
+          const digits = householdDigits(raw);
           setText(digits);
           if (digits.length) onChange(parseHouseholdSize(digits, value));
         }}
         onBlur={() => {
           const next = parseHouseholdSize(text, value);
           onChange(next);
-          setText(String(next));
+          setText(PRESETS.includes(next as (typeof PRESETS)[number]) ? '' : String(next));
         }}
         keyboardType="number-pad"
         inputMode="numeric"
-        maxLength={2}
+        maxLength={MAX_HOUSEHOLD_DIGITS}
         placeholder="Other"
         placeholderTextColor={colors.inkSoft}
         accessibilityLabel="Other household size"
@@ -58,22 +58,26 @@ export function HouseholdInput({
 const styles = StyleSheet.create({
   wrap: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
     alignItems: 'center',
     gap: 8,
     marginTop: 10,
     marginBottom: 8,
   },
   input: {
-    minWidth: 72,
+    width: 56,
+    minWidth: 56,
+    maxWidth: 56,
+    flexGrow: 0,
+    flexShrink: 0,
     backgroundColor: colors.cream,
     borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: colors.line,
-    paddingHorizontal: 14,
+    paddingHorizontal: 6,
     paddingVertical: 8,
     fontFamily: fonts.sansSemi,
-    fontSize: 14,
+    fontSize: 13,
     color: colors.ink,
     textAlign: 'center',
   },
