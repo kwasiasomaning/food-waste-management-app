@@ -43,7 +43,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    maxWidth: 152,
+    maxWidth: 168,
+    flexShrink: 0,
     justifyContent: 'center',
   },
   text: {

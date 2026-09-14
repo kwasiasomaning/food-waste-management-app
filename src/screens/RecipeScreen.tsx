@@ -87,7 +87,7 @@ export function RecipeScreen({
           return (
             <View key={line.ingredientId + line.amount} style={styles.ing}>
               <IngredientStill ingredientId={ingredient.id} size={40} radius={10} />
-              <View style={{ flex: 1 }}>
+              <View style={styles.ingCopy}>
                 <Text style={styles.ingName}>{ingredient.name}</Text>
                 <Text style={styles.ingAmt}>
                   {scaleAmount(line.amount, recipe.servings, householdSize)}
@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
   },
   ingName: { fontFamily: fonts.sansSemi, color: colors.ink },
   ingAmt: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 13 },
+  ingCopy: { flex: 1, minWidth: 0 },
   shop: { fontFamily: fonts.sansBold, color: colors.terracotta },
   shopHit: {
     paddingVertical: 8,
