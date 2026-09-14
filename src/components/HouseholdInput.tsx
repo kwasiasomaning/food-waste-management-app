@@ -31,26 +31,31 @@ export function HouseholdInput({
           onPress={() => onChange(size)}
         />
       ))}
-      <TextInput
-        value={text}
-        onChangeText={(raw) => {
-          const digits = householdDigits(raw);
-          setText(digits);
-          if (digits.length) onChange(parseHouseholdSize(digits, value));
-        }}
-        onBlur={() => {
-          const next = parseHouseholdSize(text, value);
-          onChange(next);
-          setText(PRESETS.includes(next as (typeof PRESETS)[number]) ? '' : String(next));
-        }}
-        keyboardType="number-pad"
-        inputMode="numeric"
-        maxLength={MAX_HOUSEHOLD_DIGITS}
-        placeholder="Other"
-        placeholderTextColor={colors.inkSoft}
-        accessibilityLabel="Other household size"
-        style={[styles.input, !preset && styles.inputActive]}
-      />
+      <View style={[styles.other, !preset && styles.otherActive]}>
+        <TextInput
+          value={text}
+          onChangeText={(raw) => {
+            const digits = householdDigits(raw);
+            setText(digits);
+            if (digits.length) onChange(parseHouseholdSize(digits, value));
+          }}
+          onBlur={() => {
+            const next = parseHouseholdSize(text, value);
+            onChange(next);
+            setText(PRESETS.includes(next as (typeof PRESETS)[number]) ? '' : String(next));
+          }}
+          keyboardType="number-pad"
+          inputMode="numeric"
+          maxLength={MAX_HOUSEHOLD_DIGITS}
+          placeholder="Other"
+          placeholderTextColor={!preset ? colors.cream : colors.inkSoft}
+          accessibilityLabel="Other household size"
+          multiline={false}
+          numberOfLines={1}
+          underlineColorAndroid="transparent"
+          style={[styles.otherInput, !preset && styles.otherInputActive]}
+        />
+      </View>
     </View>
   );
 }
@@ -64,28 +69,35 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 8,
   },
-  input: {
-    width: 72,
-    minWidth: 72,
-    maxWidth: 72,
+  other: {
+    width: 76,
     height: 36,
     flexGrow: 0,
     flexShrink: 0,
-    backgroundColor: colors.cream,
     borderRadius: radius.pill,
     borderWidth: 1,
     borderColor: colors.line,
-    paddingHorizontal: 8,
-    paddingVertical: 0,
-    fontFamily: fonts.sansSemi,
-    fontSize: 14,
-    lineHeight: 18,
-    color: colors.ink,
-    textAlign: 'center',
+    backgroundColor: colors.cream,
+    justifyContent: 'center',
+    overflow: 'hidden',
   },
-  inputActive: {
+  otherActive: {
     backgroundColor: colors.ink,
     borderColor: colors.ink,
+  },
+  otherInput: {
+    margin: 0,
+    paddingHorizontal: 4,
+    paddingVertical: 0,
+    height: 34,
+    fontFamily: fonts.sansSemi,
+    fontSize: 14,
+    lineHeight: 34,
+    color: colors.ink,
+    textAlign: 'center',
+    backgroundColor: 'transparent',
+  },
+  otherInputActive: {
     color: colors.cream,
   },
 });
