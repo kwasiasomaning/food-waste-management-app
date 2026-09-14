@@ -9,7 +9,6 @@ export const colors = {
   terracottaDeep: '#8F2E14',
   sage: '#3E6A4C',
   sageSoft: '#D5E4D4',
-  sageWash: '#E8F3E6',
   amber: '#C4841A',
   amberSoft: '#F3E1B5',
   tonight: '#C24722',
