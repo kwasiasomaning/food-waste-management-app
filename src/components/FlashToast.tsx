@@ -42,14 +42,14 @@ export function FlashToast({
 const styles = StyleSheet.create({
   toast: {
     position: 'absolute',
-    left: 20,
-    right: 20,
-    bottom: 100,
+    left: 16,
+    right: 16,
+    bottom: 16,
     backgroundColor: colors.sage,
     borderRadius: radius.md,
     paddingVertical: 14,
     paddingHorizontal: 16,
-    zIndex: 50,
+    zIndex: 100,
     elevation: 8,
     shadowColor: '#1B1713',
     shadowOpacity: 0.22,
