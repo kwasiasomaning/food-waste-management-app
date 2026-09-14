@@ -51,7 +51,6 @@ export function HouseholdInput({
           placeholderTextColor={!preset ? colors.cream : colors.inkSoft}
           accessibilityLabel="Other household size"
           multiline={false}
-          numberOfLines={1}
           underlineColorAndroid="transparent"
           style={[styles.otherInput, !preset && styles.otherInputActive]}
         />
@@ -86,6 +85,7 @@ const styles = StyleSheet.create({
     borderColor: colors.ink,
   },
   otherInput: {
+    width: '100%',
     margin: 0,
     paddingHorizontal: 4,
     paddingVertical: 0,
