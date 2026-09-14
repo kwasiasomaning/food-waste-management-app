@@ -191,5 +191,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.line,
     backgroundColor: colors.cream,
+    zIndex: 1,
   },
 });
