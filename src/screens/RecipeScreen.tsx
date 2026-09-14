@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import * as Haptics from 'expo-haptics';
 import { Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,7 +11,7 @@ import { findRecipe } from '../lib/mealCache';
 import { recipeImageSource } from '../lib/recipeImage';
 import { scoreRecipe } from '../lib/matching';
 import { scaleAmount, servingLabel } from '../lib/servings';
-import { shopAddedMessage } from '../lib/shopToast';
+import { shopAddedInlineLabel, shopAddedMessage } from '../lib/shopToast';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
 
@@ -30,8 +30,7 @@ export function RecipeScreen({
   const shop = useKitchen((s) => s.shop);
   const addToShop = useKitchen((s) => s.addToShop);
   const cookRecipe = useKitchen((s) => s.cookRecipe);
-  const toastId = useRef(0);
-  const [toast, setToast] = useState<{ text: string; id: number } | null>(null);
+  const [toastingId, setToastingId] = useState<string | null>(null);
   const recipe = findRecipe(id);
 
   if (!recipe) {
@@ -50,8 +49,7 @@ export function RecipeScreen({
 
   const addMissingToBasket = (ingredientId: string, name: string) => {
     addToShop(ingredientId, `For ${recipe.title}`);
-    toastId.current += 1;
-    setToast({ text: shopAddedMessage(name), id: toastId.current });
+    setToastingId(ingredientId);
     if (Platform.OS !== 'web') {
       void Haptics.selectionAsync();
     }
@@ -96,7 +94,17 @@ export function RecipeScreen({
                   {line.optional ? ' · if you have it' : ''}
                 </Text>
               </View>
-              {need && !queued ? (
+              {need && toastingId === line.ingredientId ? (
+                <FlashToast
+                  label={shopAddedInlineLabel()}
+                  accessibilityLabel={shopAddedMessage(ingredient.name)}
+                  onHidden={() =>
+                    setToastingId((current) => (current === line.ingredientId ? null : current))
+                  }
+                />
+              ) : need && queued ? (
+                <Text style={styles.inShop}>In Shop</Text>
+              ) : need ? (
                 <Pressable
                   onPress={() => addMissingToBasket(line.ingredientId, ingredient.name)}
                   hitSlop={10}
@@ -106,8 +114,6 @@ export function RecipeScreen({
                 >
                   <Text style={styles.shop}>Shop</Text>
                 </Pressable>
-              ) : need && queued ? (
-                <Text style={styles.inShop}>In Shop</Text>
               ) : (
                 <Text style={[styles.flag, owned && { color: colors.sage }]}>
                   {owned ? 'Have' : line.optional ? 'Optional' : ''}
@@ -126,7 +132,6 @@ export function RecipeScreen({
         ))}
       </ScrollView>
       <View style={styles.footer}>
-        <FlashToast message={toast} />
         <Button label="I made this" onPress={cook} />
       </View>
     </SafeAreaView>
