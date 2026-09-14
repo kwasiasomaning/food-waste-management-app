@@ -126,9 +126,9 @@ export function RecipeScreen({
         ))}
       </ScrollView>
       <View style={styles.footer}>
+        <FlashToast message={toast} />
         <Button label="I made this" onPress={cook} />
       </View>
-      <FlashToast message={toast} />
     </SafeAreaView>
   );
 }
@@ -191,6 +191,5 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.line,
     backgroundColor: colors.cream,
-    zIndex: 1,
   },
 });

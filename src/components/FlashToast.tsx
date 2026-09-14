@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, fonts, radius } from '../theme';
 
@@ -8,53 +8,32 @@ export function FlashToast({
 }: {
   message: { text: string; id: number } | null;
 }) {
-  const opacity = useRef(new Animated.Value(0)).current;
   const [shown, setShown] = useState<string | null>(null);
 
   useEffect(() => {
     if (!message) return;
     setShown(message.text);
-    opacity.setValue(0);
-    const anim = Animated.sequence([
-      Animated.timing(opacity, { toValue: 1, duration: 160, useNativeDriver: false }),
-      Animated.delay(1800),
-      Animated.timing(opacity, { toValue: 0, duration: 280, useNativeDriver: false }),
-    ]);
-    anim.start(({ finished }) => {
-      if (finished) setShown(null);
-    });
-    return () => anim.stop();
-  }, [message?.id, message?.text, opacity]);
+    const hide = setTimeout(() => setShown(null), 2000);
+    return () => clearTimeout(hide);
+  }, [message?.id, message?.text]);
 
   if (!shown) return null;
 
   return (
-    <Animated.View
-      pointerEvents="none"
-      accessibilityLiveRegion="polite"
-      style={[styles.toast, { opacity }]}
-    >
+    <View accessibilityLiveRegion="polite" style={styles.toast}>
       <Text style={styles.text}>{shown}</Text>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   toast: {
-    position: 'absolute',
-    left: 16,
-    right: 16,
-    bottom: 16,
     backgroundColor: colors.sage,
-    borderRadius: radius.md,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    zIndex: 100,
-    elevation: 8,
-    shadowColor: '#1B1713',
-    shadowOpacity: 0.22,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
+    borderRadius: radius.pill,
+    paddingVertical: 15,
+    paddingHorizontal: 22,
+    marginBottom: 10,
+    alignItems: 'center',
   },
   text: {
     fontFamily: fonts.sansSemi,
