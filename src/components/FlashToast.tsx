@@ -39,11 +39,11 @@ export function FlashToast({
 
 const styles = StyleSheet.create({
   toast: {
-    backgroundColor: colors.sageWash,
+    backgroundColor: colors.sageSoft,
     borderRadius: radius.pill,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    maxWidth: 148,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    maxWidth: 152,
     justifyContent: 'center',
   },
   text: {
