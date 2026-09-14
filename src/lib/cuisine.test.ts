@@ -42,7 +42,13 @@ describe('cuisine mapping', () => {
     expect(cuisineFromDummyjson('Asian', ['Stir-fry'])).toBe('chinese');
     expect(cuisineFromDummyjson(undefined, ['Italian'])).toBe('italian');
     expect(themealdbAreas('mediterranean')).toEqual(['Italian', 'Greek', 'Spanish']);
+    expect(themealdbAreas('nigerian')).toEqual(['Nigerian']);
+    expect(themealdbAreas('ghanaian')).toEqual(['Ghanaian']);
+    expect(cuisineFromArea('Nigerian')).toBe('nigerian');
+    expect(cuisineFromArea('Ghanaian')).toBe('ghanaian');
     expect(cuisineLabel('italian')).toBe('Italian');
+    expect(cuisineLabel('nigerian')).toBe('Nigerian');
+    expect(cuisineLabel('ghanaian')).toBe('Ghanaian');
   });
 
   it('treats Italian as Mediterranean, but not the reverse', () => {

@@ -15,6 +15,7 @@ export type Cuisine =
   | 'caribbean'
   | 'chinese'
   | 'french'
+  | 'ghanaian'
   | 'greek'
   | 'indian'
   | 'italian'
@@ -24,6 +25,7 @@ export type Cuisine =
   | 'mexican'
   | 'middle-eastern'
   | 'moroccan'
+  | 'nigerian'
   | 'spanish'
   | 'thai'
   | 'vietnamese';
