@@ -1,8 +1,14 @@
 import type { ImageSourcePropType } from 'react-native';
 
-import type { FoodPhotoId, IngredientPhotoId, MealPhotoId } from '../lib/foodPhoto';
+import type {
+  FoodPhotoId,
+  IngredientPhotoId,
+  MealPhotoId,
+  OnboardPhotoId,
+  OnboardingStillId,
+} from '../lib/foodPhoto';
 
-export type { FoodPhotoId, IngredientPhotoId, MealPhotoId };
+export type { FoodPhotoId, IngredientPhotoId, MealPhotoId, OnboardingStillId };
 
 export const FOOD_PHOTOS: Record<FoodPhotoId, ImageSourcePropType> = {
   table: require('../../assets/food/table.png'),
@@ -54,6 +60,17 @@ export const INGREDIENT_PHOTOS: Record<IngredientPhotoId, ImageSourcePropType> =
   'ing-roast': require('../../assets/food/ing-roast.png'),
 };
 
+export const ONBOARD_PHOTOS: Record<OnboardPhotoId, ImageSourcePropType> = {
+  'onboard-spread': require('../../assets/food/onboard-spread.png'),
+  'onboard-roast': require('../../assets/food/onboard-roast.png'),
+  'onboard-pasta': require('../../assets/food/onboard-pasta.png'),
+  'onboard-fish': require('../../assets/food/onboard-fish.png'),
+  'onboard-salad': require('../../assets/food/onboard-salad.png'),
+  'onboard-curry': require('../../assets/food/onboard-curry.png'),
+  'onboard-eggs': require('../../assets/food/onboard-eggs.png'),
+  'onboard-stirfry': require('../../assets/food/onboard-stirfry.png'),
+};
+
 export const MEAL_PHOTOS: Record<MealPhotoId, ImageSourcePropType> = {
   'meal-frittata': require('../../assets/food/meal-frittata.jpg'),
   'meal-toast': require('../../assets/food/meal-toast.jpg'),
@@ -70,4 +87,13 @@ export const MEAL_PHOTOS: Record<MealPhotoId, ImageSourcePropType> = {
   'meal-noodles': require('../../assets/food/meal-noodles.jpg'),
   'meal-beans': require('../../assets/food/meal-beans.jpg'),
   'meal-caprese': require('../../assets/food/meal-caprese.jpg'),
+};
+
+export const ONBOARDING_PHOTOS: Record<OnboardingStillId, ImageSourcePropType> = {
+  table: FOOD_PHOTOS.table,
+  bread: FOOD_PHOTOS.bread,
+  bowl: FOOD_PHOTOS.bowl,
+  plate: FOOD_PHOTOS.plate,
+  ...MEAL_PHOTOS,
+  ...ONBOARD_PHOTOS,
 };

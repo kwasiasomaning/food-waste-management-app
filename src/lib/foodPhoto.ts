@@ -137,6 +137,21 @@ export type MealPhotoId =
   | 'meal-beans'
   | 'meal-caprese';
 
+export type OnboardPhotoId =
+  | 'onboard-spread'
+  | 'onboard-roast'
+  | 'onboard-pasta'
+  | 'onboard-fish'
+  | 'onboard-salad'
+  | 'onboard-curry'
+  | 'onboard-eggs'
+  | 'onboard-stirfry';
+
+export type OnboardingStillId =
+  | Extract<FoodPhotoId, 'table' | 'bread' | 'bowl' | 'plate'>
+  | MealPhotoId
+  | OnboardPhotoId;
+
 export function photoForRecipe(recipe: { id: string; title: string; emoji?: string }): MealPhotoId {
   const hay = `${recipe.id} ${recipe.title}`.toLowerCase();
   if (/taco|quesadilla/.test(hay)) return 'meal-tacos';
