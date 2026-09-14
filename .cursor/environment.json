@@ -1,0 +1,11 @@
+{
+  "name": "Tonight",
+  "install": "npm ci",
+  "start": "./scripts/start-web.sh",
+  "ports": [
+    {
+      "name": "web",
+      "port": 8081
+    }
+  ]
+}
