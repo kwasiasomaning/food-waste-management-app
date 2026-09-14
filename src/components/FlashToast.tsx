@@ -3,6 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, fonts, radius } from '../theme';
 
+export const SHOP_TOAST_MS = 4000;
+
 export function FlashToast({
   message,
 }: {
@@ -13,14 +15,19 @@ export function FlashToast({
   useEffect(() => {
     if (!message) return;
     setShown(message.text);
-    const hide = setTimeout(() => setShown(null), 2000);
+    const hide = setTimeout(() => setShown(null), SHOP_TOAST_MS);
     return () => clearTimeout(hide);
   }, [message?.id, message?.text]);
 
   if (!shown) return null;
 
   return (
-    <View accessibilityLiveRegion="polite" style={styles.toast}>
+    <View
+      testID="shop-added-toast"
+      accessibilityRole="alert"
+      accessibilityLiveRegion="polite"
+      style={styles.toast}
+    >
       <Text style={styles.text}>{shown}</Text>
     </View>
   );
