@@ -44,7 +44,7 @@ export function HouseholdInput({
             onChange(next);
             setText(PRESETS.includes(next as (typeof PRESETS)[number]) ? '' : String(next));
           }}
-          keyboardType="number-pad"
+          keyboardType="default"
           inputMode="numeric"
           maxLength={MAX_HOUSEHOLD_DIGITS}
           placeholder="Other"
