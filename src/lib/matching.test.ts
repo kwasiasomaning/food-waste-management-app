@@ -107,4 +107,17 @@ describe('suggestDinners', () => {
     );
     expect(suggestions.every((row) => !row.recipe.ingredients.some((line) => line.ingredientId.includes('chicken') || line.ingredientId === 'ground-beef' || line.ingredientId === 'bacon'))).toBe(true);
   });
+
+  it('puts Italian pantry dinners first when that cuisine is chosen', () => {
+    const suggestions = suggestDinners(starterPantry(), 'omnivore', 3, Date.now(), 'italian');
+    expect(suggestions.length).toBeGreaterThan(0);
+    expect(suggestions.every((row) => row.recipe.cuisine === 'italian')).toBe(true);
+    expect(suggestions.some((row) => row.recipe.id === 'spinach-frittata' || row.recipe.id === 'aglio-spinach-pasta')).toBe(true);
+  });
+
+  it('still fills from the fridge when too few cuisine matches exist', () => {
+    const suggestions = suggestDinners(starterPantry(), 'omnivore', 3, Date.now(), 'japanese');
+    expect(suggestions).toHaveLength(3);
+    expect(suggestions[0].have.length).toBeGreaterThan(0);
+  });
 });

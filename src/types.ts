@@ -8,6 +8,26 @@ export type Category =
 
 export type RecipeDiet = 'omnivore' | 'vegetarian' | 'vegan';
 
+export type Cuisine =
+  | 'any'
+  | 'american'
+  | 'british'
+  | 'caribbean'
+  | 'chinese'
+  | 'french'
+  | 'greek'
+  | 'indian'
+  | 'italian'
+  | 'japanese'
+  | 'korean'
+  | 'mediterranean'
+  | 'mexican'
+  | 'middle-eastern'
+  | 'moroccan'
+  | 'spanish'
+  | 'thai'
+  | 'vietnamese';
+
 export type Diet =
   | RecipeDiet
   | 'pescatarian'
@@ -85,6 +105,7 @@ export type Recipe = {
   rescue: string;
   source?: RecipeSource;
   photoUri?: string;
+  cuisine?: Cuisine;
 };
 
 export type PantryItem = {
@@ -135,6 +156,7 @@ export type Settings = {
   onboardingDone: boolean;
   country: string;
   currency: string;
+  cuisine: Cuisine;
   ownerId?: string;
 };
 

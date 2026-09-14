@@ -1,4 +1,4 @@
-import type { Recipe, RecipeDiet, RecipeIngredient } from '../types';
+import type { Cuisine, Recipe, RecipeDiet, RecipeIngredient } from '../types';
 
 function r(
   id: string,
@@ -11,9 +11,9 @@ function r(
   ingredients: RecipeIngredient[],
   steps: string[],
   rescue: string,
-  servings = 2,
+  cuisine?: Cuisine,
 ): Recipe {
-  return { id, title, subtitle, minutes, servings, diet, emoji, plate, ingredients, steps, rescue };
+  return { id, title, subtitle, minutes, servings: 2, diet, emoji, plate, ingredients, steps, rescue, cuisine };
 }
 
 const a = (ingredientId: string, amount: string, optional?: boolean): RecipeIngredient => ({
@@ -39,6 +39,7 @@ export const RECIPES: Recipe[] = [
       'Cook until the edges set, then finish under a hot grill until just firm.',
     ],
     'Spinach is usually the first thing to slime. Eggs buy it one more night.',
+    'italian',
   ),
   r(
     'tomato-bread-supper',
@@ -56,6 +57,7 @@ export const RECIPES: Recipe[] = [
       'Finish with olive oil and basil if it is hanging on.',
     ],
     'Bread and soft tomatoes die together. This is their best last day.',
+    'spanish',
   ),
   r(
     'leftover-fried-rice',
@@ -73,6 +75,7 @@ export const RECIPES: Recipe[] = [
       'Return the eggs, splash soy, fold in peas and scallion.',
     ],
     'Day-old rice is safer and better fried than steamed again.',
+    'chinese',
   ),
   r(
     'chicken-rice-bowl',
@@ -107,6 +110,7 @@ export const RECIPES: Recipe[] = [
       'Finish with lemon. Eat with bread or rice.',
     ],
     'Canned chickpeas make a meal from vegetables that would otherwise wait too long.',
+    'mediterranean',
   ),
   r(
     'spinach-quesadilla',
@@ -124,6 +128,7 @@ export const RECIPES: Recipe[] = [
       'Rest one minute, then cut. The cheese is the glue.',
     ],
     'Tortillas dry out and spinach wilts. Together they become dinner.',
+    'mexican',
   ),
   r(
     'shakshuka',
@@ -141,6 +146,7 @@ export const RECIPES: Recipe[] = [
       'Eat with any bread that needs using.',
     ],
     'Soft tomatoes and lonely eggs are a complete supper.',
+    'mediterranean',
   ),
   r(
     'yogurt-cucumber-rice',
@@ -157,6 +163,7 @@ export const RECIPES: Recipe[] = [
       'Eat immediately. This is a 10-minute rescue, not a leftover for tomorrow.',
     ],
     'Opened yogurt is forgotten behind newer jars. This uses a whole cup.',
+    'indian',
   ),
   r(
     'grilled-cheese-tomato',
@@ -173,6 +180,7 @@ export const RECIPES: Recipe[] = [
       'Flip once. Rest 30 seconds so you do not lose the cheese to the plate.',
     ],
     'Ends of bread and odds of cheese disappear into something people actually want.',
+    'american',
   ),
   r(
     'aglio-spinach-pasta',
@@ -190,6 +198,7 @@ export const RECIPES: Recipe[] = [
       'Toss until glossy. Parmesan and lemon if they are around.',
     ],
     'Pasta waits forever. Spinach does not. This is the handshake.',
+    'italian',
   ),
   r(
     'chicken-tacos',
@@ -207,6 +216,7 @@ export const RECIPES: Recipe[] = [
       'Pile chicken, a cool spoon of yogurt, and anything crunchy left in the crisper.',
     ],
     'A pack of tortillas often dies unopened. Chicken is the reason to open it.',
+    'mexican',
   ),
   r(
     'carrot-ginger-soup',
@@ -241,6 +251,7 @@ export const RECIPES: Recipe[] = [
       'Serve over leftover rice if you have it.',
     ],
     'Opened tofu is a countdown. Vegetables ride along.',
+    'chinese',
   ),
   r(
     'black-bean-tacos',
@@ -257,6 +268,7 @@ export const RECIPES: Recipe[] = [
       'Warm tortillas. Load beans and any leftover crunch.',
     ],
     'A can and a pack of tortillas beat another delivery order.',
+    'mexican',
   ),
   r(
     'mushroom-pasta',
@@ -273,6 +285,7 @@ export const RECIPES: Recipe[] = [
       'Toss with pasta, pasta water, parsley, and parmesan.',
     ],
     'Slimy mushrooms are a choice. Golden mushrooms are a 12-minute decision.',
+    'italian',
   ),
   r(
     'salmon-lemon',
@@ -305,6 +318,7 @@ export const RECIPES: Recipe[] = [
       'Chili if you want it to feel like a decision.',
     ],
     'Uses leftover half-lemons and the pasta box with three nests left.',
+    'italian',
   ),
   r(
     'lentil-soup',
@@ -321,6 +335,7 @@ export const RECIPES: Recipe[] = [
       'Salt, lemon, and more olive oil than is polite.',
     ],
     'A pot that empties the drawer and feeds tomorrow too.',
+    'mediterranean',
   ),
   r(
     'peanut-noodles',
@@ -337,6 +352,7 @@ export const RECIPES: Recipe[] = [
       'Top with cucumber, scallion, chili — whatever is left.',
     ],
     'Half a jar of peanut butter and last night’s noodles are a meal.',
+    'thai',
   ),
   r(
     'sweet-potato-chickpea',
@@ -353,6 +369,7 @@ export const RECIPES: Recipe[] = [
       'Pile on yogurt and lemon. Wilt spinach in the hot tray if needed.',
     ],
     'Root vegetables outlive our memory of buying them. Roast is the reminder.',
+    'mediterranean',
   ),
   r(
     'avocado-toast-egg',
@@ -369,6 +386,7 @@ export const RECIPES: Recipe[] = [
       'Chili flakes if the avocado is very ripe — it usually is.',
     ],
     'Avocados go from perfect to compost in a day. Eat them at perfect.',
+    'american',
   ),
   r(
     'broccoli-cheddar-melt',
@@ -385,6 +403,7 @@ export const RECIPES: Recipe[] = [
       'Or skip bread and eat it from the skillet with a fork. That is also dinner.',
     ],
     'Broccoli yellows in the bag. Cheese hides a multitude of almosts.',
+    'american',
   ),
   r(
     'leftover-chicken-soup',
@@ -401,6 +420,7 @@ export const RECIPES: Recipe[] = [
       'Rice or pasta in the last 5 minutes if you have leftovers to hide.',
     ],
     'The most wasted protein in a household is cooked meat nobody planned a second life for.',
+    'american',
   ),
   r(
     'banana-oat-skillet',
@@ -433,6 +453,7 @@ export const RECIPES: Recipe[] = [
       'Salt well. Parmesan if the block is open.',
     ],
     'Zucchini turns to water in the fridge. High heat is the fix.',
+    'mediterranean',
   ),
   r(
     'cabbage-noodles',
@@ -449,6 +470,7 @@ export const RECIPES: Recipe[] = [
       'Chili and scallion. Eat from the pan.',
     ],
     'People buy a whole cabbage for one recipe and lose the rest.',
+    'chinese',
   ),
   r(
     'ham-egg-toast',
@@ -464,6 +486,7 @@ export const RECIPES: Recipe[] = [
       'Toast and butter the bread. Stack. Cheese if you are that person tonight.',
     ],
     'Opened ham is a food-safety clock. Use it on toast, not as a guilt object.',
+    'british',
   ),
   r(
     'mozzarella-tomato',
@@ -479,6 +502,7 @@ export const RECIPES: Recipe[] = [
       'Oil, basil, more salt. Bread if the juices demand it.',
     ],
     'Wet mozzarella does not improve in the fridge. Tomatoes do not either.',
+    'italian',
   ),
   r(
     'feta-eggs',
@@ -495,6 +519,7 @@ export const RECIPES: Recipe[] = [
       'Chili and bread. This is a whole dinner for one, or a share for two.',
     ],
     'Blocks of feta dry out after the first use. Heat brings them back.',
+    'greek',
   ),
   r(
     'beef-pasta',
@@ -511,6 +536,7 @@ export const RECIPES: Recipe[] = [
       'Boil pasta, toss through. This freezes if you make too much — that is the point.',
     ],
     'Mince is among the most thrown-away proteins because plans change.',
+    'italian',
   ),
   r(
     'oat-yogurt-bowl',
@@ -541,6 +567,7 @@ export const RECIPES: Recipe[] = [
       'Pour over beaten eggs. Cook low, then grill the top.',
     ],
     'Potatoes are cheap and still wasted by the bag. This uses three.',
+    'italian',
   ),
   r(
     'herb-oil-pasta',
@@ -556,6 +583,7 @@ export const RECIPES: Recipe[] = [
       'Toss through hot pasta. If you only have one herb, that is enough.',
     ],
     'Herbs are the fastest wilt in the drawer. Pasta is their last useful job.',
+    'italian',
   ),
   r(
     'corn-eggs',
@@ -571,6 +599,7 @@ export const RECIPES: Recipe[] = [
       'Add beaten eggs and soft-scramble. Scallion on top.',
     ],
     'Cooked corn sits in foil and gets forgotten. Eggs wake it up.',
+    'american',
   ),
   r(
     'shrimp-garlic',
@@ -586,6 +615,7 @@ export const RECIPES: Recipe[] = [
       'Lemon, parsley, salt. Rice if it is already cooked.',
     ],
     'Defrosted shrimp cannot go back. This recipe respects that.',
+    'mediterranean',
   ),
   r(
     'kale-beans',
@@ -602,6 +632,7 @@ export const RECIPES: Recipe[] = [
       'Add chickpeas and lemon. Eat with bread or rice.',
     ],
     'Kale outlives spinach but still ends up yellow in the bag.',
+    'mediterranean',
   ),
   r(
     'apple-cheddar-toast',
@@ -617,6 +648,7 @@ export const RECIPES: Recipe[] = [
       'Grill until the cheese slumps. Honey if the apple is sharp.',
     ],
     'Soft apples still slice. Ends of cheddar still melt.',
+    'american',
   ),
   r(
     'roast-veg-eggs',
@@ -649,6 +681,7 @@ export const RECIPES: Recipe[] = [
       'Lemon and salt until it tastes expensive.',
     ],
     'Coconut milk cans linger after one curry. Lentils make the second.',
+    'indian',
   ),
   r(
     'bacon-potato',
@@ -664,5 +697,6 @@ export const RECIPES: Recipe[] = [
       'Return bacon. Eggs on top if the carton is open.',
     ],
     'Opened bacon is a countdown. Potatoes make it a meal instead of a snack.',
+    'british',
   ),
 ];
