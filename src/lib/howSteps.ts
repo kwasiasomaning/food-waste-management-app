@@ -1,11 +1,12 @@
 const FALLBACK_HOW = 'Cook it hot. Season. Eat it tonight.';
+const LONG_STEP = 220;
 
 const HTML_BREAK = /<br\s*\/?>/gi;
 const HTML_BLOCK_END = /<\/(p|div|li|h\d)>/gi;
 const HTML_TAG = /<\/?[^>]+>/g;
 const MARKDOWN_BOLD = /\*\*(.+?)\*\*/g;
 const MARKDOWN_ITALIC = /(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g;
-const STEP_HEADING = /^(?:step\s+\d+|method|instructions|directions)\s*[:.)-]?\s*$/i;
+const STEP_HEADING = /^(?:(?:step\s+)?\d{1,2}|method|instructions|directions)\s*[:.)-]?\s*$/i;
 const NUMBER_PREFIX = /^(?:step\s+)?\d{1,2}\s*[.):\-]\s+/i;
 const BULLET_PREFIX = /^[*•\-–]+\s+/;
 const LEADING_MARK = /^[*_]+/;
@@ -17,7 +18,7 @@ export function howSteps(input: string | string[] | null | undefined): string[] 
     pieces.push(...splitInstructionChunk(chunk));
   }
   const cleaned = pieces.map(cleanStep).filter(isDisplayableStep);
-  const split = splitOversizedBlob(cleaned);
+  const split = splitLongSteps(cleaned);
   return split.length ? split : [FALLBACK_HOW];
 }
 
@@ -70,6 +71,9 @@ function cleanStep(step: string): string {
   if (text && /^[a-z]/.test(text)) {
     text = text[0].toUpperCase() + text.slice(1);
   }
+  if (text && !/[.!?]$/.test(text)) {
+    text += '.';
+  }
   return text;
 }
 
@@ -77,21 +81,32 @@ function isDisplayableStep(step: string): boolean {
   return step.length >= 8 && /[A-Za-z]/.test(step);
 }
 
-function splitOversizedBlob(steps: string[]): string[] {
-  if (steps.length !== 1 || steps[0].length < 240) return steps;
-  const sentences = steps[0]
+function splitLongSteps(steps: string[]): string[] {
+  const out: string[] = [];
+  for (const step of steps) {
+    if (step.length < LONG_STEP) {
+      out.push(step);
+      continue;
+    }
+    const sentences = splitSentences(step);
+    if (sentences.length >= 2) out.push(...sentences);
+    else out.push(step);
+  }
+  return out;
+}
+
+function splitSentences(text: string): string[] {
+  const parts = text
     .split(/(?<=[.!?])\s+(?=[A-Z"“])/)
     .map((part) => part.trim())
     .filter(Boolean);
-  if (sentences.length < 3) return steps;
   const merged: string[] = [];
-  for (const sentence of sentences) {
+  for (const sentence of parts) {
     if (merged.length && (sentence.length < 24 || /^Enjoy\b/i.test(sentence))) {
       merged[merged.length - 1] += ` ${sentence}`;
     } else {
       merged.push(sentence);
     }
   }
-  const usable = merged.filter(isDisplayableStep);
-  return usable.length >= 3 ? usable : steps;
+  return merged.filter(isDisplayableStep);
 }

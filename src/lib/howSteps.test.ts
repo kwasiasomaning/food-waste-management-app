@@ -123,6 +123,32 @@ describe('howSteps', () => {
     expect(steps.length).toBeGreaterThanOrEqual(3);
     expectDisplayableHow(steps, 'rendang blob');
   });
+
+  it('ends a remote step with a period so How reads as a sentence', () => {
+    expect(howSteps(['Serve with fresh bread', 'Rest the pan'])).toEqual([
+      'Serve with fresh bread.',
+      'Rest the pan.',
+    ]);
+  });
+
+  it('splits long ThemealDB sections, including a bare 2/3/4 between paragraphs', () => {
+    const raw = [
+      'For the dough place lard, warm water and salt in a large kneading bowl and stir. Add flour and oregano and either knead five minutes by hand or with the kneading function of your machine. Let rest covered for at least half an hour or overnight in the fridge.',
+      '2',
+      'For the filling place tomatoes for about 30 seconds in boiling water, then cool with cold water and peel of skin and cut into cubes. Press garlic through garlic press, cut onions into cubes. Simmer garlic and onions in some olive oil until translucent. Take out onions and garlic and brown the meat at high heat from all sides.',
+      '3',
+      'Cut dough into half and roll out one half thinly on floured surface. Cut out circles about 12-15cm in diameter. Place filling on one circle and fold over so that you get half moons.',
+      '4',
+      'Meanwhile preheat oven to 200 degrees Celsius. Brush empanadas with egg wash and bake until golden. Serve warm with chimichurri sauce.',
+    ].join('\n\n');
+    const steps = howSteps(raw);
+    expect(steps.some((step) => /^\d+$/.test(step))).toBe(false);
+    expect(steps.length).toBeGreaterThanOrEqual(8);
+    expect(steps.every((step) => step.length < 220)).toBe(true);
+    expectDisplayableHow(steps, 'empanadas');
+    expect(steps.join(' ').toLowerCase()).toMatch(/dough/);
+    expect(steps.join(' ').toLowerCase()).toMatch(/filling|meat/);
+  });
 });
 
 describe('house meal How', () => {
