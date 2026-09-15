@@ -3,19 +3,25 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { LocaleIcons } from '../components/LocaleIcons';
 import { countedNoun } from '../lib/grammar';
+import {
+  groceryOrderStatusLabel,
+  grocerySpendUsd,
+  moneySavedAfterGroceryUsd,
+} from '../lib/grocery';
 import { formatKg, formatMoney, mealsEquivalent } from '../lib/savings';
 import { useKitchen } from '../store/kitchen';
+import type { GroceryOrder } from '../types';
 import { colors, fonts, radius, traffic } from '../theme';
 
 export function ImpactScreen() {
   const cooked = useKitchen((s) => s.cooked);
   const wasted = useKitchen((s) => s.wasted ?? []);
   const used = useKitchen((s) => s.used ?? []);
+  const groceryOrders = useKitchen((s) => s.groceryOrders ?? []);
   const currency = useKitchen((s) => s.settings.currency ?? 'USD');
   const money = (value: number) => formatMoney(value, currency);
-  const cookedUsd = cooked.reduce((sum, meal) => sum + meal.savedUsd, 0);
-  const usedUsd = used.reduce((sum, item) => sum + item.savedUsd, 0);
-  const savedUsd = Math.round((cookedUsd + usedUsd) * 100) / 100;
+  const groceryUsd = grocerySpendUsd(groceryOrders);
+  const savedUsd = moneySavedAfterGroceryUsd(cooked, used, groceryOrders);
   const lostUsd = wasted.reduce((sum, item) => sum + item.lostUsd, 0);
   const lostKg = wasted.reduce((sum, item) => sum + item.lostKg, 0);
   const mealsAway = mealsEquivalent(lostKg);
@@ -34,8 +40,9 @@ export function ImpactScreen() {
           <HeroBox
             label="Money Saved"
             amount={formatMoney(savedUsd, currency, { tight: true })}
-            ink={colors.sage}
-            wash={colors.sageSoft}
+            detail={groceryUsd > 0 ? `After ${money(groceryUsd)} grocery delivery` : undefined}
+            ink={savedUsd >= 0 ? colors.sage : traffic.tonight.ink}
+            wash={savedUsd >= 0 ? colors.sageSoft : traffic.tonight.wash}
             large
           />
           <HeroBox
@@ -62,9 +69,32 @@ export function ImpactScreen() {
             <Stat count={wasted.length} one="item binned" many="items binned" />
             <Stat count={mealsAway} one="meal thrown away" many="meals thrown away" />
           </View>
+          <View style={styles.row}>
+            <Stat
+              count={groceryOrders.length}
+              one="grocery delivery"
+              many="grocery deliveries"
+            />
+            <View style={styles.stat}>
+              <Text style={styles.statNum}>{money(groceryUsd)}</Text>
+              <Text style={styles.statCap}>grocery spend</Text>
+            </View>
+          </View>
         </View>
 
-        <Text style={styles.section}>Cooked</Text>
+        <Text style={styles.section}>Delivered for dinner</Text>
+        {groceryOrders.length === 0 ? (
+          <Text style={styles.empty}>
+            Send Shop through Uber Eats Grocery and the ticket lands here. Money Saved comes down
+            by the order total so the kitchen ledger stays honest.
+          </Text>
+        ) : (
+          groceryOrders.map((order) => (
+            <GroceryTicket key={order.id} order={order} money={money} />
+          ))
+        )}
+
+        <Text style={[styles.section, { marginTop: 28 }]}>Cooked</Text>
         {cooked.length === 0 ? (
           <Text style={styles.empty}>
             Cook tonight’s dinner and the savings show up here. No leaderboard. No guilt streak.
@@ -138,6 +168,53 @@ export function ImpactScreen() {
   );
 }
 
+function GroceryTicket({
+  order,
+  money,
+}: {
+  order: GroceryOrder;
+  money: (value: number) => string;
+}) {
+  return (
+    <View style={styles.ticket}>
+      <View style={styles.ticketHead}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.mealTitle}>{order.providerLabel}</Text>
+          <Text style={styles.mealMeta}>
+            {new Date(order.placedAt).toLocaleDateString(undefined, {
+              month: 'short',
+              day: 'numeric',
+            })}
+            {' · '}
+            {groceryOrderStatusLabel(order.status)}
+            {' · '}
+            {order.externalOrderId}
+          </Text>
+        </View>
+        <Text style={styles.mealLose}>−{money(order.totalUsd)}</Text>
+      </View>
+      <Text style={styles.ticketStore}>{order.storeName}</Text>
+      {order.lines.map((line) => (
+        <View key={line.sku} style={styles.ticketLine}>
+          <Text style={styles.ticketName}>
+            {line.quantity} × {line.name}
+          </Text>
+          <Text style={styles.ticketAmt}>{money(line.lineTotalUsd)}</Text>
+        </View>
+      ))}
+      <View style={styles.ticketLine}>
+        <Text style={styles.ticketName}>Delivery</Text>
+        <Text style={styles.ticketAmt}>{money(order.deliveryFeeUsd)}</Text>
+      </View>
+      <View style={styles.ticketLine}>
+        <Text style={styles.ticketName}>Service</Text>
+        <Text style={styles.ticketAmt}>{money(order.serviceFeeUsd)}</Text>
+      </View>
+      {order.dropoffLabel ? <Text style={styles.ticketDrop}>{order.dropoffLabel}</Text> : null}
+    </View>
+  );
+}
+
 function HeroBox({
   label,
   amount,
@@ -182,7 +259,7 @@ function Stat({ count, one, many }: { count: number; one: string; many: string }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
-  scroll: { padding: 20, paddingBottom: 40 },
+  scroll: { padding: 20, paddingBottom: 56 },
   kicker: { fontFamily: fonts.sansSemi, color: colors.inkSoft },
   top: {
     flexDirection: 'row',
@@ -256,4 +333,19 @@ const styles = StyleSheet.create({
   mealMeta: { fontFamily: fonts.sans, color: colors.inkSoft, marginTop: 2 },
   mealSave: { fontFamily: fonts.sansBold, color: colors.sage },
   mealLose: { fontFamily: fonts.sansBold, color: traffic.tonight.ink },
+  ticket: {
+    backgroundColor: colors.cream,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
+    padding: 14,
+    marginBottom: 10,
+    gap: 6,
+  },
+  ticketHead: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+  ticketStore: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 13 },
+  ticketLine: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
+  ticketName: { fontFamily: fonts.sans, color: colors.ink, flex: 1 },
+  ticketAmt: { fontFamily: fonts.sansSemi, color: colors.ink },
+  ticketDrop: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 12, marginTop: 4 },
 });

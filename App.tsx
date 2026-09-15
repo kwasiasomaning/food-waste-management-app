@@ -28,6 +28,7 @@ import { RecipeScreen } from './src/screens/RecipeScreen';
 import { ScanScreen } from './src/screens/ScanScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { ShopScreen } from './src/screens/ShopScreen';
+import { GroceryCheckoutScreen } from './src/screens/GroceryCheckoutScreen';
 import { TonightScreen } from './src/screens/TonightScreen';
 import { FOOD_PHOTOS } from './src/data/foodPhotos';
 import { useAuth } from './src/store/auth';
@@ -128,7 +129,11 @@ export default function App() {
                 onSnapHandled={() => setSnapCommand(null)}
               />
             ) : null}
-            {route.tab === 'shop' ? <ShopScreen /> : null}
+            {route.tab === 'shop' ? (
+              <ShopScreen
+                onDeliver={(ingredientIds) => setRoute({ name: 'grocery', ingredientIds })}
+              />
+            ) : null}
             {route.tab === 'impact' ? <ImpactScreen /> : null}
             <TabBar
               tab={route.tab}
@@ -155,6 +160,13 @@ export default function App() {
           <SettingsScreen
             onBack={() => setRoute({ name: 'tabs', tab: 'tonight' })}
             onOpenLegal={(doc) => setRoute({ name: 'legal', doc, back: 'settings' })}
+          />
+        ) : null}
+        {route.name === 'grocery' ? (
+          <GroceryCheckoutScreen
+            ingredientIds={route.ingredientIds}
+            onBack={() => setRoute({ name: 'tabs', tab: 'shop' })}
+            onDone={() => setRoute({ name: 'tabs', tab: 'impact' })}
           />
         ) : null}
         {route.name === 'cooked' ? (

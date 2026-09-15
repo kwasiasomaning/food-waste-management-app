@@ -5,20 +5,26 @@ import { FoodStill } from '../components/FoodStill';
 import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
+import { groceryProvider, shopIdsForDelivery } from '../lib/grocery';
 import { missingShopList, suggestDinners } from '../lib/matching';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
 
-export function ShopScreen() {
+export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[]) => void }) {
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
+  const cuisine = useKitchen((s) => s.settings.cuisine ?? 'any');
   const shop = useKitchen((s) => s.shop);
+  const providerId = useKitchen((s) => s.settings.groceryProviderId);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
   const toggleShop = useKitchen((s) => s.toggleShop);
   const buyChecked = useKitchen((s) => s.buyChecked);
   const clearShop = useKitchen((s) => s.clearShop);
+  const provider = groceryProvider(providerId);
+  const deliverIds = shopIdsForDelivery(shop);
+  const checkedCount = shop.filter((item) => item.checked).length;
 
-  const suggested = missingShopList(suggestDinners(pantry, diet, 3));
+  const suggested = missingShopList(suggestDinners(pantry, diet, 3, Date.now(), cuisine));
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -26,7 +32,8 @@ export function ShopScreen() {
         <Text style={styles.kicker}>Only what dinner is missing</Text>
         <Text style={styles.title}>Shop</Text>
         <Text style={styles.lede}>
-          Not a grocery list. Two staples so you can cook what is already dying at home.
+          Not a grocery list. Two staples so you can cook what is already dying at home. Tick what
+          you bought in person, or send the missing bits through {provider.label}.
         </Text>
 
         {shop.length === 0 ? (
@@ -35,7 +42,7 @@ export function ShopScreen() {
             <Text style={styles.emptyTitle}>Nothing to buy.</Text>
             <Text style={styles.emptyBody}>
               If Tonight needs one or two things, they land here. You can pull them from tonight’s
-              dinners.
+              dinners, then have them delivered in minutes.
             </Text>
             {suggested.length > 0 ? (
               <Button
@@ -66,6 +73,16 @@ export function ShopScreen() {
               );
             })}
             <Button label="I bought the checked ones" onPress={buyChecked} />
+            <Button
+              variant="sage"
+              label={`Deliver with ${provider.label}`}
+              onPress={() => onDeliver(deliverIds)}
+            />
+            <Text style={styles.hint}>
+              {checkedCount > 0
+                ? `${checkedCount} ticked ${checkedCount === 1 ? 'item goes' : 'items go'} on the ${provider.label} ticket.`
+                : `Nothing ticked — the whole list goes to ${provider.label}.`}
+            </Text>
             <Button variant="ghost" label="Clear list" onPress={clearShop} />
           </View>
         )}
@@ -107,4 +124,5 @@ const styles = StyleSheet.create({
   check: { color: colors.cream, fontWeight: '700' },
   name: { fontFamily: fonts.sansSemi, fontSize: 16, color: colors.ink },
   reason: { fontFamily: fonts.sans, color: colors.inkSoft, marginTop: 2 },
+  hint: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 13, lineHeight: 19, paddingHorizontal: 4 },
 });

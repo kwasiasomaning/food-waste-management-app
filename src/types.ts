@@ -8,6 +8,28 @@ export type Category =
 
 export type RecipeDiet = 'omnivore' | 'vegetarian' | 'vegan';
 
+export type Cuisine =
+  | 'any'
+  | 'american'
+  | 'british'
+  | 'caribbean'
+  | 'chinese'
+  | 'french'
+  | 'ghanaian'
+  | 'greek'
+  | 'indian'
+  | 'italian'
+  | 'japanese'
+  | 'korean'
+  | 'mediterranean'
+  | 'mexican'
+  | 'middle-eastern'
+  | 'moroccan'
+  | 'nigerian'
+  | 'spanish'
+  | 'thai'
+  | 'vietnamese';
+
 export type Diet =
   | RecipeDiet
   | 'pescatarian'
@@ -85,6 +107,7 @@ export type Recipe = {
   rescue: string;
   source?: RecipeSource;
   photoUri?: string;
+  cuisine?: Cuisine;
 };
 
 export type PantryItem = {
@@ -135,8 +158,15 @@ export type Settings = {
   onboardingDone: boolean;
   country: string;
   currency: string;
+  cuisine: Cuisine;
   ownerId?: string;
+  deliveryLine1?: string;
+  deliveryCity?: string;
+  deliveryPostal?: string;
+  groceryProviderId?: string;
 };
+
+export type { GroceryDropoff, GroceryLine, GroceryOrder, GroceryQuote } from './lib/grocery/types';
 
 export type ConsentRecord = {
   privacyVersion: string;

@@ -1,6 +1,7 @@
 import { INGREDIENT_MAP } from '../data/ingredients';
 import { RECIPES } from '../data/recipes';
-import type { Diet, PantryItem, Recipe, ScoredRecipe } from '../types';
+import type { Cuisine, Diet, PantryItem, Recipe, ScoredRecipe } from '../types';
+import { pickCuisineFirst } from './cuisine';
 import { daysUntil } from './dates';
 import { dietAllows } from './diet';
 
@@ -93,11 +94,12 @@ export function suggestDinners(
   userDiet: Diet,
   limit = 3,
   now = Date.now(),
+  cuisine: Cuisine = 'any',
 ): ScoredRecipe[] {
-  return RECIPES.map((recipe) => scoreRecipe(recipe, pantry, userDiet, now))
+  const scored = RECIPES.map((recipe) => scoreRecipe(recipe, pantry, userDiet, now))
     .filter((row): row is ScoredRecipe => row !== null)
-    .sort((a, b) => b.score - a.score || a.missing.length - b.missing.length)
-    .slice(0, limit);
+    .sort((a, b) => b.score - a.score || a.missing.length - b.missing.length);
+  return pickCuisineFirst(scored, cuisine, limit);
 }
 
 export function missingShopList(suggestions: ScoredRecipe[]): { ingredientId: string; reason: string }[] {

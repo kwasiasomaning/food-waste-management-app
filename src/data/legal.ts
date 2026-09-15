@@ -1,6 +1,6 @@
-export const PRIVACY_VERSION = '1.0';
-export const TERMS_VERSION = '1.0';
-export const LEGAL_UPDATED = '12 September 2026';
+export const PRIVACY_VERSION = '1.1';
+export const TERMS_VERSION = '1.1';
+export const LEGAL_UPDATED = '15 September 2026';
 export const PRIVACY_CONTACT = 'kwasi@oakagility.coach';
 export const APP_NAME = 'Tonight';
 
@@ -13,7 +13,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   },
   {
     heading: 'What we collect',
-    body: 'We collect only what the app needs: your email and password (stored as a salted hash, never in plain text), your name, the country and currency you choose, household size and diet, pantry items, cooked and binned records, and the consents you give. We do not ask for your phone number, payment card, precise location, contacts, or government ID. We do not run advertising SDKs or sell your data.',
+    body: 'We collect only what the app needs: your email and password (stored as a salted hash, never in plain text), your name, the country and currency you choose, household size and diet, pantry items, cooked and binned records, grocery-order ledgers, the consents you give, and — if you order dinner groceries — the drop-off address you type (street, city, and postal code). We do not ask for your phone number, payment card, GPS or other precise location, contacts, or government ID. We do not run advertising SDKs or sell your data.',
   },
   {
     heading: 'Where it is stored',
@@ -33,7 +33,7 @@ export const PRIVACY_SECTIONS: LegalSection[] = [
   },
   {
     heading: 'Who we share it with',
-    body: 'We do not sell personal data. We do not share your kitchen or email with advertisers. The operating system and app stores may process diagnostic information under their own policies if you send them a crash report. Camera and photo access, if you use them, stay on device to identify food you already have.',
+    body: `We do not sell personal data. We do not share your kitchen or email with advertisers. If you place a grocery order, we send the drop-off address and the ingredient list to the grocery partner you chose (starting with Uber Eats Grocery) so they can quote and deliver. Payment stays with that partner or a Tonight grocery backend you configure; this app does not store cards. Sandbox orders stay on this device. The operating system and app stores may process diagnostic information under their own policies if you send them a crash report. Camera and photo access, if you use them, stay on device to identify food you already have.`,
   },
   {
     heading: 'International users',
@@ -73,6 +73,10 @@ export const TERMS_SECTIONS: LegalSection[] = [
   {
     heading: 'Acceptable use',
     body: 'Do not misuse the app, attempt to break security, or use it to harm others. We may refuse or delete an account that is abusive or created for a child below the minimum age.',
+  },
+  {
+    heading: 'Grocery delivery',
+    body: `${APP_NAME} can send missing dinner ingredients to a grocery partner for delivery. Uber Eats Grocery is the first partner; others can use the same quote-and-place contract later. ${APP_NAME} is not the grocer. Prices, availability, and delivery times belong to the partner. Orders may run in an on-device sandbox until a grocery backend is configured. You are responsible for the order. Grocery spend is deducted from Money Saved and itemized on Saved for your records.`,
   },
   {
     heading: 'Stores and availability',
