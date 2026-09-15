@@ -166,7 +166,7 @@ export type Settings = {
   groceryProviderId?: string;
 };
 
-export type { GroceryDropoff, GroceryLine, GroceryOrder, GroceryQuote } from './lib/grocery/types';
+export type { GroceryDropoff, GroceryLine, GroceryOrder } from './lib/grocery/types';
 
 export type ConsentRecord = {
   privacyVersion: string;

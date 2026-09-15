@@ -85,8 +85,8 @@ export function ImpactScreen() {
         <Text style={styles.section}>Delivered for dinner</Text>
         {groceryOrders.length === 0 ? (
           <Text style={styles.empty}>
-            Send Shop through Uber Eats Grocery and the ticket lands here. Money Saved comes down
-            by the order total so the kitchen ledger stays honest.
+            Shop opens Uber Eats so you can add missing bits to your basket there. Tick them bought
+            when they land. Older delivery tickets, if you have any, stay here.
           </Text>
         ) : (
           groceryOrders.map((order) => (

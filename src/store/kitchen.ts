@@ -51,6 +51,7 @@ export type KitchenState = {
   addMissingToShop: (items: { ingredientId: string; reason: string }[]) => void;
   toggleShop: (ingredientId: string) => void;
   buyChecked: () => void;
+  buyShopItems: (ingredientIds: string[]) => void;
   recordGroceryOrder: (order: GroceryOrder) => void;
   clearShop: () => void;
   resetKitchen: () => void;
@@ -229,8 +230,15 @@ export const useKitchen = create<KitchenState>()(
         const checked = get()
           .shop.filter((item) => item.checked)
           .map((item) => item.ingredientId);
-        if (checked.length) get().addIngredients(checked, 'shop');
-        set((state) => ({ shop: state.shop.filter((item) => !item.checked) }));
+        get().buyShopItems(checked);
+      },
+      buyShopItems: (ingredientIds) => {
+        const ids = [...new Set(ingredientIds)].filter(Boolean);
+        if (!ids.length) return;
+        get().addIngredients(ids, 'shop');
+        set((state) => ({
+          shop: state.shop.filter((item) => !ids.includes(item.ingredientId)),
+        }));
       },
       recordGroceryOrder: (order) =>
         set((state) =>

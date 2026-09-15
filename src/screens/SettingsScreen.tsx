@@ -3,14 +3,12 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DietPicker } from '../components/DietPicker';
-import { DeliveryAddress } from '../components/DeliveryAddress';
 import { HouseholdInput } from '../components/HouseholdInput';
 import { SettingPicker } from '../components/SettingPicker';
 import { CUISINE_MAP, CUISINE_OPTIONS } from '../data/cuisines';
 import { COUNTRIES, COUNTRY_MAP, CURRENCIES, CURRENCY_MAP } from '../data/places';
 import { deliverExport } from '../lib/auth/exportData';
 import { isCuisine } from '../lib/cuisine';
-import { dropoffFromSettings, groceryProvider, groceryProviders } from '../lib/grocery';
 import { countryLabel, currencyLabel } from '../lib/money';
 import { useAuth } from '../store/auth';
 import { useKitchen } from '../store/kitchen';
@@ -133,56 +131,9 @@ export function SettingsScreen({
         </Card>
 
         <Card
-          title="Drop-off"
-          hint="Typed address only, for dinner groceries. No GPS. Tonight never stores a payment card."
-        >
-          <DeliveryAddress
-            value={dropoffFromSettings(settings)}
-            onChange={(dropoff) =>
-              updateSettings({
-                deliveryLine1: dropoff.line1,
-                deliveryCity: dropoff.city,
-                deliveryPostal: dropoff.postal,
-              })
-            }
-          />
-        </Card>
-
-        <Card
-          title="Dinner delivery"
-          hint="Shop can send missing bits through a grocery app. Uber Eats Grocery is first; others can plug in on the same contract."
-        >
-          {groceryProviders().length > 1 ? (
-            <SettingPicker
-              title="Grocery app"
-              value={settings.groceryProviderId ?? 'uber-eats-grocery'}
-              options={groceryProviders().map((provider) => ({
-                value: provider.id,
-                label: provider.label,
-              }))}
-              onChange={(next) => updateSettings({ groceryProviderId: next })}
-            >
-              <View style={styles.pickRow}>
-                <View style={styles.pickCopy}>
-                  <Text style={styles.pickLabel}>Grocery app</Text>
-                  <Text style={styles.pickValue}>
-                    {groceryProvider(settings.groceryProviderId).label}
-                  </Text>
-                </View>
-                <Text style={styles.chevron}>▾</Text>
-              </View>
-            </SettingPicker>
-          ) : (
-            <View style={styles.pickRow}>
-              <View style={styles.pickCopy}>
-                <Text style={styles.pickLabel}>Grocery app</Text>
-                <Text style={styles.pickValue}>
-                  {groceryProvider(settings.groceryProviderId).label}
-                </Text>
-              </View>
-            </View>
-          )}
-        </Card>
+          title="Uber Eats"
+          hint="Shop opens the Uber Eats app — if it is on the phone — with each missing dinner item so you can add it to your basket. Tonight does not place the order or store a card. Uber Eats uses the address already in that app."
+        />
 
         <Card title="Dinner" hint="Tonight only suggests what this table can eat.">
           <Text style={styles.fieldLabel}>Diet</Text>
@@ -291,12 +242,12 @@ function Card({
   title?: string;
   hint?: string;
   tone?: 'warn';
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <View style={[styles.card, tone === 'warn' && styles.cardWarn]}>
       {title ? <Text style={styles.cardTitle}>{title}</Text> : null}
-      {hint ? <Text style={styles.cardHint}>{hint}</Text> : null}
+      {hint ? <Text style={[styles.cardHint, !children && { marginBottom: 0 }]}>{hint}</Text> : null}
       {children}
     </View>
   );
