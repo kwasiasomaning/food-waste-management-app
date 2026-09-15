@@ -12,13 +12,14 @@ import { colors, fonts, radius } from '../theme';
 export function ShopScreen() {
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
+  const cuisine = useKitchen((s) => s.settings.cuisine ?? 'any');
   const shop = useKitchen((s) => s.shop);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
   const toggleShop = useKitchen((s) => s.toggleShop);
   const buyChecked = useKitchen((s) => s.buyChecked);
   const clearShop = useKitchen((s) => s.clearShop);
 
-  const suggested = missingShopList(suggestDinners(pantry, diet, 3));
+  const suggested = missingShopList(suggestDinners(pantry, diet, 3, Date.now(), cuisine));
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>

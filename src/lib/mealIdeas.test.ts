@@ -28,4 +28,18 @@ describe('mergeDinnerIdeas', () => {
     expect(merged[0].recipe.id).toBe('remote-leftover-fried-rice');
     expect(merged[1].recipe.id).toBe('spinach-frittata');
   });
+
+  it('prefers the chosen cuisine when merging house and remote dinners', () => {
+    const italian = {
+      ...scored('aglio-spinach-pasta', 30),
+      recipe: {
+        ...scored('aglio-spinach-pasta', 30).recipe,
+        cuisine: 'italian' as const,
+      },
+    };
+    const chineseRemote = scored('leftover-fried-rice', 80, 'themealdb');
+    const merged = mergeDinnerIdeas([[italian], [chineseRemote]], 1, 'italian');
+    expect(merged).toHaveLength(1);
+    expect(merged[0].recipe.id).toBe('aglio-spinach-pasta');
+  });
 });

@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { DEFAULT_CUISINE } from '../data/cuisines';
 import { getIngredient } from '../data/ingredients';
 import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from '../data/places';
 import { uid } from '../lib/dates';
@@ -53,6 +54,7 @@ const defaultSettings: Settings = {
   onboardingDone: false,
   country: DEFAULT_COUNTRY,
   currency: DEFAULT_CURRENCY,
+  cuisine: DEFAULT_CUISINE,
 };
 
 export const useKitchen = create<KitchenState>()(
@@ -73,6 +75,7 @@ export const useKitchen = create<KitchenState>()(
             country: state.settings.country,
             currency: state.settings.currency,
             ownerId: state.settings.ownerId,
+            cuisine: state.settings.cuisine,
             diet,
             householdSize: parseHouseholdSize(String(householdSize), 1),
             onboardingDone: true,
@@ -225,6 +228,7 @@ export const useKitchen = create<KitchenState>()(
             onboardingDone: state.settings.onboardingDone,
             diet: state.settings.diet,
             householdSize: state.settings.householdSize,
+            cuisine: state.settings.cuisine,
           },
           pantry: [],
           cooked: [],
@@ -288,6 +292,7 @@ export const useKitchen = create<KitchenState>()(
         if (state?.settings) {
           if (!state.settings.country) state.settings.country = DEFAULT_COUNTRY;
           if (!state.settings.currency) state.settings.currency = DEFAULT_CURRENCY;
+          if (!state.settings.cuisine) state.settings.cuisine = DEFAULT_CUISINE;
         }
         state?.setHydrated();
       },
