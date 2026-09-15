@@ -54,6 +54,13 @@ export const CUISINES: CuisineDef[] = [
     dummyjson: [],
   },
   {
+    id: 'ghanaian',
+    label: 'Ghanaian',
+    detail: 'House recipes · TheMealDB',
+    areas: ['Ghanaian'],
+    dummyjson: [],
+  },
+  {
     id: 'greek',
     label: 'Greek',
     detail: 'TheMealDB · DummyJSON',
@@ -115,6 +122,13 @@ export const CUISINES: CuisineDef[] = [
     detail: 'TheMealDB · DummyJSON',
     areas: ['Moroccan'],
     dummyjson: ['Moroccan'],
+  },
+  {
+    id: 'nigerian',
+    label: 'Nigerian',
+    detail: 'House recipes · TheMealDB',
+    areas: ['Nigerian'],
+    dummyjson: [],
   },
   {
     id: 'spanish',

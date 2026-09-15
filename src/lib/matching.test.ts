@@ -115,6 +115,24 @@ describe('suggestDinners', () => {
     expect(suggestions.some((row) => row.recipe.id === 'spinach-frittata' || row.recipe.id === 'aglio-spinach-pasta')).toBe(true);
   });
 
+  it('puts Nigerian pantry dinners first when that cuisine is chosen', () => {
+    const suggestions = suggestDinners(starterPantry(), 'omnivore', 3, Date.now(), 'nigerian');
+    expect(suggestions).toHaveLength(3);
+    expect(suggestions.every((row) => row.recipe.cuisine === 'nigerian')).toBe(true);
+    expect(suggestions.some((row) => row.recipe.id === 'efo-spinach-stew' || row.recipe.id === 'tomato-jollof')).toBe(
+      true,
+    );
+  });
+
+  it('puts Ghanaian pantry dinners first when that cuisine is chosen', () => {
+    const suggestions = suggestDinners(starterPantry(), 'omnivore', 3, Date.now(), 'ghanaian');
+    expect(suggestions).toHaveLength(3);
+    expect(suggestions.every((row) => row.recipe.cuisine === 'ghanaian')).toBe(true);
+    expect(
+      suggestions.some((row) => row.recipe.id === 'kontomire-stew' || row.recipe.id === 'ghanaian-jollof'),
+    ).toBe(true);
+  });
+
   it('still fills from the fridge when too few cuisine matches exist', () => {
     const suggestions = suggestDinners(starterPantry(), 'omnivore', 3, Date.now(), 'japanese');
     expect(suggestions).toHaveLength(3);

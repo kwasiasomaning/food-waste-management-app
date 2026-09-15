@@ -7,6 +7,12 @@ describe('ingredientIdFromName', () => {
     expect(ingredientIdFromName('minced beef')).toBe('ground-beef');
     expect(ingredientIdFromName('Fettuccine pasta')).toBe('pasta');
     expect(ingredientIdFromName('olive oil')).toBe('olive-oil');
+    expect(ingredientIdFromName('Scotch bonnet')).toBe('chili');
+    expect(ingredientIdFromName('ripe plantain')).toBe('plantain');
+    expect(ingredientIdFromName('black-eyed peas')).toBe('black-eyed-peas');
+    expect(ingredientIdFromName('red palm oil')).toBe('palm-oil');
+    expect(ingredientIdFromName('okro')).toBe('okra');
+    expect(ingredientIdFromName('white yam')).toBe('yam');
   });
 });
 

@@ -4,12 +4,17 @@ function jsonResponse(body: unknown): Response {
   return { ok: true, json: async () => body } as Response;
 }
 
-function mealLookup(id: string, area: string, ingredient: string) {
+function mealLookup(
+  id: string,
+  area: string,
+  ingredient: string,
+  extras: { title?: string; category?: string } = {},
+) {
   return {
     idMeal: id,
-    strMeal: area === 'Italian' ? 'Spinach Linguine' : 'Fried Rice',
+    strMeal: extras.title ?? (area === 'Italian' ? 'Spinach Linguine' : 'Fried Rice'),
     strMealThumb: `https://example.com/${id}.jpg`,
-    strCategory: 'Vegetarian',
+    strCategory: extras.category ?? 'Vegetarian',
     strArea: area,
     strInstructions: 'Boil the pasta.\nToss with spinach.',
     strIngredient1: ingredient,
@@ -43,6 +48,35 @@ describe('fetchThemealdbMeals', () => {
     expect(meals[0].cuisine).toBe('italian');
     expect(meals[0].subtitle).toMatch(/Italian/);
     expect(meals[0].steps.length).toBeGreaterThan(0);
+  });
+
+  it('drops TheMealDB desserts when filling a cuisine from leftover area meals', async () => {
+    const fetchImpl: typeof fetch = async (url) => {
+      const href = String(url);
+      if (href.includes('filter.php?a=Italian')) {
+        return jsonResponse({ meals: [{ idMeal: '111' }, { idMeal: '530' }] });
+      }
+      if (href.includes('filter.php?i=')) {
+        return jsonResponse({ meals: [] });
+      }
+      if (href.includes('lookup.php?i=111')) {
+        return jsonResponse({ meals: [mealLookup('111', 'Italian', 'spinach')] });
+      }
+      if (href.includes('lookup.php?i=530')) {
+        return jsonResponse({
+          meals: [
+            mealLookup('530', 'Italian', 'eggs', {
+              title: 'Tiramisu',
+              category: 'Dessert',
+            }),
+          ],
+        });
+      }
+      throw new Error(`unexpected ${href}`);
+    };
+
+    const meals = await fetchThemealdbMeals(['spinach'], fetchImpl, new AbortController().signal, 'italian');
+    expect(meals.map((row) => row.id)).toEqual(['themealdb:111']);
   });
 });
 
