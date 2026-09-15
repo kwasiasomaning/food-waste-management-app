@@ -21,8 +21,10 @@ import { Button, Display } from '../components/ui';
 import { COMMON_FRIDGE, INGREDIENT_MAP, searchIngredients } from '../data/ingredients';
 import { takeFridgePhoto, uploadFridgePhoto } from '../lib/fridgePhoto';
 import { identifyFridgeContents } from '../lib/fridgeVision';
+import type { OnboardingStillId } from '../lib/foodPhoto';
 import { loadDinnerIdeas } from '../lib/mealIdeas';
 import { suggestDinners } from '../lib/matching';
+import { pickOnboardingStills } from '../lib/onboardingStills';
 import { itemsFromIds } from '../lib/starterPantry';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
@@ -30,6 +32,7 @@ import type { Diet, ItemSource, ScoredRecipe } from '../types';
 
 export function OnboardingScreen() {
   const completeOnboarding = useKitchen((s) => s.completeOnboarding);
+  const [stills] = useState(pickOnboardingStills);
   const [step, setStep] = useState(0);
   const [diet, setDiet] = useState<Diet>('omnivore');
   const [householdSize, setHouseholdSize] = useState(2);
@@ -44,7 +47,7 @@ export function OnboardingScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <View style={styles.hero}>
-          <FoodStill id="citrus" height={168} style={styles.heroStill} />
+          <FoodStill id={stills[0]} height={176} style={styles.heroStill} />
           <Text style={styles.kicker}>A dinner app, not a climate lecture</Text>
           <Display style={styles.wordmark} italic>
             Tonight.
@@ -62,15 +65,18 @@ export function OnboardingScreen() {
   if (step === 1) {
     return (
       <SafeAreaView style={styles.safe}>
-        <Display>One job.</Display>
-        <Text style={styles.lede}>
-          Photograph the fridge, or tick a list. Tonight ranks three dinners from what expires
-          first. Two missing staples is fine. A shopping trip is not the point.
-        </Text>
-        <View style={styles.points}>
-          <Text style={styles.point}>1. Snap the fridge, or pick from a list.</Text>
-          <Text style={styles.point}>2. See dinners from that pantry, tonight.</Text>
-          <Text style={styles.point}>3. Cook the thing that will not last.</Text>
+        <View style={styles.hero}>
+          <FoodStill id={stills[1]} height={196} style={styles.heroStill} />
+          <Display>One job.</Display>
+          <Text style={styles.lede}>
+            Photograph the fridge, or tick a list. Tonight ranks three dinners from what expires
+            first. Two missing staples is fine. A shopping trip is not the point.
+          </Text>
+          <View style={styles.points}>
+            <Text style={styles.point}>1. Snap the fridge, or pick from a list.</Text>
+            <Text style={styles.point}>2. See dinners from that pantry, tonight.</Text>
+            <Text style={styles.point}>3. Cook the thing that will not last.</Text>
+          </View>
         </View>
         <Button label="Set the table" onPress={() => setStep(2)} />
       </SafeAreaView>
@@ -81,6 +87,7 @@ export function OnboardingScreen() {
     return (
       <SafeAreaView style={styles.safe}>
         <ScrollView contentContainerStyle={styles.form} showsVerticalScrollIndicator={false}>
+          <FoodStill id={stills[2]} height={156} style={styles.heroStill} />
           <Display>How do you eat?</Display>
           <DietPicker value={diet} onChange={setDiet} />
           <Text style={styles.label}>Who is home for dinner?</Text>
@@ -94,6 +101,7 @@ export function OnboardingScreen() {
   if (step === 3) {
     return (
       <PantrySetup
+        still={stills[3]}
         picked={picked}
         onChange={setPicked}
         onSource={setSource}
@@ -104,6 +112,7 @@ export function OnboardingScreen() {
 
   return (
     <MealPreview
+      still={stills[4]}
       diet={diet}
       ingredientIds={picked}
       onBack={() => setStep(3)}
@@ -113,11 +122,13 @@ export function OnboardingScreen() {
 }
 
 function PantrySetup({
+  still,
   picked,
   onChange,
   onSource,
   onNext,
 }: {
+  still: OnboardingStillId;
   picked: string[];
   onChange: (ids: string[]) => void;
   onSource: (source: ItemSource) => void;
@@ -171,6 +182,7 @@ function PantrySetup({
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.pantryScroll} showsVerticalScrollIndicator={false}>
+        <FoodStill id={still} height={148} style={styles.heroStill} />
         <FridgeMark size={36} />
         <Display style={styles.pantryTitle}>What's inside your fridge Tonight</Display>
         <Text style={styles.lede}>
@@ -234,11 +246,13 @@ function PantrySetup({
 }
 
 function MealPreview({
+  still,
   diet,
   ingredientIds,
   onBack,
   onDone,
 }: {
+  still: OnboardingStillId;
   diet: Diet;
   ingredientIds: string[];
   onBack: () => void;
@@ -265,6 +279,7 @@ function MealPreview({
         <Pressable onPress={onBack}>
           <Text style={styles.back}>← Pantry</Text>
         </Pressable>
+        <FoodStill id={still} height={132} style={styles.heroStill} />
         <Display>Tonight, from your fridge.</Display>
         <Text style={styles.lede}>
           {ideas.length

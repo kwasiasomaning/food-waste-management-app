@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FoodStill } from '../components/FoodStill';
 import { Button, Display } from '../components/ui';
+import { nextCookPraise } from '../lib/cookPraise';
 import { findRecipe } from '../lib/mealCache';
 import { recipeImageSource } from '../lib/recipeImage';
 import { formatKg, formatMoney } from '../lib/savings';
@@ -22,6 +24,7 @@ export function CookedScreen({
 }) {
   const recipe = findRecipe(recipeId);
   const currency = useKitchen((s) => s.settings.currency ?? 'USD');
+  const [praise] = useState(nextCookPraise);
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.center}>
@@ -31,7 +34,7 @@ export function CookedScreen({
           <FoodStill id="plate" height={160} />
         )}
         <Display italic style={styles.word}>
-          That stayed food.
+          {praise}
         </Display>
         <Text style={styles.body}>
           {recipe?.title ?? 'Dinner'} is cooked. The ingredients came off the pantry so they cannot
@@ -63,7 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     backgroundColor: colors.paperDeep,
   },
-  word: { marginTop: 16 },
+  word: { marginTop: 16, lineHeight: 42 },
   body: {
     fontFamily: fonts.sans,
     color: colors.inkSoft,

@@ -47,14 +47,14 @@ const INGREDIENT_FAMILIES: Record<IngredientPhotoId, readonly string[]> = {
   'ing-carrot': ['carrot'],
   'ing-pepper': ['bell-pepper'],
   'ing-cucumber': ['cucumber'],
-  'ing-potato': ['potato'],
+  'ing-potato': ['potato', 'yam'],
   'ing-sweet-potato': ['sweet-potato'],
   'ing-broccoli': ['broccoli'],
-  'ing-zucchini': ['zucchini'],
+  'ing-zucchini': ['zucchini', 'okra'],
   'ing-mushroom': ['mushroom'],
   'ing-avocado': ['avocado'],
   'ing-apple': ['apple'],
-  'ing-banana': ['banana'],
+  'ing-banana': ['banana', 'plantain'],
   'ing-corn': ['corn'],
   'ing-ginger': ['ginger'],
   'ing-chili': ['chili', 'paprika', 'chili-flakes'],
@@ -76,6 +76,7 @@ const INGREDIENT_FAMILIES: Record<IngredientPhotoId, readonly string[]> = {
   'ing-grain': ['rice', 'pasta', 'leftover-rice', 'leftover-pasta'],
   'ing-oil': [
     'olive-oil',
+    'palm-oil',
     'soy-sauce',
     'vinegar',
     'honey',
@@ -85,7 +86,7 @@ const INGREDIENT_FAMILIES: Record<IngredientPhotoId, readonly string[]> = {
     'pepper',
     'cumin',
   ],
-  'ing-beans': ['chickpeas', 'black-beans', 'lentils', 'peanut-butter'],
+  'ing-beans': ['chickpeas', 'black-beans', 'black-eyed-peas', 'lentils', 'peanut-butter'],
   'ing-roast': ['leftover-roast-veg'],
 };
 
@@ -137,10 +138,30 @@ export type MealPhotoId =
   | 'meal-beans'
   | 'meal-caprese';
 
+export type OnboardPhotoId =
+  | 'onboard-spread'
+  | 'onboard-roast'
+  | 'onboard-pasta'
+  | 'onboard-fish'
+  | 'onboard-salad'
+  | 'onboard-curry'
+  | 'onboard-eggs'
+  | 'onboard-stirfry';
+
+export type OnboardingStillId =
+  | Extract<FoodPhotoId, 'table' | 'bread' | 'bowl' | 'plate'>
+  | MealPhotoId
+  | OnboardPhotoId;
+
 export function photoForRecipe(recipe: { id: string; title: string; emoji?: string }): MealPhotoId {
   const hay = `${recipe.id} ${recipe.title}`.toLowerCase();
   if (/taco|quesadilla/.test(hay)) return 'meal-tacos';
-  if (/shakshuka/.test(hay)) return 'meal-shakshuka';
+  if (/shakshuka|egg-stew|egg stew/.test(hay)) return 'meal-shakshuka';
+  if (/jollof/.test(hay)) return 'meal-fried-rice';
+  if (/efo|kontomire|okra/.test(hay)) return 'meal-soup';
+  if (/suya/.test(hay)) return 'meal-chicken';
+  if (/red-red|red red/.test(hay)) return 'meal-beans';
+  if (/yam-egg|yam and egg/.test(hay)) return 'meal-frittata';
   if (/frittata|zucchini-eggs|feta-eggs|corn-eggs|roast-veg|bacon-potato/.test(hay)) {
     return 'meal-frittata';
   }
