@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * Expo is bound to IPv4 0.0.0.0 on EXPO_PORT (8099 by default). Cursor Browser
+ * Expo is bound to IPv4 0.0.0.0 on EXPO_PORT (18765 by default). Cursor Browser
  * often hits ::1 first (localhost resolves IPv6 first) and gets ERR_CONNECTION_REFUSED.
  * Forward IPv6 loopback to IPv4 loopback on the same port.
  */
 const net = require('net');
 
-const port = Number(process.env.EXPO_PORT || process.env.PORT || 8099);
+const port = Number(process.env.EXPO_PORT || process.env.PORT || 18765);
 const target = { host: '127.0.0.1', port };
 
 const server = net.createServer((client) => {

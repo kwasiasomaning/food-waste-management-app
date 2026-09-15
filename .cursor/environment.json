@@ -5,13 +5,13 @@
     {
       "name": "web",
       "command": "./scripts/start-web.sh",
-      "description": "Tonight Expo web at http://127.0.0.1:8099"
+      "description": "Tonight Expo web at http://127.0.0.1:18765"
     }
   ],
   "ports": [
     {
       "name": "web",
-      "port": 8099
+      "port": 18765
     }
   ]
 }

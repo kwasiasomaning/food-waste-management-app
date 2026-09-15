@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Serve Tonight on IPv4 0.0.0.0:8099, plus ::1 so Cursor Browser can connect.
+# Serve Tonight on IPv4 0.0.0.0:18765, plus ::1 so Cursor Browser can connect.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
 export BROWSER="${BROWSER:-none}"
 export EXPO_NO_TELEMETRY="${EXPO_NO_TELEMETRY:-1}"
-export EXPO_PORT="${EXPO_PORT:-8099}"
+export EXPO_PORT="${EXPO_PORT:-18765}"
 
 PATCH="$(pwd)/scripts/force-ipv4-listen.cjs"
 if [[ -f "$PATCH" ]]; then
