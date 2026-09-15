@@ -16,7 +16,7 @@ export function DeliveryAddress({
       <Field
         label="Street"
         value={value.line1}
-        placeholder="12 Oak Street"
+        placeholder="Street address"
         autoComplete="address-line1"
         textContentType="streetAddressLine1"
         onChangeText={(line1) => onChange({ ...value, line1 })}
@@ -26,7 +26,7 @@ export function DeliveryAddress({
           <Field
             label="City"
             value={value.city}
-            placeholder="Austin"
+            placeholder="City"
             autoComplete="off"
             textContentType="addressCity"
             onChangeText={(city) => onChange({ ...value, city })}
@@ -36,7 +36,7 @@ export function DeliveryAddress({
           <Field
             label="Postal"
             value={value.postal}
-            placeholder="78701"
+            placeholder="Postcode"
             autoComplete="postal-code"
             textContentType="postalCode"
             onChangeText={(postal) => onChange({ ...value, postal })}

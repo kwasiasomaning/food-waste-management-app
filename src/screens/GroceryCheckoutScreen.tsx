@@ -39,9 +39,11 @@ export function GroceryCheckoutScreen({
   const recordGroceryOrder = useKitchen((s) => s.recordGroceryOrder);
   const currency = settings.currency ?? 'USD';
   const money = (value: number) => formatMoney(value, currency);
-  const provider = groceryProvider(settings.groceryProviderId);
+  const providerId = settings.groceryProviderId;
+  const provider = groceryProvider(providerId);
   const dropoff = dropoffFromSettings(settings);
   const idsKey = ingredientIds.join(',');
+  const country = settings.country ?? 'US';
 
   const [quote, setQuote] = useState<GroceryQuote | null>(null);
   const [order, setOrder] = useState<GroceryOrder | null>(null);
@@ -52,43 +54,40 @@ export function GroceryCheckoutScreen({
   const ready = isDropoffReady(dropoff);
 
   useEffect(() => {
-    if (!ingredientIds.length) return;
-    let cancelled = false;
+    if (!idsKey) return;
+    const partner = groceryProvider(providerId);
+    const basket = idsKey.split(',').filter(Boolean);
+    const dest = { line1: dropoff.line1, city: dropoff.city, postal: dropoff.postal };
+    let active = true;
     const timer = setTimeout(() => {
       setQuoting(true);
       setError(null);
-      void provider
-        .quote({
-          ingredientIds,
-          dropoff,
-          country: settings.country ?? 'US',
-        })
+      void partner
+        .quote({ ingredientIds: basket, dropoff: dest, country })
         .then((next) => {
-          if (!cancelled) setQuote(next);
+          if (active) setQuote(next);
         })
         .catch((issue: unknown) => {
-          if (!cancelled) {
-            setQuote(null);
-            setError(issue instanceof Error ? issue.message : 'Could not quote this order.');
-          }
+          if (!active) return;
+          setError(issue instanceof Error ? issue.message : 'Could not quote this order.');
         })
         .finally(() => {
-          if (!cancelled) setQuoting(false);
+          if (active) setQuoting(false);
         });
     }, 220);
     return () => {
-      cancelled = true;
+      active = false;
       clearTimeout(timer);
+      setQuoting(false);
     };
-    // Quote when the basket, kitchen, or typed drop-off change.
-  }, [idsKey, dropoff.line1, dropoff.city, dropoff.postal, provider.id, settings.country]);
+  }, [idsKey, dropoff.line1, dropoff.city, dropoff.postal, providerId, country]);
 
   const place = async () => {
     if (!quote || !ready || placing) return;
     setPlacing(true);
     setError(null);
     try {
-      const placed = await provider.place(quote);
+      const placed = await groceryProvider(providerId).place(quote);
       recordGroceryOrder(placed);
       setOrder(placed);
       if (Platform.OS !== 'web') {
@@ -109,11 +108,15 @@ export function GroceryCheckoutScreen({
   if (!ingredientIds.length) {
     return (
       <SafeAreaView style={styles.safe} edges={['top']}>
-        <Pressable onPress={onBack} hitSlop={8}>
-          <Text style={styles.back}>← Shop</Text>
-        </Pressable>
-        <Text style={styles.title}>Nothing to deliver.</Text>
-        <Button label="Back to Shop" onPress={onBack} />
+        <View style={styles.top}>
+          <Pressable onPress={onBack} hitSlop={8}>
+            <Text style={styles.back}>← Shop</Text>
+          </Pressable>
+        </View>
+        <Text style={[styles.title, { paddingHorizontal: 20 }]}>Nothing to deliver.</Text>
+        <View style={{ padding: 20 }}>
+          <Button label="Back to Shop" onPress={onBack} />
+        </View>
       </SafeAreaView>
     );
   }
@@ -164,11 +167,13 @@ export function GroceryCheckoutScreen({
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      <View style={styles.top}>
+        <Pressable onPress={onBack} hitSlop={8}>
+          <Text style={styles.back}>← Shop</Text>
+        </Pressable>
+      </View>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-          <Pressable onPress={onBack} hitSlop={8}>
-            <Text style={styles.back}>← Shop</Text>
-          </Pressable>
           <Text style={styles.kicker}>{provider.label}</Text>
           <Text style={styles.title}>Deliver</Text>
           <Text style={styles.lede}>
@@ -224,27 +229,33 @@ export function GroceryCheckoutScreen({
           {!ready ? (
             <Text style={styles.hint}>Fill the drop-off so {provider.label} knows where to stop.</Text>
           ) : null}
-
-          <Button
-            label={
-              quote
-                ? placing
-                  ? 'Placing order…'
-                  : `Place ${provider.label} order · ${money(quote.totalUsd)}`
-                : 'Place order'
-            }
-            onPress={() => void place()}
-            disabled={!quote || !ready || placing || quoting}
-          />
         </ScrollView>
       </KeyboardAvoidingView>
+      <View style={styles.footer}>
+        <Button
+          label={
+            quote
+              ? placing
+                ? 'Placing order…'
+                : `Place ${provider.label} order · ${money(quote.totalUsd)}`
+              : 'Place order'
+          }
+          onPress={() => void place()}
+          disabled={!quote || !ready || placing}
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
-  scroll: { padding: 20, paddingBottom: 48, gap: 12 },
+  top: {
+    paddingHorizontal: 20,
+    paddingTop: 28,
+    paddingBottom: 4,
+  },
+  scroll: { padding: 20, paddingTop: 12, paddingBottom: 48, gap: 12 },
   back: { fontFamily: fonts.sansSemi, color: colors.terracotta },
   kicker: { fontFamily: fonts.sansSemi, color: colors.inkSoft },
   title: { fontFamily: fonts.display, fontSize: 36, color: colors.ink },
@@ -258,7 +269,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   store: { fontFamily: fonts.sansSemi, fontSize: 16, color: colors.ink },
-  meta: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 13 },
+  meta: { fontFamily: fonts.sansSemi, color: colors.inkSoft, fontSize: 13 },
   line: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
   lineName: { fontFamily: fonts.sans, color: colors.ink, flex: 1 },
   lineAmt: { fontFamily: fonts.sansSemi, color: colors.ink },
@@ -276,4 +287,10 @@ const styles = StyleSheet.create({
   section: { fontFamily: fonts.display, fontSize: 24, color: colors.ink, marginTop: 8 },
   hint: { fontFamily: fonts.sans, color: colors.inkSoft, fontSize: 13, lineHeight: 19 },
   error: { fontFamily: fonts.sansSemi, color: colors.terracottaDeep, lineHeight: 20 },
+  footer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.line,
+    backgroundColor: colors.cream,
+  },
 });

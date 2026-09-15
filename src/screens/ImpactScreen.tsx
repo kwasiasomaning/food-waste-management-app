@@ -259,7 +259,7 @@ function Stat({ count, one, many }: { count: number; one: string; many: string }
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.paper },
-  scroll: { padding: 20, paddingBottom: 40 },
+  scroll: { padding: 20, paddingBottom: 56 },
   kicker: { fontFamily: fonts.sansSemi, color: colors.inkSoft },
   top: {
     flexDirection: 'row',
