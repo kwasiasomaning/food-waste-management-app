@@ -7,6 +7,7 @@ import {
   dummyjsonCuisineNames,
   themealdbAreas,
 } from './cuisine';
+import { howSteps } from './howSteps';
 import { ingredientIdFromName } from './mealMatch';
 
 export type FetchLike = typeof fetch;
@@ -67,7 +68,6 @@ function toRecipe(meal: RemoteMeal): Recipe | null {
     meal,
     ingredients.map((line) => line.ingredientId),
   );
-  const steps = meal.steps.map((step) => step.trim()).filter(Boolean);
   const label = cuisineLabel(meal.cuisine);
   return {
     id: meal.id,
@@ -81,7 +81,7 @@ function toRecipe(meal: RemoteMeal): Recipe | null {
     emoji: '🍽️',
     plate: '#E8DCCB',
     ingredients,
-    steps: steps.length ? steps : ['Cook it hot. Season. Eat it tonight.'],
+    steps: howSteps(meal.steps),
     rescue: 'Suggested because it uses food already in your fridge.',
     source: meal.source,
     photoUri: meal.photoUri,

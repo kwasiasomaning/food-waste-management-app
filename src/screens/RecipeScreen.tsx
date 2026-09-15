@@ -6,9 +6,10 @@ import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
 import { cuisineLabel } from '../data/cuisines';
 import { getIngredient } from '../data/ingredients';
+import { howSteps } from '../lib/howSteps';
+import { scoreRecipe } from '../lib/matching';
 import { findRecipe } from '../lib/mealCache';
 import { recipeImageSource } from '../lib/recipeImage';
-import { scoreRecipe } from '../lib/matching';
 import { scaleAmount, servingLabel } from '../lib/servings';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
@@ -95,8 +96,8 @@ export function RecipeScreen({
         })}
 
         <Text style={styles.section}>How</Text>
-        {recipe.steps.map((step, index) => (
-          <View key={step} style={styles.step}>
+        {howSteps(recipe.steps).map((step, index) => (
+          <View key={`${index}-${step.slice(0, 24)}`} style={styles.step}>
             <Text style={styles.num}>{index + 1}</Text>
             <Text style={styles.stepText}>{step}</Text>
           </View>
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.display,
     fontSize: 20,
     color: colors.terracotta,
-    width: 22,
+    minWidth: 28,
   },
   stepText: { flex: 1, fontFamily: fonts.sans, fontSize: 16, lineHeight: 23, color: colors.ink },
   footer: {
