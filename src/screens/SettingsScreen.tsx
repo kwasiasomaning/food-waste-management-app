@@ -94,18 +94,9 @@ export function SettingsScreen({
               <Text style={styles.profileEmail}>{session?.email ?? 'Signed out'}</Text>
             </View>
           </View>
-          <View style={styles.legalRow}>
-            <Pressable onPress={() => onOpenLegal('privacy')} hitSlop={6}>
-              <Text style={styles.link}>Privacy policy</Text>
-            </Pressable>
-            <Text style={styles.legalDot}>·</Text>
-            <Pressable onPress={() => onOpenLegal('terms')} hitSlop={6}>
-              <Text style={styles.link}>Terms of use</Text>
-            </Pressable>
-          </View>
         </Card>
 
-        <Card title="Place" hint="Country and money stay independent.">
+        <Card title="My Location" hint="Country and money stay independent.">
           <SettingPicker
             title="Country"
             value={country}
@@ -277,6 +268,15 @@ export function SettingsScreen({
           Tonight ranks dinners by what expires first. It will not end hunger. It will use the
           spinach.
         </Text>
+        <View style={styles.legalRow}>
+          <Pressable onPress={() => onOpenLegal('privacy')} hitSlop={6}>
+            <Text style={styles.link}>Privacy policy</Text>
+          </Pressable>
+          <Text style={styles.legalDot}>·</Text>
+          <Pressable onPress={() => onOpenLegal('terms')} hitSlop={6}>
+            <Text style={styles.link}>Terms of use</Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -372,7 +372,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: 8,
-    marginTop: 14,
+    marginTop: 8,
+    paddingHorizontal: 4,
+    paddingBottom: 8,
   },
   legalDot: { fontFamily: fonts.sans, color: colors.inkSoft },
   link: { fontFamily: fonts.sansSemi, color: colors.terracotta },
