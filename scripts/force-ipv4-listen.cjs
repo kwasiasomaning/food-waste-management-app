@@ -3,6 +3,7 @@
 /**
  * Metro/Expo `listen(port)` with no host binds IPv6 `::` only.
  * Cursor Browser / port-forward scans IPv4 sockets, so force 0.0.0.0.
+ * Pair with ipv6-loopback-proxy.cjs so ::1 still works.
  */
 const net = require('net');
 
@@ -14,9 +15,7 @@ function shouldForceIpv4(host) {
     host === '' ||
     host === 'localhost' ||
     host === '::' ||
-    host === '::1' ||
-    host === '[::]' ||
-    host === '[::1]'
+    host === '[::]'
   );
 }
 
