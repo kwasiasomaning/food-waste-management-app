@@ -47,7 +47,7 @@ export type KitchenState = {
   consumeIngredients: (ingredientIds: string[]) => void;
   setExpiryDays: (id: string, daysFromNow: number) => void;
   cookRecipe: (recipeId: string) => CookedMeal | null;
-  addToShop: (ingredientId: string, reason: string) => void;
+  addToShop: (ingredientId: string, reason: string) => boolean;
   addMissingToShop: (items: { ingredientId: string; reason: string }[]) => void;
   toggleShop: (ingredientId: string) => void;
   buyChecked: () => void;
@@ -205,11 +205,12 @@ export const useKitchen = create<KitchenState>()(
         set((state) => ({ cooked: [meal, ...state.cooked] }));
         return meal;
       },
-      addToShop: (ingredientId, reason) =>
-        set((state) => {
-          if (state.shop.some((item) => item.ingredientId === ingredientId)) return state;
-          return { shop: [...state.shop, { ingredientId, reason, checked: false }] };
-        }),
+      addToShop: (ingredientId, reason) => {
+        const state = get();
+        if (state.shop.some((item) => item.ingredientId === ingredientId)) return false;
+        set({ shop: [...state.shop, { ingredientId, reason, checked: false }] });
+        return true;
+      },
       addMissingToShop: (items) =>
         set((state) => {
           const have = new Set(state.shop.map((item) => item.ingredientId));
