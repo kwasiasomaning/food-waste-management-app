@@ -1,7 +1,7 @@
-import { uid } from '../dates';
+import { uid } from '../../dates';
 import { buildGroceryQuote, dropoffLabel } from './catalog';
 import { groceryBackendBase, groceryPartnerUrl } from './env';
-import type { GroceryOrder, GroceryProvider, GroceryQuote, GroceryQuoteInput } from './types';
+import type { GroceryOrder, GroceryProvider, GroceryQuote, GroceryQuoteInput } from '../types';
 
 type FetchLike = typeof fetch;
 
@@ -40,8 +40,8 @@ function sandboxPlace(quote: GroceryQuote): GroceryOrder {
 }
 
 /**
- * Partner grocery APIs (Uber Eats Grocery, later Instacart / DoorDash) talk to a
- * Tonight backend, never to the consumer app with a client_secret.
+ * Shelved. Partner grocery APIs talk to a Tonight backend, never to the
+ * consumer app with a client_secret. Not wired in Tonight v1.
  *
  * POST {EXPO_PUBLIC_GROCERY_API_BASE}/grocery/{providerId}/quotes
  *   body: GroceryQuoteInput

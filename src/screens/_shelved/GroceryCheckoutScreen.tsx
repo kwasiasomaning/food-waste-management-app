@@ -1,3 +1,6 @@
+/**
+ * Shelved Uber Eats grocery checkout. Not routed from App in Tonight v1.
+ */
 import { useEffect, useMemo, useState } from 'react';
 import {
   KeyboardAvoidingView,
@@ -11,19 +14,16 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 
-import { DeliveryAddress } from '../components/DeliveryAddress';
-import { FoodStill } from '../components/FoodStill';
-import { Button } from '../components/ui';
-import {
-  dropoffFromSettings,
-  groceryOrderStatusLabel,
-  groceryProvider,
-  isDropoffReady,
-} from '../lib/grocery';
-import { formatMoney } from '../lib/savings';
-import { useKitchen } from '../store/kitchen';
-import { colors, fonts, radius } from '../theme';
-import type { GroceryOrder, GroceryQuote } from '../types';
+import { DeliveryAddress } from '../../components/_shelved/DeliveryAddress';
+import { FoodStill } from '../../components/FoodStill';
+import { Button } from '../../components/ui';
+import { groceryOrderStatusLabel } from '../../lib/grocery/status';
+import { dropoffFromSettings, isDropoffReady } from '../../lib/grocery/_shelved/catalog';
+import { groceryProvider } from '../../lib/grocery/_shelved/registry';
+import { formatMoney } from '../../lib/savings';
+import { useKitchen } from '../../store/kitchen';
+import { colors, fonts, radius } from '../../theme';
+import type { GroceryOrder, GroceryQuote } from '../../types';
 
 export function GroceryCheckoutScreen({
   ingredientIds,

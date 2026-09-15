@@ -1,5 +1,6 @@
-import { groceryStoreName } from '../catalog';
-import { createPartnerGroceryProvider } from '../createPartnerProvider';
+/** Shelved Uber Eats Grocery provider. Not registered in Tonight v1. */
+import { groceryStoreName } from './catalog';
+import { createPartnerGroceryProvider } from './createPartnerProvider';
 
 type FetchLike = typeof fetch;
 

@@ -5,23 +5,19 @@ import { FoodStill } from '../components/FoodStill';
 import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
 import { getIngredient } from '../data/ingredients';
-import { groceryProvider, shopIdsForDelivery } from '../lib/grocery';
 import { missingShopList, suggestDinners } from '../lib/matching';
 import { useKitchen } from '../store/kitchen';
 import { colors, fonts, radius } from '../theme';
 
-export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[]) => void }) {
+export function ShopScreen() {
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
   const cuisine = useKitchen((s) => s.settings.cuisine ?? 'any');
   const shop = useKitchen((s) => s.shop);
-  const providerId = useKitchen((s) => s.settings.groceryProviderId);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
   const toggleShop = useKitchen((s) => s.toggleShop);
   const buyChecked = useKitchen((s) => s.buyChecked);
   const clearShop = useKitchen((s) => s.clearShop);
-  const provider = groceryProvider(providerId);
-  const deliverIds = shopIdsForDelivery(shop);
   const checkedCount = shop.filter((item) => item.checked).length;
 
   const suggested = missingShopList(suggestDinners(pantry, diet, 3, Date.now(), cuisine));
@@ -33,7 +29,7 @@ export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[])
         <Text style={styles.title}>Shop</Text>
         <Text style={styles.lede}>
           Not a grocery list. Two staples so you can cook what is already dying at home. Tick what
-          you bought in person, or send the missing bits through {provider.label}.
+          you bought, then add it to Pantry.
         </Text>
 
         {shop.length === 0 ? (
@@ -41,8 +37,8 @@ export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[])
             <FoodStill id="citrus" height={120} />
             <Text style={styles.emptyTitle}>Nothing to buy.</Text>
             <Text style={styles.emptyBody}>
-              If Tonight needs one or two things, they land here. You can pull them from tonight’s
-              dinners, then have them delivered in minutes.
+              If Tonight needs one or two things, they land here. Pull them from tonight’s dinners,
+              then tick what you picked up.
             </Text>
             {suggested.length > 0 ? (
               <Button
@@ -73,16 +69,13 @@ export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[])
               );
             })}
             <Button label="I bought the checked ones" onPress={buyChecked} />
-            <Button
-              variant="sage"
-              label={`Deliver with ${provider.label}`}
-              onPress={() => onDeliver(deliverIds)}
-            />
-            <Text style={styles.hint}>
-              {checkedCount > 0
-                ? `${checkedCount} ticked ${checkedCount === 1 ? 'item goes' : 'items go'} on the ${provider.label} ticket.`
-                : `Nothing ticked — the whole list goes to ${provider.label}.`}
-            </Text>
+            {checkedCount === 0 ? (
+              <Text style={styles.hint}>Tick what you already bought so it can move into Pantry.</Text>
+            ) : (
+              <Text style={styles.hint}>
+                {checkedCount} ticked {checkedCount === 1 ? 'item moves' : 'items move'} into Pantry.
+              </Text>
+            )}
             <Button variant="ghost" label="Clear list" onPress={clearShop} />
           </View>
         )}
