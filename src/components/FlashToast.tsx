@@ -1,51 +1,55 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, fonts, radius } from '../theme';
 
-export const SHOP_TOAST_MS = 4000;
+export const SHOP_TOAST_MS = 2200;
 
 export function FlashToast({
-  message,
+  label,
+  accessibilityLabel,
+  onHidden,
 }: {
-  message: { text: string; id: number } | null;
+  label: string;
+  accessibilityLabel?: string;
+  onHidden?: () => void;
 }) {
-  const [shown, setShown] = useState<string | null>(null);
+  const onHiddenRef = useRef(onHidden);
+  onHiddenRef.current = onHidden;
 
   useEffect(() => {
-    if (!message) return;
-    setShown(message.text);
-    const hide = setTimeout(() => setShown(null), SHOP_TOAST_MS);
+    const hide = setTimeout(() => onHiddenRef.current?.(), SHOP_TOAST_MS);
     return () => clearTimeout(hide);
-  }, [message?.id, message?.text]);
-
-  if (!shown) return null;
+  }, []);
 
   return (
     <View
       testID="shop-added-toast"
       accessibilityRole="alert"
       accessibilityLiveRegion="polite"
+      accessibilityLabel={accessibilityLabel ?? label}
       style={styles.toast}
     >
-      <Text style={styles.text}>{shown}</Text>
+      <Text style={styles.text} numberOfLines={1}>
+        {label}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   toast: {
-    backgroundColor: colors.sage,
+    backgroundColor: colors.sageSoft,
     borderRadius: radius.pill,
-    paddingVertical: 15,
-    paddingHorizontal: 22,
-    marginBottom: 10,
-    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    maxWidth: 168,
+    flexShrink: 0,
+    justifyContent: 'center',
   },
   text: {
     fontFamily: fonts.sansSemi,
-    fontSize: 16,
-    color: colors.cream,
-    textAlign: 'center',
+    fontSize: 12,
+    color: colors.sage,
   },
 });
