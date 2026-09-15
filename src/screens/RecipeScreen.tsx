@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { IngredientStill } from '../components/IngredientStill';
 import { Button } from '../components/ui';
+import { cuisineLabel } from '../data/cuisines';
 import { getIngredient } from '../data/ingredients';
 import { findRecipe } from '../lib/mealCache';
 import { recipeImageSource } from '../lib/recipeImage';
@@ -40,6 +41,7 @@ export function RecipeScreen({
   const scored = scoreRecipe(recipe, pantry, diet);
   const have = new Set(scored?.have ?? []);
   const missing = new Set(scored?.missing ?? []);
+  const cuisine = cuisineLabel(recipe.cuisine);
 
   const cook = async () => {
     const meal = cookRecipe(recipe.id);
@@ -60,7 +62,7 @@ export function RecipeScreen({
         <Text style={styles.title}>{recipe.title}</Text>
         <Text style={styles.sub}>{recipe.subtitle}</Text>
         <Text style={styles.meta}>
-          {recipe.minutes} min · {servingLabel(householdSize)}
+          {cuisine ? `${cuisine} · ${recipe.minutes} min · ${servingLabel(householdSize)}` : `${recipe.minutes} min · ${servingLabel(householdSize)}`}
         </Text>
         <Text style={styles.rescue}>{recipe.rescue}</Text>
 

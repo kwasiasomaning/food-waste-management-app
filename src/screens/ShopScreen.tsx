@@ -13,6 +13,7 @@ import { colors, fonts, radius } from '../theme';
 export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[]) => void }) {
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
+  const cuisine = useKitchen((s) => s.settings.cuisine ?? 'any');
   const shop = useKitchen((s) => s.shop);
   const providerId = useKitchen((s) => s.settings.groceryProviderId);
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
@@ -23,7 +24,7 @@ export function ShopScreen({ onDeliver }: { onDeliver: (ingredientIds: string[])
   const deliverIds = shopIdsForDelivery(shop);
   const checkedCount = shop.filter((item) => item.checked).length;
 
-  const suggested = missingShopList(suggestDinners(pantry, diet, 3));
+  const suggested = missingShopList(suggestDinners(pantry, diet, 3, Date.now(), cuisine));
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>

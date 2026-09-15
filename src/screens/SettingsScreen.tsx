@@ -6,8 +6,10 @@ import { DietPicker } from '../components/DietPicker';
 import { DeliveryAddress } from '../components/DeliveryAddress';
 import { HouseholdInput } from '../components/HouseholdInput';
 import { SettingPicker } from '../components/SettingPicker';
+import { CUISINE_MAP, CUISINE_OPTIONS } from '../data/cuisines';
 import { COUNTRIES, COUNTRY_MAP, CURRENCIES, CURRENCY_MAP } from '../data/places';
 import { deliverExport } from '../lib/auth/exportData';
+import { isCuisine } from '../lib/cuisine';
 import { dropoffFromSettings, groceryProvider, groceryProviders } from '../lib/grocery';
 import { countryLabel, currencyLabel } from '../lib/money';
 import { useAuth } from '../store/auth';
@@ -46,6 +48,7 @@ export function SettingsScreen({
 
   const country = settings.country ?? 'US';
   const currency = settings.currency ?? 'USD';
+  const cuisine = isCuisine(settings.cuisine) ? settings.cuisine : 'any';
   const flag = COUNTRY_MAP[country]?.flag ?? '🌐';
   const countryName = COUNTRY_MAP[country]?.name ?? country;
   const currencyInfo = CURRENCY_MAP[currency];
@@ -193,6 +196,23 @@ export function SettingsScreen({
         <Card title="Dinner" hint="Tonight only suggests what this table can eat.">
           <Text style={styles.fieldLabel}>Diet</Text>
           <DietPicker value={settings.diet} onChange={(diet) => updateSettings({ diet })} />
+          <Text style={styles.fieldLabel}>Cuisine</Text>
+          <SettingPicker
+            title="Cuisine"
+            value={cuisine}
+            options={CUISINE_OPTIONS}
+            onChange={(next) => {
+              if (isCuisine(next)) updateSettings({ cuisine: next });
+            }}
+          >
+            <View style={styles.pickRow}>
+              <View style={styles.pickCopy}>
+                <Text style={styles.pickLabel}>What kind of food</Text>
+                <Text style={styles.pickValue}>{CUISINE_MAP[cuisine]?.label ?? 'Any cuisine'}</Text>
+              </View>
+              <Text style={styles.chevron}>▾</Text>
+            </View>
+          </SettingPicker>
           <Text style={styles.fieldLabel}>Who is home for dinner?</Text>
           <HouseholdInput
             value={settings.householdSize}
