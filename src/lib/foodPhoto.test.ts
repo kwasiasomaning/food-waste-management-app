@@ -1,6 +1,20 @@
 import { INGREDIENTS } from '../data/ingredients';
+import { RECIPES } from '../data/recipes';
 
 import { hasMappedIngredientPhoto, photoForIngredient, photoForRecipe } from './foodPhoto';
+
+const WEST_AFRICA_STILLS = {
+  'tomato-jollof': 'meal-jollof-ng',
+  'nigerian-egg-stew': 'meal-egg-stew-ng',
+  'efo-spinach-stew': 'meal-efo',
+  'suya-chicken': 'meal-suya',
+  'yam-egg-sauce': 'meal-yam-egg',
+  'ghanaian-jollof': 'meal-jollof-gh',
+  'ghanaian-egg-stew': 'meal-egg-stew-gh',
+  'kontomire-stew': 'meal-kontomire',
+  'red-red': 'meal-red-red',
+  'okra-stew': 'meal-okra-stew',
+} as const;
 
 describe('photoForRecipe', () => {
   it('picks a plated meal still that matches the dinner', () => {
@@ -13,12 +27,35 @@ describe('photoForRecipe', () => {
     );
     expect(photoForRecipe({ id: 'salmon-lemon', title: 'Lemon salmon' })).toBe('meal-fish');
     expect(photoForRecipe({ id: 'chicken-tacos', title: 'Chicken tacos' })).toBe('meal-tacos');
-    expect(photoForRecipe({ id: 'tomato-jollof', title: 'Tomato jollof' })).toBe('meal-fried-rice');
+    expect(photoForRecipe({ id: 'tomato-jollof', title: 'Tomato jollof' })).toBe('meal-jollof-ng');
     expect(photoForRecipe({ id: 'nigerian-egg-stew', title: 'Egg stew with rice' })).toBe(
-      'meal-shakshuka',
+      'meal-egg-stew-ng',
     );
-    expect(photoForRecipe({ id: 'red-red', title: 'Red red beans' })).toBe('meal-beans');
+    expect(photoForRecipe({ id: 'efo-spinach-stew', title: 'Spinach pepper stew' })).toBe('meal-efo');
+    expect(photoForRecipe({ id: 'suya-chicken', title: 'Suya-spiced chicken' })).toBe('meal-suya');
+    expect(photoForRecipe({ id: 'yam-egg-sauce', title: 'Yam and egg sauce' })).toBe('meal-yam-egg');
+    expect(photoForRecipe({ id: 'ghanaian-jollof', title: 'Ghanaian jollof' })).toBe('meal-jollof-gh');
+    expect(photoForRecipe({ id: 'ghanaian-egg-stew', title: 'Ghanaian egg stew' })).toBe(
+      'meal-egg-stew-gh',
+    );
+    expect(photoForRecipe({ id: 'kontomire-stew', title: 'Kontomire spinach stew' })).toBe(
+      'meal-kontomire',
+    );
+    expect(photoForRecipe({ id: 'red-red', title: 'Red red beans' })).toBe('meal-red-red');
+    expect(photoForRecipe({ id: 'okra-stew', title: 'Okra tomato stew' })).toBe('meal-okra-stew');
     expect(photoForRecipe({ id: 'bell-pepper-pasta', title: 'Pasta' })).toBe('meal-pasta');
+  });
+
+  it('gives every Nigerian and Ghanaian house dinner its own plated still', () => {
+    const west = RECIPES.filter(
+      (recipe) => recipe.cuisine === 'nigerian' || recipe.cuisine === 'ghanaian',
+    );
+    expect(west.map((recipe) => recipe.id).sort()).toEqual(Object.keys(WEST_AFRICA_STILLS).sort());
+    for (const recipe of west) {
+      expect(photoForRecipe(recipe)).toBe(
+        WEST_AFRICA_STILLS[recipe.id as keyof typeof WEST_AFRICA_STILLS],
+      );
+    }
   });
 });
 

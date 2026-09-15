@@ -87,6 +87,16 @@ export const MEAL_PHOTOS: Record<MealPhotoId, ImageSourcePropType> = {
   'meal-noodles': require('../../assets/food/meal-noodles.jpg'),
   'meal-beans': require('../../assets/food/meal-beans.jpg'),
   'meal-caprese': require('../../assets/food/meal-caprese.jpg'),
+  'meal-jollof-ng': require('../../assets/food/meal-jollof-ng.jpg'),
+  'meal-egg-stew-ng': require('../../assets/food/meal-egg-stew-ng.jpg'),
+  'meal-efo': require('../../assets/food/meal-efo.jpg'),
+  'meal-suya': require('../../assets/food/meal-suya.jpg'),
+  'meal-yam-egg': require('../../assets/food/meal-yam-egg.jpg'),
+  'meal-jollof-gh': require('../../assets/food/meal-jollof-gh.jpg'),
+  'meal-egg-stew-gh': require('../../assets/food/meal-egg-stew-gh.jpg'),
+  'meal-kontomire': require('../../assets/food/meal-kontomire.jpg'),
+  'meal-red-red': require('../../assets/food/meal-red-red.jpg'),
+  'meal-okra-stew': require('../../assets/food/meal-okra-stew.jpg'),
 };
 
 export const ONBOARDING_PHOTOS: Record<OnboardingStillId, ImageSourcePropType> = {

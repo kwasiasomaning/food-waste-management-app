@@ -136,7 +136,17 @@ export type MealPhotoId =
   | 'meal-bowl'
   | 'meal-noodles'
   | 'meal-beans'
-  | 'meal-caprese';
+  | 'meal-caprese'
+  | 'meal-jollof-ng'
+  | 'meal-egg-stew-ng'
+  | 'meal-efo'
+  | 'meal-suya'
+  | 'meal-yam-egg'
+  | 'meal-jollof-gh'
+  | 'meal-egg-stew-gh'
+  | 'meal-kontomire'
+  | 'meal-red-red'
+  | 'meal-okra-stew';
 
 export type OnboardPhotoId =
   | 'onboard-spread'
@@ -153,15 +163,35 @@ export type OnboardingStillId =
   | MealPhotoId
   | OnboardPhotoId;
 
+const RECIPE_MEAL_PHOTOS: Record<string, MealPhotoId> = {
+  'tomato-jollof': 'meal-jollof-ng',
+  'nigerian-egg-stew': 'meal-egg-stew-ng',
+  'efo-spinach-stew': 'meal-efo',
+  'suya-chicken': 'meal-suya',
+  'yam-egg-sauce': 'meal-yam-egg',
+  'ghanaian-jollof': 'meal-jollof-gh',
+  'ghanaian-egg-stew': 'meal-egg-stew-gh',
+  'kontomire-stew': 'meal-kontomire',
+  'red-red': 'meal-red-red',
+  'okra-stew': 'meal-okra-stew',
+};
+
 export function photoForRecipe(recipe: { id: string; title: string; emoji?: string }): MealPhotoId {
+  const mapped = RECIPE_MEAL_PHOTOS[recipe.id];
+  if (mapped) return mapped;
   const hay = `${recipe.id} ${recipe.title}`.toLowerCase();
   if (/taco|quesadilla/.test(hay)) return 'meal-tacos';
-  if (/shakshuka|egg-stew|egg stew/.test(hay)) return 'meal-shakshuka';
-  if (/jollof/.test(hay)) return 'meal-fried-rice';
-  if (/efo|kontomire|okra/.test(hay)) return 'meal-soup';
-  if (/suya/.test(hay)) return 'meal-chicken';
-  if (/red-red|red red/.test(hay)) return 'meal-beans';
-  if (/yam-egg|yam and egg/.test(hay)) return 'meal-frittata';
+  if (/ghanaian-jollof|ghanaian jollof/.test(hay)) return 'meal-jollof-gh';
+  if (/jollof/.test(hay)) return 'meal-jollof-ng';
+  if (/ghanaian-egg-stew|ghanaian egg stew/.test(hay)) return 'meal-egg-stew-gh';
+  if (/nigerian-egg-stew|egg-stew|egg stew/.test(hay)) return 'meal-egg-stew-ng';
+  if (/shakshuka/.test(hay)) return 'meal-shakshuka';
+  if (/kontomire/.test(hay)) return 'meal-kontomire';
+  if (/\befo\b/.test(hay)) return 'meal-efo';
+  if (/okra/.test(hay)) return 'meal-okra-stew';
+  if (/suya/.test(hay)) return 'meal-suya';
+  if (/red-red|red red/.test(hay)) return 'meal-red-red';
+  if (/yam-egg|yam and egg/.test(hay)) return 'meal-yam-egg';
   if (/frittata|zucchini-eggs|feta-eggs|corn-eggs|roast-veg|bacon-potato/.test(hay)) {
     return 'meal-frittata';
   }
