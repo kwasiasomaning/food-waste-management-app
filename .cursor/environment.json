@@ -1,7 +1,13 @@
 {
   "name": "Tonight",
   "install": "npm ci",
-  "start": "./scripts/start-web.sh",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "./scripts/start-web.sh",
+      "description": "Tonight Expo web at http://127.0.0.1:8081"
+    }
+  ],
   "ports": [
     {
       "name": "web",
