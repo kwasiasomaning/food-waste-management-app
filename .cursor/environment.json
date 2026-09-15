@@ -1,6 +1,16 @@
 {
   "name": "Tonight",
   "install": "npm ci",
+  "mcpServerAllowlist": [
+    {
+      "name": "GitHub",
+      "command": "bash scripts/github-mcp.sh"
+    },
+    {
+      "name": "GitHub API",
+      "serverUrl": "https://api.githubcopilot.com/mcp/"
+    }
+  ],
   "terminals": [
     {
       "name": "web",
