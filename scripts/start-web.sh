@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# Serve Tonight on IPv4 0.0.0.0:8081, plus ::1 so Cursor Browser can connect.
+# Serve Tonight on IPv4 0.0.0.0:8099, plus ::1 so Cursor Browser can connect.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
 export BROWSER="${BROWSER:-none}"
 export EXPO_NO_TELEMETRY="${EXPO_NO_TELEMETRY:-1}"
-export EXPO_PORT="${EXPO_PORT:-8081}"
+export EXPO_PORT="${EXPO_PORT:-8099}"
 
 PATCH="$(pwd)/scripts/force-ipv4-listen.cjs"
 if [[ -f "$PATCH" ]]; then
@@ -34,7 +34,7 @@ done
 
 PROXY="$(pwd)/scripts/ipv6-loopback-proxy.cjs"
 if [[ -f "$PROXY" ]]; then
-  # Do not inherit the IPv4 listen patch — it would steal 0.0.0.0:8081.
+  # Do not inherit the IPv4 listen patch — it would steal 0.0.0.0:$EXPO_PORT.
   NODE_OPTIONS= EXPO_PORT="$EXPO_PORT" node "$PROXY" &
   PROXY_PID=$!
 fi
