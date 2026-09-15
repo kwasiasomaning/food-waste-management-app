@@ -136,7 +136,13 @@ export type Settings = {
   country: string;
   currency: string;
   ownerId?: string;
+  deliveryLine1?: string;
+  deliveryCity?: string;
+  deliveryPostal?: string;
+  groceryProviderId?: string;
 };
+
+export type { GroceryDropoff, GroceryLine, GroceryOrder, GroceryQuote } from './lib/grocery/types';
 
 export type ConsentRecord = {
   privacyVersion: string;

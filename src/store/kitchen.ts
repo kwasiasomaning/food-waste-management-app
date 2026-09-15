@@ -7,10 +7,20 @@ import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from '../data/places';
 import { uid } from '../lib/dates';
 import { findRecipe } from '../lib/mealCache';
 import { parseHouseholdSize } from '../lib/household';
+import { applyGroceryOrder } from '../lib/grocery/applyOrder';
 import { estimateSavings, estimateUse, estimateWaste } from '../lib/savings';
 import { itemsFromIds } from '../lib/starterPantry';
 import type { KitchenSlice } from '../lib/auth/kitchenVault';
-import type { BinnedItem, CookedMeal, Diet, PantryItem, Settings, ShopItem, UsedItem } from '../types';
+import type {
+  BinnedItem,
+  CookedMeal,
+  Diet,
+  GroceryOrder,
+  PantryItem,
+  Settings,
+  ShopItem,
+  UsedItem,
+} from '../types';
 
 export type KitchenState = {
   hydrated: boolean;
@@ -20,6 +30,7 @@ export type KitchenState = {
   wasted: BinnedItem[];
   used: UsedItem[];
   shop: ShopItem[];
+  groceryOrders: GroceryOrder[];
   setHydrated: () => void;
   completeOnboarding: (input: {
     diet: Diet;
@@ -39,6 +50,7 @@ export type KitchenState = {
   addMissingToShop: (items: { ingredientId: string; reason: string }[]) => void;
   toggleShop: (ingredientId: string) => void;
   buyChecked: () => void;
+  recordGroceryOrder: (order: GroceryOrder) => void;
   clearShop: () => void;
   resetKitchen: () => void;
   kitchenSlice: () => KitchenSlice;
@@ -53,6 +65,7 @@ const defaultSettings: Settings = {
   onboardingDone: false,
   country: DEFAULT_COUNTRY,
   currency: DEFAULT_CURRENCY,
+  groceryProviderId: 'uber-eats-grocery',
 };
 
 export const useKitchen = create<KitchenState>()(
@@ -65,6 +78,7 @@ export const useKitchen = create<KitchenState>()(
       wasted: [],
       used: [],
       shop: [],
+      groceryOrders: [],
       setHydrated: () => set({ hydrated: true }),
       completeOnboarding: ({ diet, householdSize, ingredientIds = [], source = 'manual' }) =>
         set((state) => ({
@@ -214,6 +228,17 @@ export const useKitchen = create<KitchenState>()(
         if (checked.length) get().addIngredients(checked, 'shop');
         set((state) => ({ shop: state.shop.filter((item) => !item.checked) }));
       },
+      recordGroceryOrder: (order) =>
+        set((state) =>
+          applyGroceryOrder(
+            {
+              pantry: state.pantry,
+              shop: state.shop,
+              groceryOrders: state.groceryOrders ?? [],
+            },
+            order,
+          ),
+        ),
       clearShop: () => set({ shop: [] }),
       resetKitchen: () =>
         set((state) => ({
@@ -225,12 +250,17 @@ export const useKitchen = create<KitchenState>()(
             onboardingDone: state.settings.onboardingDone,
             diet: state.settings.diet,
             householdSize: state.settings.householdSize,
+            deliveryLine1: state.settings.deliveryLine1,
+            deliveryCity: state.settings.deliveryCity,
+            deliveryPostal: state.settings.deliveryPostal,
+            groceryProviderId: state.settings.groceryProviderId,
           },
           pantry: [],
           cooked: [],
           wasted: [],
           used: [],
           shop: [],
+          groceryOrders: [],
         })),
       kitchenSlice: () => {
         const state = get();
@@ -241,6 +271,7 @@ export const useKitchen = create<KitchenState>()(
           wasted: state.wasted,
           used: state.used,
           shop: state.shop,
+          groceryOrders: state.groceryOrders ?? [],
         };
       },
       replaceKitchen: (slice) =>
@@ -251,6 +282,7 @@ export const useKitchen = create<KitchenState>()(
           wasted: slice.wasted ?? [],
           used: slice.used ?? [],
           shop: slice.shop,
+          groceryOrders: slice.groceryOrders ?? [],
         }),
       claimKitchen: (ownerId) =>
         set((state) => ({
@@ -269,6 +301,7 @@ export const useKitchen = create<KitchenState>()(
           wasted: [],
           used: [],
           shop: [],
+          groceryOrders: [],
         }),
     }),
     {
@@ -281,13 +314,18 @@ export const useKitchen = create<KitchenState>()(
         wasted: state.wasted,
         used: state.used,
         shop: state.shop,
+        groceryOrders: state.groceryOrders,
       }),
       onRehydrateStorage: () => (state) => {
         if (state && !Array.isArray(state.wasted)) state.wasted = [];
         if (state && !Array.isArray(state.used)) state.used = [];
+        if (state && !Array.isArray(state.groceryOrders)) state.groceryOrders = [];
         if (state?.settings) {
           if (!state.settings.country) state.settings.country = DEFAULT_COUNTRY;
           if (!state.settings.currency) state.settings.currency = DEFAULT_CURRENCY;
+          if (!state.settings.groceryProviderId) {
+            state.settings.groceryProviderId = 'uber-eats-grocery';
+          }
         }
         state?.setHydrated();
       },

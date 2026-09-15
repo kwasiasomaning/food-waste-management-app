@@ -1,6 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import type { BinnedItem, CookedMeal, PantryItem, Settings, ShopItem, UsedItem } from '../../types';
+import type {
+  BinnedItem,
+  CookedMeal,
+  GroceryOrder,
+  PantryItem,
+  Settings,
+  ShopItem,
+  UsedItem,
+} from '../../types';
 
 export type KitchenSlice = {
   settings: Settings;
@@ -9,6 +17,7 @@ export type KitchenSlice = {
   wasted: BinnedItem[];
   used: UsedItem[];
   shop: ShopItem[];
+  groceryOrders?: GroceryOrder[];
 };
 
 const vaultKey = (userId: string) => `tonight.user.${userId}`;
