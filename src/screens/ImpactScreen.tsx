@@ -40,7 +40,7 @@ export function ImpactScreen() {
           <HeroBox
             label="Money Saved"
             amount={formatMoney(savedUsd, currency, { tight: true })}
-            detail={groceryUsd > 0 ? `After ${money(groceryUsd)} grocery delivery` : undefined}
+            detail={groceryUsd > 0 ? `After ${money(groceryUsd)} shop spend` : undefined}
             ink={savedUsd >= 0 ? colors.sage : traffic.tonight.ink}
             wash={savedUsd >= 0 ? colors.sageSoft : traffic.tonight.wash}
             large
@@ -69,30 +69,29 @@ export function ImpactScreen() {
             <Stat count={wasted.length} one="item binned" many="items binned" />
             <Stat count={mealsAway} one="meal thrown away" many="meals thrown away" />
           </View>
-          <View style={styles.row}>
-            <Stat
-              count={groceryOrders.length}
-              one="grocery delivery"
-              many="grocery deliveries"
-            />
-            <View style={styles.stat}>
-              <Text style={styles.statNum}>{money(groceryUsd)}</Text>
-              <Text style={styles.statCap}>grocery spend</Text>
+          {groceryOrders.length > 0 ? (
+            <View style={styles.row}>
+              <Stat
+                count={groceryOrders.length}
+                one="shop ticket"
+                many="shop tickets"
+              />
+              <View style={styles.stat}>
+                <Text style={styles.statNum}>{money(groceryUsd)}</Text>
+                <Text style={styles.statCap}>shop spend</Text>
+              </View>
             </View>
-          </View>
+          ) : null}
         </View>
 
-        <Text style={styles.section}>Delivered for dinner</Text>
-        {groceryOrders.length === 0 ? (
-          <Text style={styles.empty}>
-            Send Shop through Uber Eats Grocery and the ticket lands here. Money Saved comes down
-            by the order total so the kitchen ledger stays honest.
-          </Text>
-        ) : (
-          groceryOrders.map((order) => (
-            <GroceryTicket key={order.id} order={order} money={money} />
-          ))
-        )}
+        {groceryOrders.length > 0 ? (
+          <>
+            <Text style={styles.section}>Shop tickets</Text>
+            {groceryOrders.map((order) => (
+              <GroceryTicket key={order.id} order={order} money={money} />
+            ))}
+          </>
+        ) : null}
 
         <Text style={[styles.section, { marginTop: 28 }]}>Cooked</Text>
         {cooked.length === 0 ? (
@@ -119,8 +118,7 @@ export function ImpactScreen() {
         <Text style={[styles.section, { marginTop: 28 }]}>Items Used</Text>
         {used.length === 0 ? (
           <Text style={styles.empty}>
-            When you finish something, mark it Used in Pantry. The grocery money stays here so it
-            counts as kept.
+            When you finish something, mark it Used in Pantry.
           </Text>
         ) : (
           used.map((item) => (
@@ -143,8 +141,7 @@ export function ImpactScreen() {
         <Text style={[styles.section, { marginTop: 28 }]}>Binned</Text>
         {wasted.length === 0 ? (
           <Text style={styles.empty}>
-            When something goes in the bin, mark it Binned in Pantry. The grocery money leaves
-            this list so it is not invisible.
+            When something goes in the bin, mark it Binned in Pantry.
           </Text>
         ) : (
           wasted.map((item) => (
@@ -179,7 +176,7 @@ function GroceryTicket({
     <View style={styles.ticket}>
       <View style={styles.ticketHead}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.mealTitle}>{order.providerLabel}</Text>
+          <Text style={styles.mealTitle}>{ticketLabel(order.providerLabel)}</Text>
           <Text style={styles.mealMeta}>
             {new Date(order.placedAt).toLocaleDateString(undefined, {
               month: 'short',
@@ -193,7 +190,7 @@ function GroceryTicket({
         </View>
         <Text style={styles.mealLose}>−{money(order.totalUsd)}</Text>
       </View>
-      <Text style={styles.ticketStore}>{order.storeName}</Text>
+      <Text style={styles.ticketStore}>{displayStore(order.storeName)}</Text>
       {order.lines.map((line) => (
         <View key={line.sku} style={styles.ticketLine}>
           <Text style={styles.ticketName}>
@@ -213,6 +210,16 @@ function GroceryTicket({
       {order.dropoffLabel ? <Text style={styles.ticketDrop}>{order.dropoffLabel}</Text> : null}
     </View>
   );
+}
+
+function ticketLabel(label: string): string {
+  if (/uber/i.test(label)) return 'Shop ticket';
+  return label;
+}
+
+function displayStore(storeName: string): string {
+  if (/uber/i.test(storeName)) return 'Neighborhood market';
+  return storeName;
 }
 
 function HeroBox({

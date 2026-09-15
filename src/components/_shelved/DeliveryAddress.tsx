@@ -1,8 +1,11 @@
+/**
+ * Shelved drop-off fields for grocery delivery. Not shown in Tonight v1 Settings.
+ */
 import type { ComponentProps } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-import type { GroceryDropoff } from '../lib/grocery';
-import { colors, fonts, radius } from '../theme';
+import type { GroceryDropoff } from '../../lib/grocery/types';
+import { colors, fonts, radius } from '../../theme';
 
 export function DeliveryAddress({
   value,

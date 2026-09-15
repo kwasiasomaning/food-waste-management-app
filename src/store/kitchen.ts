@@ -67,7 +67,6 @@ const defaultSettings: Settings = {
   country: DEFAULT_COUNTRY,
   currency: DEFAULT_CURRENCY,
   cuisine: DEFAULT_CUISINE,
-  groceryProviderId: 'uber-eats-grocery',
 };
 
 export const useKitchen = create<KitchenState>()(
@@ -255,10 +254,6 @@ export const useKitchen = create<KitchenState>()(
             diet: state.settings.diet,
             householdSize: state.settings.householdSize,
             cuisine: state.settings.cuisine,
-            deliveryLine1: state.settings.deliveryLine1,
-            deliveryCity: state.settings.deliveryCity,
-            deliveryPostal: state.settings.deliveryPostal,
-            groceryProviderId: state.settings.groceryProviderId,
           },
           pantry: [],
           cooked: [],
@@ -329,8 +324,8 @@ export const useKitchen = create<KitchenState>()(
           if (!state.settings.country) state.settings.country = DEFAULT_COUNTRY;
           if (!state.settings.currency) state.settings.currency = DEFAULT_CURRENCY;
           if (!state.settings.cuisine) state.settings.cuisine = DEFAULT_CUISINE;
-          if (!state.settings.groceryProviderId) {
-            state.settings.groceryProviderId = 'uber-eats-grocery';
+          if (state.settings.groceryProviderId) {
+            delete state.settings.groceryProviderId;
           }
         }
         state?.setHydrated();

@@ -14,5 +14,4 @@ export type Route =
   | { name: 'tabs'; tab: TabName }
   | { name: 'recipe'; id: string }
   | { name: 'settings' }
-  | { name: 'grocery'; ingredientIds: string[] }
   | { name: 'cooked'; recipeId: string; savedUsd: number; savedKg: number };

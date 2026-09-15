@@ -1,5 +1,5 @@
-import { uberEatsGroceryProvider } from './providers/uberEatsGrocery';
-import type { GroceryProvider, GroceryProviderId } from './types';
+import type { GroceryProvider, GroceryProviderId } from '../types';
+import { uberEatsGroceryProvider } from './uberEatsGrocery';
 
 const providers: GroceryProvider[] = [uberEatsGroceryProvider];
 

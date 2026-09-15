@@ -1,4 +1,4 @@
-import type { ShopItem } from '../../types';
+import type { ShopItem } from '../../../types';
 
 export function shopIdsForDelivery(shop: ShopItem[]): string[] {
   const checked = shop.filter((item) => item.checked).map((item) => item.ingredientId);
