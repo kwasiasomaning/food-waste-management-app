@@ -28,7 +28,7 @@ import { RecipeScreen } from './src/screens/RecipeScreen';
 import { ScanScreen } from './src/screens/ScanScreen';
 import { SettingsScreen } from './src/screens/SettingsScreen';
 import { ShopScreen } from './src/screens/ShopScreen';
-import { GroceryCheckoutScreen } from './src/screens/GroceryCheckoutScreen';
+import { UberEatsBasketScreen } from './src/screens/UberEatsBasketScreen';
 import { TonightScreen } from './src/screens/TonightScreen';
 import { FOOD_PHOTOS } from './src/data/foodPhotos';
 import { useAuth } from './src/store/auth';
@@ -131,7 +131,7 @@ export default function App() {
             ) : null}
             {route.tab === 'shop' ? (
               <ShopScreen
-                onDeliver={(ingredientIds) => setRoute({ name: 'grocery', ingredientIds })}
+                onAddInUberEats={(ingredientIds) => setRoute({ name: 'grocery', ingredientIds })}
               />
             ) : null}
             {route.tab === 'impact' ? <ImpactScreen /> : null}
@@ -163,10 +163,9 @@ export default function App() {
           />
         ) : null}
         {route.name === 'grocery' ? (
-          <GroceryCheckoutScreen
+          <UberEatsBasketScreen
             ingredientIds={route.ingredientIds}
             onBack={() => setRoute({ name: 'tabs', tab: 'shop' })}
-            onDone={() => setRoute({ name: 'tabs', tab: 'impact' })}
           />
         ) : null}
         {route.name === 'cooked' ? (

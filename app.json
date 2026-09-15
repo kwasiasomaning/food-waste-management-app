@@ -18,7 +18,8 @@
       "bundleIdentifier": "app.tonight.kitchen",
       "infoPlist": {
         "NSCameraUsageDescription": "Tonight uses a photo of your kitchen to suggest dinner from food you already have.",
-        "NSPhotoLibraryUsageDescription": "Tonight uses a fridge photo so you can confirm what is already there."
+        "NSPhotoLibraryUsageDescription": "Tonight uses a fridge photo so you can confirm what is already there.",
+        "LSApplicationQueriesSchemes": ["ubereats"]
       }
     },
     "android": {
@@ -41,6 +42,7 @@
       "backgroundColor": "#231C16"
     },
     "plugins": [
+      "./plugins/with-uber-eats-queries.js",
       "expo-font",
       [
         "expo-splash-screen",
