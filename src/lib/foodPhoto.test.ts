@@ -13,6 +13,11 @@ describe('photoForRecipe', () => {
     );
     expect(photoForRecipe({ id: 'salmon-lemon', title: 'Lemon salmon' })).toBe('meal-fish');
     expect(photoForRecipe({ id: 'chicken-tacos', title: 'Chicken tacos' })).toBe('meal-tacos');
+    expect(photoForRecipe({ id: 'tomato-jollof', title: 'Tomato jollof' })).toBe('meal-fried-rice');
+    expect(photoForRecipe({ id: 'nigerian-egg-stew', title: 'Egg stew with rice' })).toBe(
+      'meal-shakshuka',
+    );
+    expect(photoForRecipe({ id: 'red-red', title: 'Red red beans' })).toBe('meal-beans');
     expect(photoForRecipe({ id: 'bell-pepper-pasta', title: 'Pasta' })).toBe('meal-pasta');
   });
 });
@@ -34,6 +39,11 @@ describe('photoForIngredient', () => {
     expect(photoForIngredient({ id: 'ground-beef' })).toBe('ing-beef');
     expect(photoForIngredient({ id: 'leftover-rice' })).toBe('ing-grain');
     expect(photoForIngredient({ id: 'chickpeas' })).toBe('ing-beans');
+    expect(photoForIngredient({ id: 'plantain' })).toBe('ing-banana');
+    expect(photoForIngredient({ id: 'yam' })).toBe('ing-potato');
+    expect(photoForIngredient({ id: 'okra' })).toBe('ing-zucchini');
+    expect(photoForIngredient({ id: 'black-eyed-peas' })).toBe('ing-beans');
+    expect(photoForIngredient({ id: 'palm-oil' })).toBe('ing-oil');
     expect(photoForIngredient({ id: 'olive-oil' })).toBe('ing-oil');
   });
 

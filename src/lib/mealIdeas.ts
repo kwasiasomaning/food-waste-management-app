@@ -1,11 +1,16 @@
-import type { Diet, PantryItem, Recipe, ScoredRecipe } from '../types';
+import type { Cuisine, Diet, PantryItem, Recipe, ScoredRecipe } from '../types';
+import { pickCuisineFirst } from './cuisine';
 import { daysUntil } from './dates';
 import { rememberRecipe } from './mealCache';
 import { urgentSearchTerms } from './mealMatch';
 import { fetchRemoteRecipes } from './mealSources';
 import { scoreRecipe, suggestDinners } from './matching';
 
-export function mergeDinnerIdeas(groups: ScoredRecipe[][], limit = 3): ScoredRecipe[] {
+export function mergeDinnerIdeas(
+  groups: ScoredRecipe[][],
+  limit = 3,
+  cuisine: Cuisine = 'any',
+): ScoredRecipe[] {
   const seen = new Set<string>();
   const merged: ScoredRecipe[] = [];
   for (const group of groups) {
@@ -18,9 +23,8 @@ export function mergeDinnerIdeas(groups: ScoredRecipe[][], limit = 3): ScoredRec
       merged.push(row);
     }
   }
-  return merged
-    .sort((a, b) => b.score - a.score || a.missing.length - b.missing.length)
-    .slice(0, limit);
+  const ranked = merged.sort((a, b) => b.score - a.score || a.missing.length - b.missing.length);
+  return pickCuisineFirst(ranked, cuisine, limit);
 }
 
 function scoreRemote(recipe: Recipe, pantry: PantryItem[], diet: Diet, now: number): ScoredRecipe | null {
@@ -48,8 +52,9 @@ export async function loadDinnerIdeas(
   limit = 3,
   now = Date.now(),
   fetchImpl: typeof fetch = fetch,
+  cuisine: Cuisine = 'any',
 ): Promise<ScoredRecipe[]> {
-  const local = suggestDinners(pantry, diet, limit, now);
+  const local = suggestDinners(pantry, diet, limit, now, cuisine);
   if (pantry.length === 0) return local;
 
   const urgent = pantry
@@ -58,12 +63,12 @@ export async function loadDinnerIdeas(
   const terms = urgentSearchTerms(urgent, 3);
 
   try {
-    const remoteRecipes = await fetchRemoteRecipes(terms, fetchImpl);
+    const remoteRecipes = await fetchRemoteRecipes(terms, fetchImpl, 4500, cuisine);
     const remote = remoteRecipes
       .map((recipe) => scoreRemote(recipe, pantry, diet, now))
       .filter((row): row is ScoredRecipe => row !== null);
     if (remote.length === 0) return local;
-    return mergeDinnerIdeas([local, remote], limit);
+    return mergeDinnerIdeas([local, remote], limit, cuisine);
   } catch {
     return local;
   }

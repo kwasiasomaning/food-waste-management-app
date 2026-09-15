@@ -1,5 +1,6 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { cuisineLabel } from '../data/cuisines';
 import { getIngredient } from '../data/ingredients';
 import { recipeImageSource } from '../lib/recipeImage';
 import type { ScoredRecipe } from '../types';
@@ -17,6 +18,7 @@ export function RecipeCard({
   const dying = scored.expiringUsed.map((id) => getIngredient(id).name);
   const missing = scored.missing.map((id) => getIngredient(id).name);
   const photo = recipeImageSource(scored.recipe);
+  const cuisine = cuisineLabel(scored.recipe.cuisine);
 
   return (
     <Pressable
@@ -27,7 +29,7 @@ export function RecipeCard({
       <View style={featured ? styles.copyFeatured : styles.copy}>
         <Text style={[styles.title, featured && styles.titleFeatured]}>{scored.recipe.title}</Text>
         <Text style={styles.meta}>
-          {scored.recipe.minutes} min
+          {cuisine ? `${cuisine} · ${scored.recipe.minutes} min` : `${scored.recipe.minutes} min`}
           {missing.length === 0 ? ' · nothing to buy' : ` · ${missing.length} to buy`}
         </Text>
         {dying.length > 0 ? (

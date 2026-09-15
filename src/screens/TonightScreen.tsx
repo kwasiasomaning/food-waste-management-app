@@ -28,22 +28,26 @@ export function TonightScreen({
   const [showBrief, setShowBrief] = useState(() => !isWasteBriefDismissed());
   const pantry = useKitchen((s) => s.pantry);
   const diet = useKitchen((s) => s.settings.diet);
+  const cuisine = useKitchen((s) => s.settings.cuisine ?? 'any');
   const addMissingToShop = useKitchen((s) => s.addMissingToShop);
   const pantryKey = pantry.map((item) => `${item.ingredientId}:${item.expiresAt}`).join('|');
-  const localIdeas = useMemo(() => suggestDinners(pantry, diet, 3), [diet, pantry, pantryKey]);
+  const localIdeas = useMemo(
+    () => suggestDinners(pantry, diet, 3, Date.now(), cuisine),
+    [cuisine, diet, pantry, pantryKey],
+  );
   const [suggestions, setSuggestions] = useState(localIdeas);
 
   useEffect(() => {
     setSuggestions(localIdeas);
     if (pantry.length === 0) return;
     let cancelled = false;
-    void loadDinnerIdeas(pantry, diet, 3).then((rows) => {
+    void loadDinnerIdeas(pantry, diet, 3, Date.now(), fetch, cuisine).then((rows) => {
       if (!cancelled && rows.length) setSuggestions(rows);
     });
     return () => {
       cancelled = true;
     };
-  }, [diet, localIdeas, pantry, pantryKey]);
+  }, [cuisine, diet, localIdeas, pantry, pantryKey]);
   const dying = pantry
     .filter((item) => {
       const ingredient = INGREDIENT_MAP[item.ingredientId];
